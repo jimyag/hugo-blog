@@ -1,0 +1,5 @@
+baseURL = 'https://jimyag.cn'
+languageCode = 'zh-cn'
+title = 'My New Hugo Site'
+# [permalinks]
+#   posts = "/post/:slug"
