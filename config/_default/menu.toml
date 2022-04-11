@@ -27,11 +27,6 @@
   parent = "friends"
   url = "https://zhangzqs.cn/"
   weight = 4
-# [[main]]
-#   parent = "friends"
-#   weight = 5
-#   [main.params]
-#     divider = true
 
 [[main]]
   name = "资料"
