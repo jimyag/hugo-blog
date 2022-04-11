@@ -19,21 +19,3 @@
     keywords = "Hugo, Bootstrap, 博客主题"
     [zh-cn.params.archive]
       dateFormat = "01-02"
-
-# [zh-tw]
-#   languageName = "繁體中文"
-#   weight = 3
-#   [zh-tw.params]
-#     dateFormat = "2006-01-02"
-#     description = "一個快速、響應式和功能豐富的 Hugo 博客主題"
-#     keywords = "Hugo, Bootstrap, 博客主題"
-#     [zh-tw.params.archive]
-#       dateFormat = "01-02"
-
-# [ar]
-#   languageName = "العربية"
-#   LanguageDirection = 'rtl'
-#   weight = 5
-#   [ar.params]
-#     dateFormat = "02-01-2006"
-#     description = "ثيم مدونة مصمم لـ هوجو سريع وغني بالميزات"
