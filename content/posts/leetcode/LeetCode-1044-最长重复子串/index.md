@@ -4,7 +4,7 @@ tags:
   - 困难
 categories:
   - LeetCode
-slug: ../8669609e
+slug: /8669609e
 date: 2021-12-23 22:47:24
 series: [ "leetcode" ] 
 ---

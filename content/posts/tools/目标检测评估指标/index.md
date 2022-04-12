@@ -1,6 +1,6 @@
 ---
 title: 目标检测评估指标
-slug: ../d9d2de90
+slug: /d9d2de90
 date: 2021-08-03 13:03:32
 tags:
     - YOLOV5

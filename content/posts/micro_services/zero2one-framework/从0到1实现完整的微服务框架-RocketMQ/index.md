@@ -10,7 +10,7 @@ categories:
   - - 分布式
   - - MQ
   - - RocketMQ
-slug: ../../897c83b3
+slug: /897c83b3
 date: 2022-04-04 14:47:32
 series: [ "从0到1实现完整的微服务框架" ] 
 ---

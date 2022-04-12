@@ -6,7 +6,7 @@ tags:
 categories:
   - - 微服务
   - - gRPC
-slug: ../../5f073a52
+slug: /5f073a52
 date: 2022-03-25 20:26:35
 series: [ "从0到1实现完整的微服务框架" ] 
 ---

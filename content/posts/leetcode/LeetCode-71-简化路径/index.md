@@ -5,7 +5,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../30245f9e
+slug: /30245f9e
 date: 2022-01-06 22:08:14
 series: [ "leetcode" ] 
 ---
@@ -36,7 +36,7 @@ series: [ "leetcode" ]
 ```
 #### 示例 2
 ```tex
-输入：path = "/../"
+输入：path = "//"
 输出："/"
 解释：从根目录向上一级是不可行的，因为根目录是你可以到达的最高级。
 ```
@@ -48,7 +48,7 @@ series: [ "leetcode" ]
 ```
 #### 示例 4
 ```tex
-输入：path = "/a/./b/../../c/"
+输入：path = "/a/./b///c/"
 输出："/c"
 ```
 ### 解答

@@ -2,7 +2,7 @@
 title: "服务器环境的配置"
 date: 2022-04-11T17:06:27+08:00
 draft: false
-slug: ../173a3c06
+slug: /173a3c06
 tags: ["教程"]
 categories: ["教程"]
 featured: false 

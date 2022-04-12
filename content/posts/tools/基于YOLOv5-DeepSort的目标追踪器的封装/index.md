@@ -5,7 +5,7 @@ tags:
   - DeepSort
 categories:
   - YOLOV5
-slug: ../5306f355
+slug: /5306f355
 date: 2021-08-04 15:30:57
 ---
 

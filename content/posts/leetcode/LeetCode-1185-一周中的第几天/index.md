@@ -5,7 +5,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../95bcecc9
+slug: /95bcecc9
 date: 2022-01-03 12:14:06
 series: [ "leetcode" ] 
 ---

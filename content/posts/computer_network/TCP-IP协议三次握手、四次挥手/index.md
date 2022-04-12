@@ -5,7 +5,7 @@ tags:
   - 教程
 categories:
   - 教程
-slug: ../c4697fb2
+slug: /c4697fb2
 date: 2022-02-10 13:24:59
 ---
 

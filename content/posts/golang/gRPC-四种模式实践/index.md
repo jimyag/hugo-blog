@@ -6,7 +6,7 @@ tags:
 categories:
   - - 教程
   - - gRPC
-slug: ../3259ac99
+slug: /3259ac99
 date: 2022-03-09 09:41:28
 ---
 

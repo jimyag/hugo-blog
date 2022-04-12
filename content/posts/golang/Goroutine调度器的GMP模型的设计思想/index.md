@@ -5,7 +5,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../61098f97
+slug: /61098f97
 date: 2022-01-17 12:12:56
 ---
 

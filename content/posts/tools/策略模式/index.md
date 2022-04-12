@@ -4,7 +4,7 @@ tags:
   - 策略模式
 categories:
   - 设计模式
-slug: ../72e3b671
+slug: /72e3b671
 date: 2021-12-11 16:48:29
 ---
 

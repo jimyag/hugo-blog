@@ -4,7 +4,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../81eca2cd
+slug: /81eca2cd
 date: 2022-01-09 00:21:39
 series: [ "leetcode" ] 
 ---

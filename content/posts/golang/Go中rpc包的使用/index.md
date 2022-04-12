@@ -8,7 +8,7 @@ categories:
   - - Go
   - - RPC
   - - 教程
-slug: ../11a90fe7
+slug: /11a90fe7
 date: 2022-03-25 14:15:03
 ---
 

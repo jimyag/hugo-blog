@@ -8,7 +8,7 @@ categories:
   - - 教程
   - - PASETO
   - - JWT
-slug: ../d5376d72
+slug: /d5376d72
 date: 2022-03-09 11:31:02
 ---
 

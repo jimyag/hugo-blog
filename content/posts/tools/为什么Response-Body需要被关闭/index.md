@@ -7,7 +7,7 @@ tags:
 categories:
   - Go
   - 踩坑
-slug: ../60b013aa
+slug: /60b013aa
 date: 2022-02-24 15:31:16
 ---
 

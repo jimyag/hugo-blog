@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../9457eaea
+slug: /9457eaea
 date: 2021-12-13 17:59:13
 series: [ "leetcode" ] 
 ---

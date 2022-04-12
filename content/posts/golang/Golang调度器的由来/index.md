@@ -5,7 +5,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../46db0928
+slug: /46db0928
 date: 2022-01-16 23:52:10
 ---
 

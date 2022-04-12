@@ -8,7 +8,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../c21b4284
+slug: /c21b4284
 date: 2022-01-17 20:46:07
 ---
 

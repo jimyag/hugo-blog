@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../acd85fa1
+slug: /acd85fa1
 date: 2021-12-11 16:56:15
 series: [ "leetcode" ] 
 ---

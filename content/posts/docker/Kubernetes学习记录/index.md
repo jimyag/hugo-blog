@@ -6,7 +6,7 @@ tags:
 categories:
   - - k8s
   - - 教程
-slug: ../387f5f40
+slug: /387f5f40
 date: 2022-01-27 20:46:02
 ---
 

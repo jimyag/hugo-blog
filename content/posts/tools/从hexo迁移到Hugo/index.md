@@ -2,7 +2,7 @@
 title: "从hexo迁移到Hugo"
 date: 2022-04-11T11:47:04+08:00
 draft: false
-slug: ../642ecc47
+slug: /642ecc47
 tags: ["Hexo","Hugo","教程"]
 categories: ["Hexo","Hugo","教程"]
 featured: false 
@@ -191,10 +191,6 @@ slug: {{ substr (md5 (printf "%s%s" .Date (replace .TranslationBaseName "-" " " 
 [permalinks]
   posts = "/post/:slug"
 ```
-
-但是，`hugo`生成的`link`是包含存放博客的文件夹的路径的。比如你在`hugo-blog\content\posts\tools\从hexo迁移到Hugo\index.md`的博客内容，会渲染成`sitename/posts/tools/:slug`但是hexo生成的只有`sitename/posts/addlink`这时候就要在`文章`中的`slug`进行重新设置，将文章`slug`字段的值修改为`../ssdfdfs`,`ssdfdfs`是生成的永久链接。
-
-如何全部替换呢，写个脚本？随便打开一个IDE，使用`replace all`的功能替换原来的`addlink:`为`slug: ../`就可以了。
 
 ## 支持letex公式
 

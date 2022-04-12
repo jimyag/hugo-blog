@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../69e04ce
+slug: /69e04ce
 date: 2021-12-27 09:42:27
 series: [ "leetcode" ] 
 ---

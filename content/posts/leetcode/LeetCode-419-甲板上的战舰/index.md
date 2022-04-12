@@ -5,7 +5,7 @@ tags:
   - DFS
 categories:
   - LeetCode
-slug: ../aa19f9bb
+slug: /aa19f9bb
 date: 2021-12-18 15:48:25
 series: [ "leetcode" ] 
 ---

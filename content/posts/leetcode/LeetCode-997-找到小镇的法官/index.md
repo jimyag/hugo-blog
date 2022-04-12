@@ -4,7 +4,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../e18d9e0d
+slug: /e18d9e0d
 date: 2021-12-19 22:14:28
 series: [ "leetcode" ] 
 ---

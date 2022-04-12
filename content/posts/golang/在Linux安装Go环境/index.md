@@ -7,7 +7,7 @@ tags:
 categories:
   - - 教程
   - - Go
-slug: ../c56e43df
+slug: /c56e43df
 date: 2022-01-17 15:16:35
 ---
 

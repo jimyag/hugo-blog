@@ -6,7 +6,7 @@ tags:
 categories:
   - - 教程
   - - 微服务
-slug: ../../acba46c5
+slug: /acba46c5
 date: 2022-03-24 16:04:13
 series: [ "从0到1实现完整的微服务框架" ] 
 ---

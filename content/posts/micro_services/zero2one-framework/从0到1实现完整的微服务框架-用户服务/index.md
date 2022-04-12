@@ -6,7 +6,7 @@ tags:
 categories:
   - - 微服务
   - - gRPC
-slug: ../../dc2dadae
+slug: /dc2dadae
 date: 2022-03-25 20:42:57
 series: [ "从0到1实现完整的微服务框架" ] 
 ---

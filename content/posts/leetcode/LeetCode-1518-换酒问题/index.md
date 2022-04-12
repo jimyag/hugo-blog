@@ -4,7 +4,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../656c6fd2
+slug: /656c6fd2
 date: 2021-12-17 10:47:30
 series: [ "leetcode" ] 
 ---

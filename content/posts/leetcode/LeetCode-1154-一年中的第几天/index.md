@@ -4,7 +4,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../bd5751e9
+slug: /bd5751e9
 date: 2021-12-21 08:58:18
 series: [ "leetcode" ] 
 ---

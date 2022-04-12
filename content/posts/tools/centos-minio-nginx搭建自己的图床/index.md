@@ -6,7 +6,7 @@ tags:
   - Nginx
 categories:
   - 教程
-slug: ../f0e09e13
+slug: /f0e09e13
 date: 2021-12-18 16:58:21
 ---
 

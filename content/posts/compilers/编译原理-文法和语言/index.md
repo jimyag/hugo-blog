@@ -5,7 +5,7 @@ tags:
   - 复习资料
 categories:
   - 编译原理
-slug: ../b68db71a
+slug: /b68db71a
 date: 2021-10-14 12:42:52
 ---
 

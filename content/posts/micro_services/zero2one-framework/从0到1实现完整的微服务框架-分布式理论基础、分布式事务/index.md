@@ -10,7 +10,7 @@ categories:
   - - 分布式
   - - BASE理论
   - - CAP理论
-slug: ../../252f6a9e
+slug: /252f6a9e
 date: 2022-04-03 09:49:00
 series: [ "从0到1实现完整的微服务框架" ] 
 ---

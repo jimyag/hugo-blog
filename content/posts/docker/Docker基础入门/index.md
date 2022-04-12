@@ -3,7 +3,7 @@ title: Docker基础入门
 categories:
   - [教程]
   - [Docker]
-slug: ../8b63f587
+slug: /8b63f587
 date: 2022-01-03 19:10:41
 tags:
   - 教程

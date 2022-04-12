@@ -4,7 +4,7 @@ tags:
   - 周赛
 categories:
   - LeetCode
-slug: ../3087638f
+slug: /3087638f
 date: 2022-01-08 23:52:25
 series: [ "leetcode" ] 
 ---

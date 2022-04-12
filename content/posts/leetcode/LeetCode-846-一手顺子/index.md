@@ -6,7 +6,7 @@ tags:
   - 模拟
 categories:
   - LeetCode
-slug: ../111b38ee
+slug: /111b38ee
 date: 2021-12-30 10:06:01
 series: [ "leetcode" ] 
 ---

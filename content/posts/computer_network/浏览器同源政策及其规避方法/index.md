@@ -5,7 +5,7 @@ tags:
 categories:
   - - 教程
   - - Web
-slug: ../6658c08b
+slug: /6658c08b
 date: 2022-01-22 23:23:27
 ---
 

@@ -4,7 +4,7 @@ tags:
   - 二进制
 categories:
   - 计算机基础
-slug: ../c14b5b33
+slug: /c14b5b33
 date: 2021-10-02 21:45:11
 ---
 

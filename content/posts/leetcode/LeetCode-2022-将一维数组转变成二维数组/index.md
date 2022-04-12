@@ -5,7 +5,7 @@ tags:
   - 模拟
 categories:
   - LeetCode
-slug: ../9806fff7
+slug: /9806fff7
 date: 2022-01-01 15:33:21
 series: [ "leetcode" ] 
 ---

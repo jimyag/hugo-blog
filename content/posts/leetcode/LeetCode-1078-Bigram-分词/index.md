@@ -4,7 +4,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../e0d1a0
+slug: /e0d1a0
 date: 2021-12-26 23:15:20
 series: [ "leetcode" ] 
 ---

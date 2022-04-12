@@ -4,7 +4,7 @@ tags:
   - 踩坑
 categories:
   - 教程
-slug: ../155b4227
+slug: /155b4227
 date: 2022-02-13 16:03:36
 ---
 

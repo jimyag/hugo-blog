@@ -4,7 +4,7 @@ tags:
   - 复习资料
 categories:
   - 编译原理
-slug: ../29dc6b0
+slug: /29dc6b0
 date: 2021-10-06 19:08:03
 ---
 

@@ -2,7 +2,7 @@
 title: LeetCode-1609-奇偶树
 tags: ["中等" ,"BFS"]
 categories: ["LeetCode"]
-slug: ../1c05b892
+slug: /1c05b892
 date: 2021-12-25 19:47:39
 series: [ "leetcode" ] 
 ---

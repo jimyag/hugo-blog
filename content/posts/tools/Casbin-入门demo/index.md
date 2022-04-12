@@ -6,7 +6,7 @@ tags:
 categories:
   - [教程]
   - [Go]
-slug: ../112bfef3
+slug: /112bfef3
 date: 2021-12-18 22:00:08
 ---
 

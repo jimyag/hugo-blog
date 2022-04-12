@@ -6,7 +6,7 @@ tags:
   - 字符串
 categories:
   - LeetCode
-slug: ../cb644e85
+slug: /cb644e85
 date: 2021-12-22 09:21:49
 series: [ "leetcode" ] 
 ---

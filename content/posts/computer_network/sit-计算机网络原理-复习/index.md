@@ -5,7 +5,7 @@ tags:
   - 基础
 categories:
   - 计算机网络
-slug: ../6e1fe6f1
+slug: /6e1fe6f1
 date: 2021-12-12 19:23:01
 ---
 

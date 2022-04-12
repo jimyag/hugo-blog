@@ -1,6 +1,6 @@
 ---
 title: LeetCode-709-转换成小写字母
-slug: ../1af266db
+slug: /1af266db
 date: 2021-12-12 07:43:09
 series: [ "leetcode" ] 
 tags:

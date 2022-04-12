@@ -5,7 +5,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../965e3905
+slug: /965e3905
 date: 2022-01-07 00:11:54
 series: [ "leetcode" ] 
 ---

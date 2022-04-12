@@ -5,7 +5,7 @@ tags:
 categories:
   - - Go
   - - 源码
-slug: ../fb1f55a9
+slug: /fb1f55a9
 date: 2022-01-26 21:49:55
 ---
 

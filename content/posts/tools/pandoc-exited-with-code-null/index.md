@@ -5,7 +5,7 @@ tags:
 categories:
   - NexT
   - Hexo
-slug: ../80ae3d28
+slug: /80ae3d28
 date: 2022-02-12 00:18:31
 ---
 

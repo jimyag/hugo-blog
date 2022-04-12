@@ -6,7 +6,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../17eab2e7
+slug: /17eab2e7
 date: 2022-02-17 23:28:32
 ---
 

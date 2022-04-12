@@ -4,7 +4,7 @@ tags:
   - Hexo
 categories:
   - 教程
-slug: ../e058fe03
+slug: /e058fe03
 date: 2022-01-02 00:17:03
 ---
 

@@ -6,7 +6,7 @@ tags:
 categories:
   - - 教程
   - - Docker
-slug: ../26f6376f
+slug: /26f6376f
 date: 2022-01-06 21:47:56
 ---
 

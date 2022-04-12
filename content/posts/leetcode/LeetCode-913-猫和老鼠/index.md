@@ -5,7 +5,7 @@ tags:
   - 不会
 categories:
   - LeetCode
-slug: ../e1f1048f
+slug: /e1f1048f
 date: 2022-01-04 21:15:17
 series: [ "leetcode" ] 
 ---

@@ -5,7 +5,7 @@ tags:
   - 教程
 categories:
   - Web
-slug: ../37cab689
+slug: /37cab689
 date: 2021-08-03 12:55:25
 ---
 

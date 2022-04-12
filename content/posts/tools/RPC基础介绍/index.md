@@ -6,7 +6,7 @@ tags:
 categories:
   - - RPC
   - - 教程
-slug: ../8d24f484
+slug: /8d24f484
 date: 2022-03-25 10:44:35
 ---
 

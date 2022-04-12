@@ -5,7 +5,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../297384ed
+slug: /297384ed
 date: 2022-01-02 01:23:36
 series: [ "leetcode" ] 
 ---

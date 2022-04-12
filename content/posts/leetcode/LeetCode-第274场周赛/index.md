@@ -6,7 +6,7 @@ tags:
   - 周赛
 categories:
   - LeetCode
-slug: ../43ef6653
+slug: /43ef6653
 date: 2022-01-02 12:21:54
 series: [ "leetcode" ] 
 ---

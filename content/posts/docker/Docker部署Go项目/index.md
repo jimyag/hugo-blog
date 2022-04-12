@@ -8,7 +8,7 @@ categories:
   - - 教程
   - - Docker
   - - Go
-slug: ../e6a3ea27
+slug: /e6a3ea27
 date: 2022-01-10 23:20:18
 ---
 

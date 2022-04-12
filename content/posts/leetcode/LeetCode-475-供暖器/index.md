@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../e63dcfe3
+slug: /e63dcfe3
 date: 2021-12-20 09:31:58
 series: [ "leetcode" ] 
 ---

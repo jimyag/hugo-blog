@@ -4,7 +4,7 @@ tags:
   - 困难
 categories:
   - LeetCode
-slug: ../a9eb621
+slug: /a9eb621
 date: 2021-12-28 09:29:23
 series: [ "leetcode" ] 
 ---

@@ -5,7 +5,7 @@ tags:
   - 前缀和
 categories:
   - - 算法
-slug: ../b19a7723
+slug: /b19a7723
 date: 2022-01-29 01:02:43
 ---
 

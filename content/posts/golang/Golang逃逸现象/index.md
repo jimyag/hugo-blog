@@ -6,7 +6,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../427ffcfc
+slug: /427ffcfc
 date: 2022-01-18 14:34:24
 ---
 

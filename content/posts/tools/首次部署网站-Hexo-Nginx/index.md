@@ -5,7 +5,7 @@ tags:
     - 教程 
 categories:
     - Web 
-slug: ../19323af8 
+slug: /19323af8 
 date: 2021-07-31 15:20:40
 mathjax: true
 ---

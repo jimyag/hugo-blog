@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../b9635535
+slug: /b9635535
 date: 2022-01-08 17:52:15
 series: [ "leetcode" ] 
 ---

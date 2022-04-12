@@ -2,7 +2,7 @@
 title: LeetCode-851-喧闹和富有
 tags: ["中等","DFS"]
 categories: ["LeetCode"]
-slug: ../3f29dc95
+slug: /3f29dc95
 date: 2021-12-15 20:53:25
 series: [ "leetcode" ] 
 ---

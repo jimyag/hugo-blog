@@ -6,7 +6,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../1dc739af
+slug: /1dc739af
 date: 2022-03-16 07:33:51
 ---
 

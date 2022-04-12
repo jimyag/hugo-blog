@@ -3,7 +3,7 @@ title: 9.15随笔
 categories:
   - 随笔
 mathjax: true
-slug: ../c8d9f0a8
+slug: /c8d9f0a8
 date: 2021-09-15 19:08:42
 tags:
 ---

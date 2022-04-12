@@ -7,7 +7,7 @@ categories:
   - - 微服务
   - - gRPC
 date: 2022-04-05 09:21:06
-slug: ../../6f5f2fac
+slug: /6f5f2fac
 series: [ "从0到1实现完整的微服务框架" ] 
 ---
 

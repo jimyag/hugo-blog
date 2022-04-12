@@ -5,7 +5,7 @@ tags:
   - 数学
 categories:
   - LeetCode
-slug: ../5a04344
+slug: /5a04344
 date: 2021-12-16 22:01:05
 series: [ "leetcode" ] 
 ---

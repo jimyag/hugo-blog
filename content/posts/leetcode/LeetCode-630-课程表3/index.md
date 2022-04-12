@@ -5,7 +5,7 @@ tags:
   - 贪心
 categories:
   - LeetCode
-slug: ../52f591e7
+slug: /52f591e7
 date: 2021-12-14 09:04:00
 series: [ "leetcode" ] 
 ---

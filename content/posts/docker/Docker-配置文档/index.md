@@ -6,7 +6,7 @@ tags:
 categories:
   - - 教程
   - - Docker
-slug: ../ddeb9b11
+slug: /ddeb9b11
 date: 2022-01-06 21:34:27
 ---
 

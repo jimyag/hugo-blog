@@ -5,7 +5,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../b7d0417a
+slug: /b7d0417a
 date: 2022-01-18 15:58:15
 ---
 

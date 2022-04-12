@@ -4,7 +4,7 @@ tags:
   - 中等
 categories:
   - LeetCode
-slug: ../48cf338b
+slug: /48cf338b
 date: 2021-12-24 11:07:03
 series: [ "leetcode" ] 
 ---

@@ -4,7 +4,7 @@ tags:
   - Web
 categories:
   - 基础
-slug: ../77535737
+slug: /77535737
 date: 2022-01-09 20:54:07
 ---
 

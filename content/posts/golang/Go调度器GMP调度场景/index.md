@@ -5,7 +5,7 @@ tags:
 categories:
   - - Go
   - - 教程
-slug: ../cb818503
+slug: /cb818503
 date: 2022-01-17 16:08:16
 ---
 

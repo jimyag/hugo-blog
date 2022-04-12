@@ -5,7 +5,7 @@ tags:
   - 简单
 categories:
   - LeetCode
-slug: ../68d43a4d
+slug: /68d43a4d
 date: 2022-01-05 22:16:03
 series: [ "leetcode" ] 
 ---

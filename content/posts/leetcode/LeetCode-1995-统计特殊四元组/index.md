@@ -6,7 +6,7 @@ tags:
   - 动态规划
 categories:
   - LeetCode
-slug: ../ace15a6d
+slug: /ace15a6d
 date: 2021-12-29 10:51:23
 series: [ "leetcode" ] 
 ---

@@ -5,7 +5,7 @@ tags:
   - Postgres
 categories:
   - 教程
-slug: ../1fb2f937
+slug: /1fb2f937
 date: 2021-12-22 12:32:29
 ---
 
