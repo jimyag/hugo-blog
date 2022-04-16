@@ -1,4 +1,4 @@
 baseURL = "/"
 googleAnalytics = ""
 [permalinks]
-  posts = "/post/:slug"
+  posts = "/posts/:slug"
