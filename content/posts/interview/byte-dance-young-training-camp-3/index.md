@@ -466,9 +466,139 @@ go test命令在开始运行时，会先做一些准备工作，比如，确定�
 
 
 
+## day-five
 
+### 【单选】使用 SQL 语句进行分组检索时，为了去掉不满足条件的分组，应当:
 
+a. 使用 WHERE 子句
+ b. 在 GROUPBY 后面使用 HAVING 子句
+ c. 先使用 WHERE 子句，再使用 HAVING 子句
+ d. 先使用 HAVING 子句，再使用 WHERE 子句
 
+#### 解析
+
+先使用`where`筛选出基础数据，再使用`group by`进行分组，最后使用`having`挑选除分组中满足要求的数据。
+
+下面的是挑选在`1650434852`之后上架的，平均价格大于2500的商品。
+
+```sql
+SELECT product_type, AVG(sale_price)
+FROM Product
+where product_create_at >1650434852 
+GROUP BY product_type
+HAVING AVG(sale_price) >= 2500;	
+```
+
+优先使用`where`能降低`group by`中的数据量。
+
+### 实现一个 key 为字符串，value 也是字符串的，而且并发安全的 map，拥有方法 set(key string, value string)、get(key string) string、del(key string)。
+
+**扩展要求1：** 字典初始有64个桶，当有一半以上的队列有多个元素时，进行自动扩容，将桶的数量翻倍。
+ **扩展要求2：** 当一半以上的队列都为空或只有一个元素，并且这种情况持续1分钟，则自动缩容，最小缩容到64队列。
+
+#### 满足基本要求
+
+```go
+package exp5
+
+import "sync"
+
+// 自己的map的数据结构
+type MyMap struct {
+	data map[string]string
+    // 加读写锁
+	lock sync.RWMutex
+}
+
+func NewMyMap() *MyMap {
+	return &MyMap{
+		data: make(map[string]string),
+	}
+}
+
+func (myMap *MyMap) Set(key, value string) {
+	if myMap.data == nil {
+		myMap.data = make(map[string]string)
+	}
+    // 加锁
+	myMap.lock.Lock()
+	defer myMap.lock.Unlock()
+	myMap.data[key] = value
+
+}
+
+func (myMap *MyMap) Get(key string) string {
+	if myMap.data == nil {
+		return ""
+	}
+    // 加 读锁
+	myMap.lock.RLock()
+	defer myMap.lock.RUnlock()
+	return myMap.data[key]
+}
+
+func (myMap *MyMap) Del(key string) {
+	if myMap.data == nil {
+		return
+	}
+	myMap.lock.Lock()
+	delete(myMap.data, key)
+	myMap.lock.Unlock()
+}
+
+```
+
+##### 测试
+
+```go
+func createMap(t *testing.T) *MyMap {
+	m := NewMyMap()
+	require.NotNil(t, m)
+	return m
+}
+
+func TestMyMap(t *testing.T) {
+	m := createMap(t)
+	n := 10000
+	for i := 0; i < n; i++ {
+		j := i
+		// 开启 1000 个协程，每个协程都会调用 Get 方法
+		for k := 0; k < 1000; k++ {
+			k := k
+			go func() {
+				m.Set(strconv.Itoa(j), strconv.Itoa(j+k))
+			}()
+		}
+	}
+
+	for i := 0; i < n; i++ {
+		j := i
+		// 开启 1000 个协程，每个协程都会调用 Get 方法
+		for k := 0; k < 1000; k++ {
+			go func() {
+				_ = m.Get(strconv.Itoa(j))
+			}()
+		}
+
+	}
+
+	for i := 0; i < n; i++ {
+		j := i
+		// 开启 1000 个协程，每个协程都会调用 Del 方法
+		for k := 0; k < 1000; k++ {
+			go func() {
+				m.Del(strconv.Itoa(j))
+			}()
+		}
+
+	}
+}
+
+```
+
+如果是普通的map，开多个`goroutinue`会报`fatal error: concurrent map read and map write`的致命错误。加锁之后的`MyMap`是没有线程安全问题的。
+
+对于扩展要求，map的源码还没有看完先`todo`
 
 ## 参考
 
