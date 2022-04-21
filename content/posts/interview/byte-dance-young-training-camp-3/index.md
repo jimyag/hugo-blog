@@ -600,6 +600,203 @@ func TestMyMap(t *testing.T) {
 
 对于扩展要求，map的源码还没有看完先`todo`
 
+## day-six
+
+### 【单选】下列关于 Python 的说法错误的是?
+
+a. Python 是强类型语言
+b. Python 中所有变量本质上都是指针
+c. Python 运行时会根据类型提示(type hints)检查变量类型
+d. CPython 不支持尾递归优化
+
+#### 解析
+
+ **A：正确** Python 如何与其它编程语言的比较的解释：
+
+- 静态类型语言
+
+  一种在编译期间就确定数据类型的语言。大多数静态类型语言是通过要求在使用任一变量之前声明其数据类型来保证这一点的。Java 和 C 是静态类型语言。
+
+- 动态类型语言
+
+  一种在运行期间才去确定数据类型的语言，与静态类型相反。VBScript 和 Python 是动态类型的，因为它们确定一个变量的类型是在您第一次给它赋值的时候。
+
+- 强类型语言
+
+  一种总是强制类型定义的语言。Java 和 Python 是强制类型定义的。您有一个整数，如果不明确地进行转换 ，不能将把它当成一个字符串。
+
+- 弱类型语言
+
+  一种类型可以被忽略的语言，与强类型相反。VBScript 是弱类型的。在 VBScript 中，您可以将字符串 `'12'` 和整数 `3` 进行连接得到字符串`'123'`，然后可以把它看成整数 `123` ，所有这些都不需要任何的显示转换。
+
+所以说 Python 既是*动态类型语言* (因为它不使用显示数据类型声明)，又是*强类型语言* (因为只要一个变量获得了一个数据类型，它实际上就一直是这个类型了)。
+
+**B：正确**
+
+```powershell
+>>> a = 5
+>>> id(5)
+1844502817200
+>>> id(a)
+1844502817200
+>>> a = '444'
+>>> id(a)
+1844504907376
+>>> id('444')
+1844504907376
+```
+
+声明一个变量，发现`a`和`5`的地址竟然一样，如果给a赋值为`444`发现，a的地址又变了，这说明在a = `444`的时候原来的a的地址被回收，这里的a有重新指向新的字符串的地址了。python把一切数据，一切的一切都看作对象，在python中，没有变量，只有指针，要说变量，也是指针变量。
+
+**C: 错误**，python是一个动态类型语言，在运行期间才会确定数据类型。运行时解释器（CPython）不会尝试在运行时推断类型信息，或者验证基于此传递的参数。
+
+**D: 正确**
+
+有很多时候，使用递归的方式写代码要比迭代更直观一些，以下面的阶乘为例：
+
+```python
+def factorial(n):
+    if n == 0:
+        return 1
+    return factorial(n - 1) * n 
+```
+
+但是这个函数调用，如果展开，会变成如下的形式：
+
+```python
+factorial(4)
+factorial(3) * 4
+factorial(2) * 3 * 4
+factorial(1) * 2 * 3 * 4
+factorial(0) * 1 * 2 * 3 * 4
+1 * 1 * 2 * 3 * 4
+1 * 2 * 3 * 4
+2 * 3 * 4
+6 * 4
+24
+```
+
+可以看出，在每次递归调用的时候，都会产生一个临时变量，导致进程内存占用量增大一些。这样执行一些递归层数比较深的代码时，除了无谓的内存浪费，还有可能导致著名的*堆栈溢出*错误。
+
+但是如果把上面的函数写成如下形式：
+
+```python
+def factorial(n, acc=1):
+    if n == 0:
+        return acc
+    return factorial(n - 1, n * acc)
+```
+
+我们再脑内展开一下：
+
+```python
+factorial(4, 1)
+factorial(3, 4)
+factorial(2, 12)
+factorial(1, 24)
+factorial(0, 24)
+24
+```
+
+很直观的就可以看出，这次的 `factorial` 函数在递归调用的时候不会产生一系列逐渐增多的中间变量了，而是将状态保存在 `acc` 这个变量中。
+
+而这种形式的递归，就叫做**尾递归**。
+
+尾递归的定义顾名思义，**函数调用中最后返回的结果是单纯的递归函数调用（或返回结果）就是尾递归**。
+
+比如代码：
+
+```python
+def foo():
+    return foo()
+```
+
+就是尾递归。但是 return 的结果除了递归的函数调用，还包含另外的计算，就不能算作尾递归了，比如：
+
+```python
+def foo():
+    return foo() + 1  # return 1 + foo() 也一样
+```
+
+[Python 与尾递归优化 (aisk.me)](https://aisk.me/python-and-tail-call-optimization/)
+
+### 给定包含 N 个任务 task 的数组 tasks 和整数 K，和一个可并发调用的执行函数 execute，要求实现以下逻辑：
+
+1. execute并发调用次数不超过10
+2. 以最快速度执行完所有task
+3. 使用golang
+
+```go
+package main
+
+import "sync"
+
+//二、给定包含 N 个任务 task 的数组 tasks 和整数 K，和一个可并发调用的执行函数 execute，要求实现以下逻辑：
+//execute并发调用次数不超过10
+//以最快速度执行完所有task
+//使用golang的channel实现
+
+func foo(tasks []int, execute func(task int)) {
+   wg := &sync.WaitGroup{}
+   ch := make(chan struct{}, 10)
+   for _, task := range tasks {
+      ch <- struct{}{}
+      wg.Add(1)
+      task := task
+      go func() {
+         execute(task)
+         wg.Done()
+         <-ch
+      }()
+
+   }
+   wg.Wait()
+}
+
+func execute(task int) {
+   println(task)
+}
+func main() {
+   foo([]int{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14}, execute)
+}
+```
+
+空结构体的宽度是0，占用了0字节的内存空间。
+
+```go
+var s struct{}
+fmt.Println(unsafe.Sizeof(s)) // prints 0
+```
+
+由于空结构体占用0字节，那么空结构体也不需要填充字节。所以空结构体组成的组合数据类型也不会占用内存空间。
+
+```go
+type S struct {   
+    A struct{}
+    B struct{}
+}
+var s S
+fmt.Println(unsafe.Sizeof(s)) // prints 0
+```
+
+
+chan struct{}通过消息来共享数据是gol的一种设计哲学，channel则是这种哲理的体现。
+
+golang中的空结构体 **channel := make(chan struct{},10)**
+
+特点
+
+1. 省内存，尤其在事件通信的时候。
+2. struct零值就是本身，读取close的channel返回零值
+
+通常struct{}类型channel的用法是使用同步，一般不需要往channel里面写数据，只有读等待，而读等待会在channel被关闭的时候返回。
+
+
+
 ## 参考
 
 [(21条消息) go test 基本知识理解_红鲤鱼与绿鲤鱼与驴__的博客-CSDN博客](https://blog.csdn.net/zy13270867781/article/details/90770856)
+
+[2.2. 函数声明 (woodpecker.org.cn)](https://www.woodpecker.org.cn/diveintopython/getting_to_know_python/declaring_functions.html)
+
+[全面理解Python中的类型提示（Type Hints） - 交流_QQ_2240410488 - 博客园 (cnblogs.com)](https://www.cnblogs.com/jfdwd/p/11208998.html)
