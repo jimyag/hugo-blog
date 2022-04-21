@@ -791,6 +791,241 @@ golang中的空结构体 **channel := make(chan struct{},10)**
 
 通常struct{}类型channel的用法是使用同步，一般不需要往channel里面写数据，只有读等待，而读等待会在channel被关闭的时候返回。
 
+## day-seven
+
+
+
+## day-eight
+
+### 一、【单选】以下描述正确的是：
+
+a. 表达式和运算符都是执行计划的组成部分。
+ b. 在火山模型中，执行计划子节点对应的运算符执行完成后，父节点对应的运算符才能开始执行。
+ c. 排序算法仅仅在 Sort 运算符中使用。
+ d. 当使用 Index Scan 的时候，任何情况下都需要再回表读取数据。
+
+
+
+### 二、某应用需要一个可靠的审核管道，为大量用户提供文章的审核入口，并对接了专业的文章审核团队，请为该管道设计一个数据结构。【实现一个并发安全的环形队列】
+
+**要求：**
+
+- 因为审核团队的人力有限，管道要起到流量控制作用，满了之后文章无法提交审核
+- 高峰期时，多篇文章同时送审的事情常有发生，审核团队的多位同学也可能同时审核文章
+- 先提交送审的文章应先被审核
+- 进入审核管道的文章不能遗失、重复
+- 每天有大量的文章送审，要尽可能节省审核管道的开销
+
+简单使用chan就可以完成，chan本来就是并发安全的，但是可能性能不是很好。
+同时送审就像同时往里面push，
+同时审核就是同时pop
+chan就是一个先进先出的队列，如果通道中的缓存已满，之后送来的都会被阻塞。
+
+但是目前的进入审核管道的内容不能重复，这个问题没有解决。
+
+```go
+type Content struct {
+	foo string
+}
+
+type Queue struct {
+	ch chan Content
+}
+
+func NewQueue(bufSize int) *Queue {
+	return &Queue{
+		ch: make(chan Content, bufSize),
+	}
+}
+
+func (q *Queue) Push(c Content) {
+	q.ch <- c
+}
+
+func (q *Queue) Pop() Content {
+	return <-q.ch
+}
+```
+
+```go
+import (
+	"strconv"
+	"testing"
+)
+
+func BenchmarkNewQueue(b *testing.B) {
+	bufSize := 10
+	q := NewQueue(bufSize)
+	for i := 0; i < b.N; i++ {
+		i := i
+		go func() {
+			q.Push(Content{foo: strconv.Itoa(i)})
+		}()
+	}
+	for i := 0; i < b.N; i++ {
+		go func() {
+			q.Pop()
+		}()
+	}
+}
+
+```
+
+手写实现一个线程安全的队列
+
+```go
+package exp8
+
+import (
+	"fmt"
+	"log"
+	"sync"
+)
+
+type Content struct {
+	foo string
+}
+
+type Queue struct {
+	ch       []Content           // 处理的内容
+	index    int                 // 下一个要放的的位置
+	tail     int                 // 当前队列的尾部
+	mutex    sync.Mutex          // 互斥锁
+	auditing map[string]struct{} // 已经处理过的内容
+	size     int                 // 队列的大小
+}
+
+func NewQueue(bufSize int) *Queue {
+	return &Queue{
+		ch:       make([]Content, bufSize),
+		auditing: make(map[string]struct{}, bufSize),
+		size:     bufSize,
+		index:    0,
+		tail:     0,
+	}
+}
+
+func (q *Queue) Push(c Content) error {
+	q.mutex.Lock()
+	defer q.mutex.Unlock()
+	// 如果已经在队列中了，忽略
+	if _, ok := q.auditing[c.foo]; ok {
+		return fmt.Errorf("error: %s already in queue", c.foo)
+	}
+	// 如果队列已满，忽略
+	if (q.index+1)%q.size == q.tail {
+		return fmt.Errorf("error: queue is full")
+	}
+	q.ch[q.index] = c
+	q.auditing[c.foo] = struct{}{}
+	q.index = (q.index + 1) % q.size
+	log.Print("push: ", c.foo, " index:", q.index, " tail:", q.tail, " content:", q.ch)
+	return nil
+}
+
+func (q *Queue) Pop() (Content, error) {
+	q.mutex.Lock()
+	defer q.mutex.Unlock()
+	// 如果队列为空，忽略
+	if q.tail == q.index {
+		return Content{}, fmt.Errorf("error: queue is empty")
+	}
+	c := q.ch[q.tail]
+	q.ch[q.tail] = Content{}
+	delete(q.auditing, c.foo)
+
+	q.tail = (q.tail + 1) % q.size
+	log.Print("pop: ", c.foo, " index:", q.index, " tail:", q.tail)
+	return c, nil
+}
+
+```
+
+测试
+
+```go
+package exp8
+
+import (
+	"strconv"
+	"sync"
+	"testing"
+)
+
+func BenchmarkNewQueue(b *testing.B) {
+	bufSize := 10
+	q := NewQueue(bufSize)
+	b.Log(b.N)
+	for i := 0; i < b.N; i++ {
+		i := i
+		go func() {
+			q.Push(Content{foo: strconv.Itoa(i)})
+		}()
+	}
+	for i := 0; i < b.N; i++ {
+		go func() {
+			b.Log(q.Pop())
+		}()
+	}
+}
+
+func TestNewQueue(t *testing.T) {
+	q := NewQueue(10)
+	n := 100
+	wg := &sync.WaitGroup{}
+	for i := 0; i < n; i++ {
+		i := i
+		wg.Add(1)
+		go func() {
+			c, err := q.Pop()
+			if err != nil {
+				t.Log(err)
+			} else {
+				t.Logf("get %v", c)
+			}
+			wg.Done()
+		}()
+		// 消费者多于生产者，队列会为空等待
+		if i%2 == 0 {
+			wg.Add(1)
+			go func() {
+				err := q.Push(Content{foo: strconv.Itoa(i % 10)})
+				if err != nil {
+					t.Log(err)
+				} else {
+					t.Logf("push %d", i%10)
+				}
+				wg.Done()
+			}()
+		}
+
+	}
+	wg.Wait()
+}
+
+```
+
+测试结果
+
+```powershell
+=== RUN   TestNewQueue
+    chan_test.go:36: error: queue is empty
+    chan_test.go:36: error: queue is empty
+    chan_test.go:36: error: queue is empty
+    chan_test.go:36: error: queue is empty
+2022/04/21 14:19:51 push: 0 index:1 tail:0 content:[{0} {} {} {} {} {} {} {} {} {}]
+    chan_test.go:49: push 0
+2022/04/21 14:19:51 pop: 0 index:1 tail:1
+    chan_test.go:38: get {0}
+    chan_test.go:36: error: queue is empty
+2022/04/21 14:19:51 push: 4 index:2 tail:1 content:[{} {4} {} {} {} {} {} {} {} {}]
+    chan_test.go:49: push 4
+2022/04/21 14:19:51 pop: 4 index:2 tail:2
+    chan_test.go:38: get {4}
+    chan_test.go:36: error: queue is empty
+...
+```
+
 
 
 ## 参考
