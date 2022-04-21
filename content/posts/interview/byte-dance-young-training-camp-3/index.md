@@ -793,6 +793,161 @@ golang中的空结构体 **channel := make(chan struct{},10)**
 
 ## day-seven
 
+### 一、【多选】下面关于 HTTP1.x 的性能优化方式，正确的有：
+
+a. 对域名进行分片，使得客户端可以创建更多的 TCP 连接提高请求并发度
+ b. 设置 Connection: Keep-Alive Header 保持长连接，减少 TCP 连接握手的开销
+ c. 利用 ServerPush 将页面上的关键静态资源直接推送到客户端，无需等待客户端请求
+ d. 将小的静态资源直接嵌入到页面中，减少 HTTP 请求次数
+
+a，b，d；
+ ServerPush 为 HTTP2 协议才具备的能力，无法应用在 HTTP1.x 的优化中。
+
+### 二、时间复杂度 O(nlogn) 空间复杂度 O(1) (非递归) 的限制下从单链表中找出第 K 大的节点 。
+
+#### 排序-搜索-递归版
+
+```c++
+ListNode *sort(ListNode *head) {
+    // 处理空和一个元素
+    if (head == nullptr || head->next == nullptr) {
+        return head;
+    }
+
+    // 截断链表
+    ListNode *fast = head;
+    ListNode *slow = head;
+    ListNode *brk = nullptr;
+    while (fast != nullptr && fast->next != nullptr) {
+        fast = fast->next->next;
+        if (fast == nullptr || fast->next == nullptr) {
+            brk = slow;
+        }
+        slow = slow->next;
+    }
+    brk->next = nullptr;
+
+    ListNode *headLeft = sort(head);
+    ListNode *headRight = sort(slow);
+
+    // 合并
+
+    ListNode dump(0);
+    ListNode *cur = &dump;
+    // 两个都不为空
+    while (headLeft != nullptr && headRight != nullptr) {
+        // 降序排列
+        if (headLeft->val >= headRight->val) {
+            cur->next = headLeft;
+            headLeft = headLeft->next;
+            cur = cur->next;
+        } else {
+            cur->next = headRight;
+            headRight = headRight->next;
+            cur = cur->next;
+        }
+    }
+    if (headLeft != nullptr) {
+        cur->next = headLeft;
+    }
+    if (headRight != nullptr) {
+        cur->next = headRight;
+    }
+    return dump.next;
+}
+int findK(ListNode *head, int k) {
+    ListNode *cur = head;
+    while (k-- && cur) {
+        cur = cur->next;
+    }
+    return cur->val;
+}
+
+```
+
+#### 排序-搜索-非递归版
+
+```c++
+ListNode *merge(ListNode *head1, ListNode *head2) {
+    auto *dummyHead = new ListNode(0);
+    ListNode *temp = dummyHead, *temp1 = head1, *temp2 = head2;
+    while (temp1 != nullptr && temp2 != nullptr) {
+        if (temp1->val <= temp2->val) {
+            temp->next = temp1;
+            temp1 = temp1->next;
+        } else {
+            temp->next = temp2;
+            temp2 = temp2->next;
+        }
+        temp = temp->next;
+    }
+    if (temp1 != nullptr) {
+        temp->next = temp1;
+    } else if (temp2 != nullptr) {
+        temp->next = temp2;
+    }
+    return dummyHead->next;
+}
+
+ListNode *sortList(ListNode *head) {
+    if (head == nullptr) {
+        return head;
+    }
+    // 计算链表的长度
+    int length = 0;
+    ListNode *node = head;
+    while (node != nullptr) {
+        length++;
+        node = node->next;
+    }
+    // 头节点
+    auto *dummyHead = new ListNode(0, head);
+//  每次将链表拆分成若干个长度为subLen的子链表 , 并按照每两个子链表一组进行合并
+    for (int subLength = 1; subLength < length; subLength <<= 1) {
+        // curr用于记录拆分链表的位置
+        ListNode *prev = dummyHead, *curr = dummyHead->next;
+        // 如果链表没有被拆完
+        while (curr != nullptr) {
+            // 第一个链表的头 即 curr初始的位置
+            ListNode *head1 = curr;
+            // 拆分出长度为subLen的链表1
+            for (int i = 1; i < subLength && curr->next != nullptr; i++) {
+                curr = curr->next;
+            }
+//            拆分subLen长度的链表2
+
+
+
+            ListNode *head2 = curr->next; // 第二个链表的头  即 链表1尾部的下一个位置
+            curr->next = nullptr; // 断开第一个链表和第二个链表的链接
+            curr = head2; // 第二个链表头 重新赋值给curr
+//            / 再拆分出长度为subLen的链表2
+            for (int i = 1; i < subLength && curr != nullptr && curr->next != nullptr; i++) {
+                curr = curr->next;
+            }
+//            再次断开 第二个链表最后的next的链接
+            ListNode *next = nullptr;
+            if (curr != nullptr) {
+                next = curr->next; // next用于记录 拆分完两个链表的结束位置
+                curr->next = nullptr;
+            }
+
+//            合并两个subLen长度的有序链表
+            ListNode *merged = merge(head1, head2);
+            prev->next = merged;
+            while (prev->next != nullptr) {
+                prev = prev->next;  // 将prev移动到 subLen*2 的位置后去
+            }
+            curr = next;  // next用于记录 拆分完两个链表的结束位置
+        }
+    }
+    return dummyHead->next;
+}
+
+```
+
+
+
 
 
 ## day-eight
