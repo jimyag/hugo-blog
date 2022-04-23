@@ -1189,4 +1189,4 @@ func TestNewQueue(t *testing.T) {
 
 [2.2. 函数声明 (woodpecker.org.cn)](https://www.woodpecker.org.cn/diveintopython/getting_to_know_python/declaring_functions.html)
 
-[全面理解Python中的类型提示（Type Hints） - 交流_QQ_2240410488 - 博客园 (cnblogs.com)](https://www.cnblogs.com/jfdwd/p/11208998.html)
+[全面理解Python中的类型提示（Type Hints） - 交流_QQ_2240410488 - 博客园 (cnblogs.com)](https://www.cnblogs.com/jfdwd/p/11208998.html) 
