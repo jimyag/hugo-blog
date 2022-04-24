@@ -1,7 +1,7 @@
 ---
 title: "Newcoder Top 101"
 date: 2022-04-22T22:48:43+08:00
-draft: true
+draft: false
 slug: 70f03d51
 tags: ["算法","牛客TOP101"]
 categories: ["算法"]
@@ -130,15 +130,11 @@ public:
 {1,2,3,4,5},2,4
 ```
 
-复制
-
 返回值：
 
 ```
 {1,4,3,2,5}
 ```
-
-复制
 
 #### 示例2
 
@@ -147,8 +143,6 @@ public:
 ```
 {5},1,1
 ```
-
-复制
 
 返回值：
 
@@ -337,5 +331,122 @@ ListNode *reverseBetween(ListNode *head, int m, int n) {
         }
         return newHead->next;
     }
+```
+
+### 合并两个排序的链表
+
+#### 描述
+
+输入两个递增的链表，单个链表的长度为n，合并这两个链表并使新链表中的节点仍然是递增排序的。
+
+如输入{1,3,5},{2,4,6}时，合并后的链表为{1,2,3,4,5,6}，所以对应的输出为{1,2,3,4,5,6}
+
+#### 示例1
+
+输入：
+
+```
+{1,3,5},{2,4,6}
+```
+
+返回值：
+
+```
+{1,2,3,4,5,6}
+```
+
+复制
+
+#### 示例2
+
+输入：
+
+```
+{},{}
+```
+
+返回值：
+
+```
+{}
+```
+
+#### 示例3
+
+输入：
+
+```
+{-1,2,4},{1,3,4}
+```
+
+返回值：
+
+```
+{-1,1,2,3,4,4}
+```
+
+#### 解析
+
+##### 解法一
+
+利用归并排序的思想，进行模拟即可。
+
+```c++
+ListNode* Merge(ListNode* pHead1, ListNode* pHead2) {
+    ListNode *res = new ListNode(0);
+    ListNode *cur = res;
+    while(pHead1&&pHead2){
+        if(pHead1->val<=pHead2->val){
+            cur->next = pHead1;
+            pHead1 = pHead1->next;
+        }else{
+            cur->next = pHead2;
+            pHead2 = pHead2->next;
+      	}
+        cur = cur->next;
+    }
+    if(pHead1){
+        cur->next = pHead1;
+    }
+    if(pHead2){
+        cur->next = pHead2;
+    }
+    return res->next;
+}
+```
+
+##### 解法二
+
+我们利用归并思想不断合并两个链表，每当我们添加完一个节点后，该节点指针后移，相当于这个链表剩余部分与另一个链表剩余部分合并，两个链表剩余部分合并就是原问题两个有序链表合并的子问题，因此也可以使用递归：
+
+- **终止条件：** 当一个链表已经因为递归到了末尾，另一个链表剩余部分一定都大于前面的，因此我们可以将另一个链表剩余部分拼在结果后面，结束递归。
+- **返回值：** 每次返回拼接好的较大部分的子链表。
+- **本级任务：** 每级不断进入下一个较小的值后的链表部分与另一个链表剩余部分，再将本次的节点接在后面较大值拼好的结果前面。
+
+**具体做法：**
+
+- step 1：每次比较两个链表当前节点的值，然后取较小值的链表指针往后，另一个不变，两段子链表作为新的链表送入递归中。
+- step 2：递归回来的结果我们要加在当前较小值的节点后面，相当于不断在较小值后面添加节点。
+- step 3：递归的终止是两个链表有一个为空。
+
+```c++
+// 每次返回拼接好的较大部分的子链表
+ListNode* Merge(ListNode* pHead1, ListNode* pHead2) {
+    //一个已经为空了，返回另一个
+    if(pHead1==nullptr){
+        return pHead2;
+    }
+    if(pHead2==nullptr){
+        return pHead1;
+    }
+
+    if(pHead1->val<=pHead2->val){
+        pHead1->next = Merge(pHead1->next, pHead2);
+        return pHead1;
+    }else{
+        pHead2->next = Merge(pHead1, pHead2->next);
+        return pHead2;
+    }
+}
 ```
 
