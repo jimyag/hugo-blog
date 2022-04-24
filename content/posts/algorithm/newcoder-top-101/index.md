@@ -158,6 +158,8 @@ public:
 
 #### 解析
 
+##### 解法一
+
 对于这道题，我们可以参考反转链表的题，只需要直到指定的区间的链表，然后断开，将这个区间的链表进行反转。
 
 注意，由于在此过程中需要保存区间左边和右边的链表，所以需要加上一个新的头结点来处理边界问题。
@@ -219,5 +221,121 @@ ListNode *reverseBetween(ListNode *head, int m, int n) {
     return newHead->next;
 }
 
+```
+
+#### 解法二
+
+利用头插法将新遍历的结点放到前面来。
+
+![image-20220424134152549](index/image-20220424134152549.png)
+
+1. 将cur的next指向next的next
+2. next的next指向pre的next
+3. pre的next指向next。
+
+```c++
+ListNode *reverseBetween(ListNode *head, int m, int n) {
+    // 防止出现pre的问题
+    auto *newHead = new ListNode(0);
+    newHead->next = head;
+    ListNode *pre = newHead;	
+    for(int i = 1;i<m;i++){
+        pre = pre->next;
+    }
+    cur = pre->next;
+    for(int i = m;i<n;i++){
+        ListNode*next = cur->next;
+        cur->next= next->next;
+        next->next= pre->next;
+        pre->next= next;
+    }
+    return newHead->next;
+}
+```
+
+### 链表中的节点每k个一组翻转
+
+#### 描述
+
+将给出的链表中的节点每 k 个一组翻转，返回翻转后的链表
+如果链表中的节点数不是 k 的倍数，将最后剩下的节点保持原样
+你不能更改节点中的值，只能更改节点本身。
+
+数据范围： 0≤*n*≤2000 ， 1≤*k*≤2000 ，链表中每个元素都满足 0≤val≤1000
+要求空间复杂度 O(1)，时间复杂度 O(n)
+
+例如：
+
+给定的链表是 1→2→3→4→5
+
+对于 k=2 , 你应该返回 2→1→4→3→5
+
+对于 k=3 , 你应该返回 3→2→1→4→5
+
+#### 示例1
+
+输入：
+
+```
+{1,2,3,4,5},2
+```
+
+复制
+
+返回值：
+
+```
+{2,1,4,3,5}
+```
+
+复制
+
+#### 示例2
+
+输入：
+
+```
+{},1
+```
+
+复制
+
+返回值：
+
+```
+{}
+```
+
+#### 解析
+
+通过链表指定区间的反转我们知道了利用头插法进行转换链表，这个题也是类似。都反转，对每一组都是指定区间的反转。只需要将k个结点分为一组就行。
+
+```c++
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        int len = 0;
+        ListNode*cur = head;
+        ListNode*newHead = new ListNode(0);
+        newHead->next = head;
+        // 求出总共有多长
+        while(cur){
+            len++;
+            cur = cur->next;
+        }
+        ListNode *pre = newHead;
+        cur = head;
+        // 分成多少组
+        for(int i = 0;i<len/k;i++){
+            // 组内进行区间反转
+            for(int j = 1;j<k;j++){
+                ListNode*next = cur->next;
+                cur->next=next->next;
+                next->next= pre->next;
+                pre->next= next;
+            }
+            pre = cur;
+            cur = cur->next;
+        }
+        return newHead->next;
+    }
 ```
 
