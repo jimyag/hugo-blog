@@ -450,3 +450,125 @@ ListNode* Merge(ListNode* pHead1, ListNode* pHead2) {
 }
 ```
 
+### 合并k个已排序的链表
+
+#### 描述
+
+合并 k 个升序的链表并将结果作为一个升序的链表返回其头节点。
+
+数据范围：节点总数满足 0≤*n*≤105，链表个数满足 1≤*k*≤10^5 ，每个链表的长度满足 1≤len≤200 ，每个节点的值满足 |val| <= 1000
+
+要求：时间复杂度 O(nlogk)
+
+#### 示例1
+
+输入：
+
+```
+[{1,2,3},{4,5,6,7}]
+```
+
+返回值：
+
+```
+{1,2,3,4,5,6,7}
+```
+
+#### 示例2
+
+输入：
+
+```
+[{1,2},{1,4,5},{6}]
+```
+
+返回值：
+
+```
+{1,1,2,4,5,6}
+```
+
+#### 解析
+
+##### 解析1-超时
+
+上面已经完成了`两个排序链表的合并`,两个链表两两进行合并就行。但是时间复杂度是`O(n*k)`不满足时间要求。
+
+```c++
+    ListNode*merge(ListNode*list1,ListNode*list2){
+        ListNode * res = new ListNode(0);
+        ListNode *cur = res;
+        while(list1&&list2){
+            if(list1->val<=list2->val){
+                cur->next = list1;
+                list1 = list1->next;
+            }else{
+                cur->next = list2;
+                list2 = list2->next;
+            }
+            cur =cur->next;
+        }
+        if(list1){
+            cur->next = list1;
+        }
+        if(list2){
+            cur->next = list2;
+        }
+        return res->next;
+    }
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        ListNode *res ;
+        for(int i = 0;i<lists.size();i++){
+            res = merge(res, lists[i]);
+        }
+        return res;
+    }
+```
+
+##### 解析2
+
+上述中，我们是让合并好的再和新的进行合并，其实我们可以让新的链表两两合并，减少额外的合并次数。降低时间复杂度。
+
+```c++
+   ListNode*merge(ListNode*list1,ListNode*list2){
+        ListNode * res = new ListNode(0);
+        ListNode *cur = res;
+        while(list1&&list2){
+            if(list1->val<=list2->val){
+                cur->next = list1;
+                list1 = list1->next;
+            }else{
+                cur->next = list2;
+                list2 = list2->next;
+            }
+            cur =cur->next;
+        }
+        if(list1){
+            cur->next = list1;
+        }
+        if(list2){
+            cur->next = list2;
+        }
+        return res->next;
+    }
+    
+    // 分组进行合并
+    ListNode* groupMerge(vector<ListNode *> &lists,int left,int right){
+        // 中间只有一个的情况
+        if(left==right){
+            return lists[left];
+        }
+        if(left>right){
+            return nullptr;
+        }
+        // 从中间分开两段，分开的部分进行合并
+        int mid = (left+right)>>1;
+        // 合并的两部分再进行合并
+        return merge(groupMerge(lists, left, mid), groupMerge(lists, mid+1, right));
+        
+    }
+    ListNode *mergeKLists(vector<ListNode *> &lists) {
+        return groupMerge(lists, 0, lists.size()-1);
+    }
+```
+
