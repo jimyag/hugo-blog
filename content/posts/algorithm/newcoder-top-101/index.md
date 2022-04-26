@@ -904,3 +904,94 @@ ListNode* FindKthToTail(ListNode* pHead, int k) {
     }
 ```
 
+### 删除链表的倒数第n个节点
+
+#### 描述
+
+给定一个链表，删除链表的倒数第 n 个节点并返回链表的头指针.
+
+例如，给出的链表为: $1\to 2\to 3\to 4\to 5$, n= 2,删除了链表的倒数第 *n* 个节点之后,链表变为$1\to 2\to 3\to 5$。
+
+数据范围： 链表长度 $0\le n \le 1000$，链表中任意节点的值满足 $0 \le val \le 100$
+
+要求：空间复杂度 $O(1)$，时间复杂度 $O(n)$
+
+题目保证 $n$一定是有效的
+
+#### 示例1
+
+输入：
+
+```
+{1,2},2    
+```
+
+返回值：
+
+```
+{2} 
+```
+
+#### 解析
+
+##### 解析1-求长度，找到倒数第n+1个结点
+
+利用`链表中倒数第k个结点`可以找到倒数第`n+1`个结点，根据倒数第$n+1$个结点，使用$cur\to next = cur\to next\to next$删除倒数第`n`个结点。
+
+```c++
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode *newHead = new ListNode(0);
+    newHead->next = head;
+    // 找到倒数第n+1个元素
+    int len = 0;
+    ListNode *cur = newHead;
+    while(cur){
+        len++;
+        cur = cur->next;
+    }
+    cur = newHead;
+   	// 这里的n+2是因为添加了一个新的头结点。
+    len-=n+2;
+    while(len>-1){
+        cur = cur->next;
+        len--;
+    }
+        
+    cur->next = cur->next->next;
+    return newHead->next;
+}
+```
+
+##### 解析2-双指针
+
+**快指针指向`head`,快指针先走`n`步**。慢指针指向新的头结点，**当快指针走完`n`步之后，慢指针跟着快指针走完全部的**。这时候慢指针指向的是`倒数第n+1`个结点，然后利用$cur\to next = cur\to next\to next$删除倒数第`n`个结点。
+
+**重要！！！！**
+
+1. 快指针指向head,快指针先走n步
+2. 慢指针指向newHead,跟随快指针走，等到快指针走完，这时候，慢指针就在`倒数第n+1个结点`。
+
+```c++
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode *newHead = new ListNode(0);
+    newHead->next = head;
+    // 快指针指向head
+    ListNode*fast = head;
+    // 慢指针指向newHead
+    ListNode*slow = newHead;
+    // 快指针先走n步
+    while(n>0){
+        n--;
+        fast = fast->next;
+    }
+    // 快指针走完全部
+    while(fast){
+        fast = fast->next;
+        slow = slow->next;
+    }
+    // 慢指针在倒数第n+1个结点
+    slow->next = slow->next->next;
+    return newHead->next;
+}
+```
+
