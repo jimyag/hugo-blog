@@ -1,5 +1,5 @@
 ---
-title: "Newcoder Top 101"
+title: "Newcoder Top 101 链表专题"
 date: 2022-04-22T22:48:43+08:00
 draft: false
 slug: 70f03d51
@@ -9,12 +9,14 @@ featured: false
 comment: false 
 toc: true 
 diagram: true 
-series: [ ] 
+series: [ "牛客TOP101"] 
 pinned: false
 weight: 100
 ---
 
 牛客算法必刷TOP101，包含：链表、二分查找/排序、二叉树、堆/栈/队列、哈希、递归/回溯、动态规划、字符串、双指针、贪心算法、模拟总共101道题。
+
+此部分是**链表专题**。
 
 [牛客网 (nowcoder.com)](https://www.nowcoder.com/exam/oj?page=1&tab=算法篇&topicId=295)
 
@@ -1254,4 +1256,80 @@ ListNode* addInList(ListNode* head1, ListNode* head2){
 ##### 解析2-栈实现反转链表
 
 与方法一相同，只不过反转链表的时候是用了栈。
+
+### 单链表的排序
+
+#### 描述
+
+给定一个节点数为n的无序单链表，对其按升序排序。
+
+数据范围：$0 < n \le 100000$
+
+要求：时间复杂度 $O(nlogn)$
+
+#### 示例1
+
+输入：
+
+```
+{1,3,2,4,5}
+```
+
+返回值：
+
+```
+{1,2,3,4,5}
+```
+
+#### 解析
+
+##### 解析1-归并排序
+
+```c++
+ //合并两段有序链表
+    ListNode* merge(ListNode* pHead1, ListNode* pHead2) {
+        if(pHead1 == NULL)
+            return pHead2;
+        if(pHead2 == NULL)
+            return pHead1;
+        ListNode* head = new ListNode(0);
+        ListNode* cur = head;
+        while(pHead1 && pHead2){
+            if(pHead1->val <= pHead2->val){
+                cur->next = pHead1;
+                pHead1 = pHead1->next;
+            }else{
+                cur->next = pHead2;
+                pHead2 = pHead2->next;
+            }
+            cur = cur->next;
+        }
+        if(pHead1)
+            cur->next = pHead1;
+        else
+            cur->next = pHead2;
+        return head->next;
+    }
+
+	// 归并排序递归版
+    ListNode* sortInList(ListNode* head) {
+        if(head==nullptr||head->next==nullptr){
+            return head;
+        }
+        // 中间结点的前一个，整个链表要断开
+        ListNode*midPre = head;
+        ListNode*mid  = head->next;
+        ListNode*right = head->next->next;
+        while(right&&right->next){
+            midPre = midPre->next;
+            mid = mid->next;
+            right = right->next->next;
+        }
+        // 断开链表
+        midPre->next = nullptr;
+        // 归并排序的左边和右边。
+        return merge(sortInList(head),sortInList(mid));
+        
+    }
+```
 
