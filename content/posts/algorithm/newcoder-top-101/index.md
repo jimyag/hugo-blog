@@ -1151,3 +1151,107 @@ ListNode* FindFirstCommonNode( ListNode* pHead1, ListNode* pHead2) {
     }
 ```
 
+### 链表相加(二)
+
+#### 描述
+
+假设链表中每一个节点的值都在 0 - 9 之间，那么链表整体就可以代表一个整数。
+
+给定两个这种链表，请生成代表两个整数相加值的结果链表。
+
+数据范围：$0 \le n,m \le 1000000$，链表任意值
+要求：空间复杂度 $O(n)$，时间复杂度 $O(n)$
+
+例如：链表 1 为 9->3->7，链表 2 为 6->3，最后生成新的结果链表为 1->0->0->0。
+
+![img](index/C2DB572B01B0FDC03C097BE7ABA45114.png)
+
+#### 示例1
+
+输入：
+
+```
+[9,3,7],[6,3]
+```
+
+返回值：
+
+```
+{1,0,0,0}
+```
+
+说明：
+
+```
+如题面解释     
+```
+
+#### 示例2
+
+输入：
+
+```
+[0],[6,3]
+```
+
+返回值：
+
+```
+{6,3}
+```
+
+#### 解析
+
+##### 解析1-链表反转求和
+
+由于所给的链表的头结点是最高位，而我们运算是从最低位开始相加，在运算之前先将链表反转为从低位开始。
+
+对于求和可以正常的模拟加法求和就可以。
+
+**注意**
+
+1. 逢十进一
+2. 如果有进位要相加
+3. 最后有进位要额外新建结点。
+
+```c++
+ListNode*reverse(ListNode*list){
+    ListNode*pre = nullptr;
+    ListNode*cur = list;
+    while(cur){
+        ListNode*next = cur->next;
+        cur->next = pre;
+        pre = cur;
+        cur = next;
+    }
+    return pre;
+}
+ListNode* addInList(ListNode* head1, ListNode* head2){
+    int add = 0;
+    head1 = reverse(head1);
+    head2 = reverse(head2);
+    ListNode *pre = nullptr;
+    while(add||head1||head2){
+        int val = add;
+        if(head1){
+            val+=head1->val;
+            head1=head1->next;
+        }
+        if(head2){
+            val+=head2->val;
+            head2 =head2->next;
+        }
+        add = val/10;
+        val = val%10;
+        ListNode*cur = new ListNode(val);
+        cur->next = pre;
+        pre = cur;
+    }
+    return pre;
+}
+```
+
+##### 解析2-栈实现反转链表
+
+与方法一相同，只不过反转链表的时候是用了栈。
+
