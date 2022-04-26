@@ -1331,3 +1331,126 @@ ListNode* addInList(ListNode* head1, ListNode* head2){
     }
 ```
 
+### 判断一个链表是否为回文结构
+
+#### 描述
+
+给定一个链表，请判断该链表是否为回文结构。
+
+回文是指该字符串正序逆序完全一致。
+
+数据范围： 链表节点数 0 \le n \le 10^50≤*n*≤105，链表中每个节点的值满足 |val| \le 10^7∣*v**a**l*∣≤107
+
+#### 示例1
+
+输入：
+
+```
+{1}
+```
+
+返回值：
+
+```
+true
+```
+
+#### 示例2
+
+输入：
+
+```
+{2,1}
+```
+
+返回值：
+
+```
+false
+```
+
+说明：
+
+```
+2->1  
+```
+
+#### 示例3
+
+输入：
+
+```
+{1,2,2,1}
+```
+
+返回值：
+
+```
+true
+```
+
+说明：
+
+```
+1->2->2->1    
+```
+
+#### 解析
+
+##### 解析1-反转链表进行比较
+
+从中间将整个链表一分为二，对右边进行反转，反转过来的链表在与之前的链表进行比较。
+
+**注意**
+
+1. 区分链表结点个数是奇数还是偶数，如果是奇数，应该把多的一部分的结点放在左边，例如是`1->2->4->2->3`,分开的链表应该是`1->2->4`和`2->3`,然后将右边的进行反转。只要将结点少的进行反转就可以
+
+```c++
+// 链表反转
+ListNode*reverse(ListNode*list){
+        ListNode*pre = nullptr;
+        ListNode*cur = list;
+        ListNode*next = nullptr;
+        while(cur){
+            next = cur->next;
+            cur->next = pre;
+            pre = cur;
+            cur = next;
+        }
+        return pre;
+    }
+    /**
+     * 
+     * @param head ListNode类 the head
+     * @return bool布尔型
+     */
+    bool isPail(ListNode* head) {
+        // 如果只有一个结点，肯定是回文的。
+        if(head->next==nullptr){
+            return true;
+        }
+        ListNode*midPre = head;
+        ListNode*mid = head->next;
+        ListNode*right =mid->next;
+        // 找到中间的结点
+        while(right&&right->next){
+            midPre = midPre->next;
+            mid = mid->next;
+            right = right->next->next;
+        }
+        // 断开中间的结点
+        midPre->next = nullptr;
+        // 反转结点少的链表
+        mid = reverse(mid);
+        // 判断
+        while(head&&mid){
+            if(head->val!=mid->val){
+                return false;
+            }
+            head = head->next;
+            mid = mid->next;
+        }
+        return true;
+    }
+```
+
