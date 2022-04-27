@@ -229,11 +229,93 @@ Namenode是一个中心服务器，负责管理文件系统的命名空间 (Name
 4. 通过心跳机制定期（默认3秒）向NameNode汇报运行状态和Block列表信息，如果NN10分钟没有收到DN的心跳，则认为其已经lost，并复制其上的block到其它DN；
 5. 集群启动时，DataNode向NameNode提供Block列表信息。（数据块的位置并不是由namenode维护的，而是以块列表的形式，存储在datanode中，在安全模式中，datanode会向namenode发送最新的块列表信息。）
 
+### Bloack数据块
+
+1. HDFS是HDFS的最小存储单元；
+2. 文件写入HDFS会被切分成若干个Block；
+3. Block大小固定，默认为128MB，可自定义；
+4. 若一个Block的大小小于设定值，物理上不会占用整个块空间；
+5. 默认情况下每个Block有3个副本。
+6. Block和元数据分开存储：Block存储于DataNode，元数据存储于NameNode；
+7. 如何设置Block大小：
+   1. 目标：最小化寻址开销，降到1%以下
+   2. 默认大小：128M
+   3. 块太小：寻址时间占比过高
+   4. 块太大：Map任务数太少，作业执行速度变慢
+8. Block多副本：
+   1. 以DataNode节点为备份对象
+   2. 机架感知：将副本存储到不同的机架上，实现数据的高容错
+   3. 副本均匀分布：提高访问带宽和读取性能，实现负载均衡
+
+### 元数据存储
+
+1. 元数据的两种存储形式：
+   1. 内存元数据（NameNode）
+   2. 文件元数据（edits + fsimage）
+
+### Block副本放置机制
+
+1. 第一个副本：放置在上传文件的DN上，如果是集群外提交，则随机挑选一台磁盘不太满、CPU不太忙的节点上；
+2. 第二个副本：与第一个不同机架的节点上；
+3. 第三个副本：与第一个机架相同的其他节点上
+
+节点选择：同等条件下优先选择空闲节点
+
+![image-20220427153152628](index/image-20220427153152628.png)
+
+Block大小和副本数由Client端上传文件到HDFS时设置，其中副本数可以变更，Block是不可以在上传后变更的。
+
+不一次性写三份，而是由一个dn写入另一个dn，目的是防止阻塞，防止并发量过大。
+
+### 安全模式
+
+#### 什么是安全模式
+
+1. 安全模式是HDFS的一种特殊状态，在这种状态下，**HDFS只接收读数据请求**，而**不接收写入、删除、修改**等变更请求；
+2. 安全模式是HDFS确保Block数据安全的一种保护机制；
+3. Active NameNode启动时，HDFS会进入安全模式，DataNode主动向NameNode汇报可用Block列表等信息，在系统达到安全标准前，HDFS一直处于“只读”状态。
+
+#### 何时正常离开安全模式
+
+1. Block上报率：DataNode上报的可用Block个数 / NameNode元数据记录的Block个数；
+2. 当Block上报率 >= 阈值时，HDFS才能离开安全模式，默认阈值为0.999；
+3. 不建议手动强制退出安全模式。
+
+#### 触发安全模式的原因
+
+1. NameNode重启
+2. NameNode磁盘空间不足
+3. Block上报率低于阈值
+4. DataNode无法正常启动
+5. 日志中出现严重异常
+6. 用户操作不当，如：强制关机（特别注意！）
+
+
+
 ### HDFS文件的读取-重点
+
+1. 客户端向NameNode请求读取文件
+2. NameNode查找目录树，查询块和NameNode的关系
+3. 按照NameNode与客户端的距离由近到远的顺序列表返回给客户端
+4. 客户端与最近的DataNode连接
+5. DataNode返回相应Block的数据
+6. 客户端组装block成一个文件
 
 ![image-20220425234518340](index/image-20220425234518340.png)
 
 ### HDFS文件的写入
+
+1. 客户端请求上传文件
+2. NameNode检查目录中是否存在这个文件，并返回是否可以上传
+3. 客户端将文件切块
+4. 客户端向NamNode提出上传的各个block的列表
+5. NameNode检查DataNode信息
+6. NameNode返回可以上传的DataNode列表
+7. 客户端请求与DataNode建立传输Block的通道
+   1. 上传到一个结点A之后，通过这个结点A复制到另一个结点B
+   2. 再通过复制的结点B复制到新的结点C
+8. 客户端以Packet为单位发送数据
+9. 客户端通知NameNode成功写入Block
 
 ![image-20220425234554417](index/image-20220425234554417.png)
 
@@ -271,31 +353,241 @@ Block是HDFS最小存储单元，大小固定，1.X默认是64MB2.X默认为128M
 2. 大量小文件
 3. 多用户写入、任意修改文件
 
+### Shell语法
+
+`ls：查看文件`
+
+```shell
+hadoop fs -ls / 查看HDFS文件系统上的文件
+hadoop fs -ls -R / 查看HDFS文件系统多层文件夹
+```
+
+`mkdir：创建文件夹`
+
+```shell
+hadoop fs -mkdir /test/ 创建test文件夹
+hadoop fs -mkdir -p /a/b 创建多层文件夹
+```
+
+`put：上传文件`
+
+```shell
+hadoop fs -put 1.tar /test 把当前目录的1.tar上传到hdfs的test目录
+```
+
+`cat/text ：查看文件内容`
+
+```shell
+hadoop fs -cat 1.txt
+hadoop fs -text 1.txt
+```
+
+`get：下载文件`
+
+```shell
+hadoop fs -get /test/1.tar test.tar 把hdfs的test目录下的1.tar下载到本地，命名为test.tar
+```
+
+`rm：删除文件`
+
+```shell
+hadoop fs -rm /test/1.tar 删除HDFS系统上test目录下的1.tar文件
+hadoop fs rm -r /test/ 删除HDFS系统上test目录
+或者
+hadoop fs -rmr /test/ 删除HDFS系统上test目录
+```
+
+
+
 ##  MapReduce
 
-### MapReduce体系结
+
+
+### 特点
+
+1. 无需管理master、slave和分布式，程序员只需关注业务本身。
+2. 计算跟着数据走
+3. 良好的扩展性：计算能力随着节点数增加，近似线性递增
+4. 高容错
+5. 状态监控
+6. 适合海量数据的离线批处理
+7. 降低了分布式编程的门槛
+8. MapReduce框架采用了Master/Slave架构，包括一个Master和若干个Slave。
+9. Master上运行JobTracker，负责作业管理、状态监控和任务调度等，Slave上运行TaskTracker，负责任务的执行和任务状态的汇报；
+
+### 适用场景
+
+1. 数据统计，如：网站的PV（page view）、UV（user visit）统计，搜索引擎构建索引
+2. 海量数据查询、复杂数据分析算法实现
+
+### 不适用场景
+
+1. OLAP（On-Line Analytical Processing）联机分析处理
+
+2. 要求毫秒或秒级返回结果
+
+3. 流计算
+
+   流计算的输入数据集是动态的，而MapReduce是静态的
+
+4. 多步骤的复杂计算任务
+
+### MapReduce体系结构
 
 主要由四个部分组成，分别是Client、JobTracker、TaskTracker以及Task。
 
- 
+ ![image-20220427162140197](index/image-20220427162140197.png)
 
-### MapReduce原理
+#### Client
 
-空 
+1. 用户编写的MapReduce程序通过Client提交到JobTracker端；
+2. 用户可通过Client提供的一些接口查看作业运行状态。
 
-### MapReduce工作流程：
+#### JobTracker
 
-1.第一步对输入的数据进行切片，每个切片分配一个map()任务，map()对其中的数据进行计算，对每个数据用键值对的形式记录，然后输出到环形缓冲区（图中sort的位置）。
+1. JobTracker负责资源监控和作业调度；
+2. JobTracker 监控所有TaskTracker与Job的健康状况，一旦发现失败，就将相应的任务转移到其他节点；
+3. JobTracker 会跟踪任务的执行进度、资源使用量等信息，并将这些信息告诉任务调度器（TaskScheduler），而调度器会在资源出现空闲时，选择合适的任务去使用这些资源。
 
-2.map（）中输出的数据在环形缓冲区内进行快排，每个环形缓冲区默认大小100M，当数据达到80M时（默认），把数据输出到磁盘上。形成很多个内部有序整体无序的小文件。
+#### TaskTracker
 
-3.框架把磁盘中的小文件传到Reduce()中来，然后进行归并排序，最终输出。
+1. TaskTracker 会周期性地通过“心跳”将本节点上资源的使用情况和任务的运行进度汇报给JobTracker，同时接收JobTracker 发送过来的命令并执行相应的操作（如启动新任务、杀死任务等）；
+2. TaskTracker 使用“slot”等量划分本节点上的资源量（CPU、内存等）。一个Task 获取到一个slot 后才有机会运行，而Hadoop调度器的作用就是将各个TaskTracker上的空闲slot分配给Task使用。slot 分为Map slot 和Reduce slot 两种，分别供MapTask 和Reduce Task 使用。
 
- 
+#### Task
+
+1. Task 分为Map Task 和Reduce Task 两种，均由TaskTracker 启动。
+
+### MapReduce工作流程
+
+MapReduce 就是将输入进行分片，交给不同的 Map 任务进行处理，然后由 Reduce 任务合并成最终的解。
+
+![image-20220427204105219](index/image-20220427204105219.png)
+
+1. 对输入的数据进行分片格式化。
+2. 执行MapTask。每个切片分配一个map()任务，map()对其中的数据进行计算，对每个数据用键值对的形式记录。
+3. 对MapTask进行Shuffle，形成内部有序，整体无序的小文件
+4. 将小文件传到Reduce()中执行，，然后进行归并排序，最终输出
+
+#### 注意
+
+1. 不同的Map任务之间不会进行通信
+2. 不同的Reduce任务之间也不会发生任何信息交换
+3. 用户不能显式地从一台机器向另一台机器发送消息
+4. 所有的数据交换都是通过MapReduce框架自身去实现的
+
+#### WordCount流程
+
+![image-20220427205450352](index/image-20220427205450352.png)
+
+1. 我们将任务切为三份，所以启动三个map任务。
+2. 我们会启动四个reduce任务，所以数据被重构，重新分布成四份，每份对应一个reduce。
+3. map将数据转换为键值对，reduce将键值对合并。
+
+其中：spliting和Mapping是用户实现的，Shuffling是框架实现的，Reducing是用户实现
+
+![image-20220427213043596](index/image-20220427213043596.png)
+
+#### Job & Task（作业与任务）
+
+1. 作业是客户端请求执行的一个工作单元，如整个wordcount计算作业；
+2. 包括输入数据、MapReduce程序、配置信息
+3. 任务是将作业分解后得到的细分工作单元，如其中的一个map任务。
+4. 分为Map任务和Reduce任务两类
+
+#### Split（切片）
+
+1. 输入数据被划分成等长的小数据块，称为输入切片（Input Split），简称切片；
+2. 每个Split交给一个Map任务处理，Split的数量决定Map任务的数量；
+3. Split的划分方式由程序设定，按照HDFS block是其中的一种；
+4. Split越小，负载越均衡，但集群的开销越大；
+
+#### Shuffle阶段（洗牌）
+
+1. Map、Reduce阶段的中间环节，负责执行Partition（分区）、Sort（排序）、Spill（溢写）、Merge（合并）、抓取（Fetch）等工作；
+2. Partition决定了Map任务输出的每条数据放入哪个分区，交给哪个Reduce任务处理；
+3. Reduce任务的数量决定了Partition数量；（ reduce任务的数量并非由输入数据的大小决定，而是特别指定的。 ）
+4. Partition编号 = Reduce任务编号 =“hash（key） % reduce task number”；
+5. 避免和减少Shuffle是MapReduce程序调优的重点。 
+
+#### Mapper、Partition、Reducer数目的确定与关系？
+
+1. Mapper：由客户端分片情况决定，客户端获取到输入路径的所有文件，依次对每个文件执行分片，分片大小通过最大分片大小、最小分片大小、hdfs的blocksize综合确定，分片结果写入job.split提交给yarn，对每个分片分配一个Mapper，即确定了数目。
+2. Partition：由PartitionerClass中的逻辑确定，默认情况下使用的HashPartitioner中使用了hash值与reducerNum的余数，即由reducerNum决定，等于Reducer数目。如果自定义的PartitionerClass中有其他逻辑比如固定了，也可以与Reducer数目无关，但注意这种情况下，如果reducerNum小于分区数则会报错，如果大于则会产生无任务的reduecer但不会影响结果。但是如果reducerNum只有1个，则不会报错而是所有分区都交给唯一的reducer。
+3. Reducer：通过job.setNumReduceTasks手动设置决定。
 
 ### MapReduce shuffle过程
 
-![img](index/wps4.png) 
+![img](index/wps4.png)
+
+#### Map端的shuffle过程
+
+![image-20220427221211907](index/image-20220427221211907.png)
+
+1. 每个Map任务分配一个缓存
+
+   MapReduce默认100MB缓存
+
+   
+
+2. 设置溢写比例0.8
+
+3. 分区默认采用哈希函数
+
+4. 排序是默认的操作
+
+5. 排序后可以合并（Combine）（自定义）
+
+6. 合并不能改变最终结果
+
+   
+
+7. 在Map任务全部结束之前进行归并
+
+8. 归并得到一个大的文件，放在本地磁盘
+
+9. 文件归并时，如果溢写文件数量大于预定值（默认是3）则可以再次启动Combiner，少于3不需要
+
+10. JobTracker会一直监测Map任务的执行，并通知Reduce任务来领取数据
+
+**合并（Combine）和归并（Merge）的区别：**
+
+> 两个键值对<“a”,1>和<“a”,1>，如果合并，会得到<“a”,2>，如果归并，会得到<“a”,<1,1>>
+
+![image-20220427222720142](index/image-20220427222720142.png)
+
+#### Reduce端的Shuffle过程
+
+1. Reduce任务通过RPC（远程过程调用）向JobTracker询问Map任务是否已经完成，若完成，则领取数据；
+2. Reduce领取数据先放入缓存，来自不同Map机器，先归并，再合并，写入磁盘；
+3. 多个溢写文件归并成一个或多个大文件，文件中的键值对是排序的；
+4. 当数据很少时，不需要溢写到磁盘，直接在缓存中归并，然后输出给Reduce。
+
+![image-20220427222754270](index/image-20220427222754270.png)
+
+![image-20220427222847111](index/image-20220427222847111.png)
+
+#### Shuffle详解-及这个就行
+
+##### Map端
+
+1. Map任务将中间结果写入专用内存缓冲区Buffer（默认100M），同时进行Partition和Sort（先按“key hashcode % reduce task number”对数据进行分区，分区内再按key排序）
+2. 当Buffer的数据量达到阈值（默认80%）时，将数据溢写（Spill）到磁盘的一个临时文件中，文件内数据先分区后排序
+3. Map任务结束前，将多个临时文件合并（Merge）为一个Map输出文件，文件内数据先分区后排序
+4. 所有Map任务完成后，Map阶段结束，一般每个Map任务都有输出
+
+##### Reduce端
+
+1. Reduce任务从多个Map输出文件中主动抓取（Fetch）属于自己的分区数据，先写入Buffer，数据量达到阈值后，溢写到磁盘的一个临时文件中
+2. 数据抓取完成后，将多个临时文件合并为一个Reduce输入文件，文件内数据按key排序
+
+#### YARN模式（ Hadoop 2.X ）
+
+![image-20220427223407142](index/image-20220427223407142.png)
+
+![image-20220427223414098](index/image-20220427223414098.png)
+
+
 
 ## Hbase
 
