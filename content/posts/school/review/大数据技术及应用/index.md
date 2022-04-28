@@ -1217,29 +1217,89 @@ Spark在借鉴Hadoop MapReduce优点的同时，
 
 每个工作节点上负责具体任务的执行进程（Executor）
 
+![image-20220428185119904](index/image-20220428185119904.png)
+
+1. 一个应用由一个任务控制节点Driver和若干个作业Job构成，一个作业由多个阶段Stage构成，一个阶段由多个没有Shuffle关系的任务Task组成。
+2. 当执行一个应用时，Driver会向集群管理器申请资源，启动Executor，并向Executor发送应用程序代码和文件，然后在Executor上执行任务，运行结束后，执行结果会返回给Driver，或者写到HDFS或者其他数据库中。
+
+![image-20220428185344469](index/image-20220428185344469.png)
+
+#### Spark运行基本流程
+
+![image-20220428190140394](index/image-20220428190140394.png)
+
+`SparkContext对象代表了和一个集群的连接`
+
+1. 首先为应用构建起基本的运行环境，即由Driver创建一个SparkContext，进行资源的申请、任务的分配和监控；
+2. 资源管理器为Executor分配资源，并启动Executor进程；
+3. SparkContext根据RDD的依赖关系构建DAG图，DAG图提交给DAGScheduler解析成Stage，然后把一个个TaskSet提交给底层调度器TaskScheduler处理；Executor向SparkContext申请Task，Task Scheduler将Task发放给Executor运行，并提供应用程序代码；
+4. Task在Executor上运行，把执行结果反馈给TaskScheduler，然后反馈给DAGScheduler，运行完毕后写入数据并释放所有资源 。
+
 ### RDD工作原理
 
 #### RDD(弹性分布式数据集)概念
 
-一个只读的分区记录集合。
+一个只读的分区记录集合。不能直接修改，只能基于稳定的物理存储中的数据集创建RDD，或者通过在其他RDD上执行确定的转换操作（如map、join和group by）而创建得到新的RDD。
+
+#### RDD执行过程
+
+1. RDD读入外部数据源进行创建
+2. RDD经过一系列的转换（Transformation）操作，每一次都会产生不同的RDD，供给下一个转换操作使用
+3. 最后一个RDD经过“动作”操作进行转换，并输出到外部数据源 
+
+这一系列处理称为一个Lineage（血缘关系），即DAG拓扑排序的结果。
+**优点：惰性调用、管道化、避免同步等待、不需要保存中间结果、每次操作变得简单。**
+
+![image-20220428192622942](index/image-20220428192622942.png)
+
+
 
 #### RDD特性
 
 1. 高效的容错性 
-
 2. 中间结果持久化到内存 
-
 3. 存放的数据可以是未序列化的Java 对象
 
 ### 宽依赖与窄依赖
 
+![image-20220428192802610](index/image-20220428192802610.png)
+
 #### 窄依赖
 
-一个父RDD的分区对应于一个子RDD的分区或多个父RDD的分区对应于一个子RDD的分区。
+一个父RDD的分区对应于一个子RDD的分区或多个父RDD的分区对应于一个子RDD的分区。**多对一或一对一**
 
 #### 宽依赖
 
-存在一个父RDD的一个分区对应一个子RDD的多个分区。
+存在一个父RDD的一个分区对应一个子RDD的多个分区。**多对多**
+
+#### fork/join的优化原理
+
+![image-20220428193606941](index/image-20220428193606941.png)
+
+**所以，如果连续的变换操作序列都是窄依赖，就可以把多个fork/join合并为一个，这个过程称为“流水线（pipeline）优化”。**
+
+1. 窄依赖可以实现“流水线”优化
+2. 宽依赖无法实现“流水线”优化（节点间需shuffle）
+
+#### 阶段划分
+
+Spark通过分析各个RDD的依赖关系生成了DAG，再通过分析各个RDD中的分区之间的依赖关系来决定如何划分Stage，具体划分方法是：
+
+1. 在DAG中进行反向解析，遇到宽依赖就断开
+2. 遇到窄依赖就把当前的RDD加入到Stage中
+3. 将窄依赖尽量划分在同一个Stage中，可以实现流水线计算
+
+![image-20220428195422536](index/image-20220428195422536.png)
+
+被分成三个Stage，在Stage2中，从map到union都是窄依赖，这两步操作可以形成一个流水线操作
+
+#### RDD运行原理
+
+1. 创建RDD对象；
+2. SparkContext负责计算RDD之间的依赖关系，构建DAG；
+3. DAGScheduler负责把DAG图分解成多个Stage，每个Stage中包含了多个Task，每个Task会被TaskScheduler分发给各个WorkerNode上的Executor去执行。
+
+![image-20220428221524926](index/image-20220428221524926.png)
 
 ### Spark SQL工作原理
 
@@ -1258,6 +1318,38 @@ Spark在借鉴Hadoop MapReduce优点的同时，
 ### Spark Mllib基本原理
 
 MLlib是Spark的机器学习库，旨在简化机器学习的工程实践工作。Mllib常见机器学习问题：分类、回归、聚类、协同过滤。
+
+#### DataFrame
+
+使用 SparkSQL 中的 DataFrame 作为数据集，可以容纳各种数据类型。较之 RDD，DataFrame 包含了 schema 信息，更加类似传统数据库中的二维表。
+
+它被 ML Pipeline 用来存储源数据。
+
+#### Transformer
+
+**转换器**，是一种可以将一个 **DataFrame** 转换为另一个 **DataFrame** 的算法。如一个模型就是一个 **Transformer**。它可以把一个不包含预测标签的测试集的 **DataFrame** 打上标签，转化成另一个包含预测标签的 **DataFrame**。
+
+大致方法原型为 `DataFrame Transformer.transform(DataFrame)`
+
+#### Estimator
+
+**估计器或评估器**，它是某种**学习算法**，或在训练数据上的**训练方法的概念抽象**。在 Pipeline 里通常是被用来操作 **DataFrame** 数据并生成一个 **Transformer**。
+
+从技术上将，估计器有一个抽象方法 fit () 需要被具体算法去实现，它接收一个 DataFrame 并产生一个转换器。
+
+大致方法原型如下 `Transformer Estimator.fit(DataFrame)`。
+
+即通过 Estimator 对某个数据集进行 fit 操作后得到 Transformer。
+
+#### Parameter
+
+**参数**，参数被用来设置 **Transformer** 或者 **Estimator** 的参数。现在所有转换器和估计器可共享用于指定参数的公共 API。
+
+#### PipeLine
+
+**流水线或管道**，流水线将多个工作流阶段（转换器和估计器）连接在一起，形成机器学习的工作流，并获得结果输出。
+
+注意流水线本身也是一个 **Estimator**，在执行完 fit 操作后，产生一个 PipelineModel，它也是一个 Transformer。
 
 
 
