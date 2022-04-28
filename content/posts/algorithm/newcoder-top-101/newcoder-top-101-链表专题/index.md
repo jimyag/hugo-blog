@@ -1515,3 +1515,93 @@ ListNode* deleteDuplicates(ListNode* head) {
     }
 ```
 
+### 链表的奇偶重排
+
+给定一个单链表，请设定一个函数，将链表的奇数位节点和偶数位节点分别放在一起，重排后输出。
+
+注意是节点的编号而非节点的数值。
+
+数据范围：节点数量满足 $0 \le n \le 10^5$，节点中的值都满足 $0 \le val \le 1000$
+
+要求：空间复杂度 O(n)，时间复杂度 O(n)
+
+#### 示例1
+
+输入：
+
+```
+{1,2,3,4,5,6}
+```
+
+返回值：
+
+```
+{1,3,5,2,4,6}
+```
+
+说明：
+
+```
+1->2->3->4->5->6->NULL
+重排后为1->3->5->2->4->6->NULL
+   
+```
+
+#### 示例2
+
+输入：
+
+```
+{1,4,6,3,7}
+```
+
+返回值：
+
+```
+{1,6,7,4,3}
+```
+
+说明：
+
+```
+1->4->6->3->7->NULL
+重排后为
+1->6->7->4->3->NULL
+奇数位节点有1,6,7，偶数位节点有4,3。重排后为1,6,7,4,3
+```
+
+#### 解析
+
+##### 解析1-分别保存奇偶指针
+
+分别保存奇偶指针，奇指针指向head，偶指针指向head->next，奇偶指针每次向后移动两位就可以。
+
+```c++
+ListNode* oddEvenList(ListNode* head) {
+    // 如果只有一或两个结点，就返回head
+    if(head==nullptr||head->next==nullptr){
+        return head;
+    }
+    // 开始奇数指针指向头
+    ListNode*jishu = head;
+    // 偶数指针要记录偶数的头结点，后面要连起来
+    ListNode*oushuBegin = head->next;
+    // 每次更新的偶数结点
+    ListNode*oushuCur = oushuBegin;
+    // 偶数结点有
+    while(oushuCur&&oushuCur->next){
+        // 更新奇数结点
+        jishu->next = oushuCur->next;
+        jishu = jishu->next;
+        // 更新偶数结点，此时奇数结点指向的时上一个偶数结点的next
+        oushuCur->next = jishu -> next;
+        oushuCur = oushuCur->next;
+    }
+    // j
+    jishu->next = oushuBegin;        
+    return head;
+}
+```
+
+
+
