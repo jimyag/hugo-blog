@@ -1185,7 +1185,11 @@ select distinct uid from demo0737;
 
 ### 与Hadoop的关系
 
-Spark在借鉴Hadoop MapReduce优点的同时，Spark编辑模型比Hadoop更灵活，spark提高了内存计算，对于迭代运算效率更高。Spark基于DAG的任务调度执行机制优于Hadoop的迭代执行机制。
+Spark在借鉴Hadoop MapReduce优点的同时，
+
+1. Spark编辑模型比Hadoop更灵活，
+2. spark提高了内存计算，对于迭代运算效率更高。
+3. Spark基于DAG的任务调度执行机制优于Hadoop的迭代执行机制。
 
 ### Spark生态系统
 
@@ -1215,7 +1219,7 @@ Spark在借鉴Hadoop MapReduce优点的同时，Spark编辑模型比Hadoop更灵
 
 ### RDD工作原理
 
-#### RDD概念
+#### RDD(弹性分布式数据集)概念
 
 一个只读的分区记录集合。
 
