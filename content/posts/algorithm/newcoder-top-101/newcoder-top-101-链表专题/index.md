@@ -1576,6 +1576,8 @@ ListNode* deleteDuplicates(ListNode* head) {
 
 分别保存奇偶指针，奇指针指向head，偶指针指向head->next，奇偶指针每次向后移动两位就可以。
 
+![image-20220428150632329](index/image-20220428150632329.png)
+
 ```c++
 ListNode* oddEvenList(ListNode* head) {
     // 如果只有一或两个结点，就返回head
@@ -1597,7 +1599,7 @@ ListNode* oddEvenList(ListNode* head) {
         oushuCur->next = jishu -> next;
         oushuCur = oushuCur->next;
     }
-    // j
+    // ji
     jishu->next = oushuBegin;        
     return head;
 }
