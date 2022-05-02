@@ -28,9 +28,9 @@ weight: 100
 
 - 客户机和服务器如何交换密钥？
 
-- 区分-赫尔曼临时密钥交换是如何工作的？
+- Diffie-Hellman Ephemeral临时密钥交换是如何工作的？
 
-- 我们为何需要数码证书？
+- 我们为何需要数字证书？
 
 - 为什么需要由证书颁发机构签署？
 
@@ -38,9 +38,9 @@ weight: 100
 
 - 完备的前向安全性是什么意思？
 
-- 运输及房屋事务助理署、互助委员会、香港发展基金及0-rtt 如何运作？
+- AEAD, MAC, HKDF, 0-RTT如何运作？
 
-- 什么是椭圆曲线密码体制？
+- 什么是Elliptic-Curve加密体制？
 
 - 与 TLS 1.2相比，TLS 1.3有什么新特性？
 
@@ -48,9 +48,9 @@ weight: 100
 
 # 什么是 SSL/TLS?
 
-SSL 代表安全套接字层，它是 TLS 的前身。
+SSL(Secure Socket Layer)代表安全套接字层，它是 TLS 的前身。
 
-是传输层安全的简称，它是一个安全协议安全协议，通过计算机网络提供安全通信。
+TLS(Transport Layer Security)是传输层安全的简称，它是一个安全协议安全协议，通过计算机网络提供安全通信。
 
 # SSL/TLS的历史
 
@@ -95,7 +95,7 @@ SSL 代表安全套接字层，它是 TLS 的前身。
 
 ## 加密
 
-- TLS 通过使用对称加密算法对交换的数据进行加密来保护数据不受未经授权的访问。
+- TLS 通过使用**对称加密**算法对交换的数据进行加密来保护数据不受未经授权的访问。
 
 ## 完整性
 
@@ -129,7 +129,7 @@ SSL 代表安全套接字层，它是 TLS 的前身。
 3. 他们将验证，在传输过程中看看是否有任何修改。
 4. 如果没有，则将使用相同的对称密钥解密消息。
 
-因此，我们将实现该记录协议的保密性和完整性。
+因此，我们将实现该记录协议的**保密性**和**完整性**。
 
 由于此阶段的加密数据量很大，因此通常称为批量加密。
 
@@ -181,13 +181,13 @@ SSL 代表安全套接字层，它是 TLS 的前身。
 
 Alice 的明文消息通过一个对称加密算法，如 AES-256-GCM 或 cha20。
 
-这种加密算法还接受一个共享的密钥和一个随机的 nonce，或者一个初始向量密码(IV)作为输入。它会返回加密的消息。
+这种加密算法还接受一个共享的密钥和一个随机的 nonce（Number once，一个只被使用一次的任意或非重复的随机数值），或者一个初始向量密码(IV，Initialization Vector)作为输入。它会返回加密的消息。
 
 ### The second step is to authenticate
 
 加密的消息、密钥和 nonce 成为 MAC 算法的输入，如果使用 AES-256-GCM，则为 GMAC; 如果使用 cha20加密算法，则为 POLY1305。
 
-这个 MAC 算法就像一个密码**HASH**函数，它的输出是一个 MAC，或者是消息的认证码。
+这个 MAC 算法就像一个密码**HASH**函数，它的输出是一个 MAC（message authentication code消息的认证码）。
 
 现在，这个 MAC 将与加密的消息一起被标记，最终的结果将发送给 Bob。正因为如此，我们有时把这个 MAC 称为身份验证标记。
 
@@ -272,7 +272,7 @@ S = (A^b) mod p
 
 ![Derive secret key](index/qiun4qnrbh5htimuhpvz.png)
 
-### Key Derivation Function - KDF
+### Key Derivation Function(秘钥导出函数) - KDF
 
 每种加密算法可能需要不同长度的密钥。因此，为了创建密钥，Alice 和 Bob 必须将 s 放到相同的密钥导出函数，并且输出将是一个所需长度的共享密钥。
 
@@ -290,7 +290,7 @@ S = (A^b) mod p
 
 有了所有这些输入，KDF 将生成一个所需长度的密钥。
 
-### Trapdoor function 
+### Trapdoor function（陷门函数）
 
 现在让我们回到Diffie-Hellman密钥交换。
 
@@ -323,7 +323,7 @@ S = (A^b) mod p
 
 然而，就目前而言，“需要很长时间才能解决”并不意味着无法解决，对吗？
 
-### Static or Ephemeral key?
+### Static or Ephemeral（临时） key?
 
 ![Alt Text](index/yrjca18zd7te7z626rrj.png)
 
@@ -343,7 +343,7 @@ S = (A^b) mod p
 
 Elliptic-Curve Diffie-Hellman Ephemeral如何？
 
-# Elliptic-Curve Cryptography
+# Elliptic-Curve(椭圆曲线) Cryptography
 
 ![Alt Text](index/ax54m5xjp0quwyvg898f.png)
 
@@ -396,6 +396,8 @@ TLS 中使用的一些流行的数字签名算法如下:
 我们将很快学习数字签名，但在此之前，让我们学习非对称加密系统是如何工作的。
 
 ## Asymmetric Encryption
+
+如果使用公钥进行加密，就只能用私钥解密。如果用私钥加密，就只能用公钥解密。
 
 ![Asymmetric Encryption](index/qq8946qj1405vkq8j5ut.png)
 
