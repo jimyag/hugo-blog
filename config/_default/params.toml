@@ -55,7 +55,7 @@ countTaxonomyPosts = true # Count posts of taxonomy.
 # sidebarTaxonomies = ["categories", "tags", "series"] # The order of taxonomies on the sidebar.
 
 pinnedPost = true # Turn on/off pinned posts.
-pinnedPostCount = 3 # The number of pinned posts.
+pinnedPostCount = 4 # The number of pinned posts.
 
 # Custom CSS and JS
 customCSS = [
