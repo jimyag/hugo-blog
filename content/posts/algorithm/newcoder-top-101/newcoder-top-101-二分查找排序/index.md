@@ -404,6 +404,117 @@ int minNumberInRotateArray(vector<int> rotateArray) {
     }
 ```
 
+# 数组中的逆序对
+
+## 描述
+
+在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P mod 1000000007
+
+
+数据范围： 对于 50% 的数据, $size\leq 10^4$
+对于 100% 的数据, $size\leq 10^5$
+
+数组中所有数字的值满足 $0 \le val \le 1000000$
+
+要求：空间复杂度 O(n)，时间复杂度 O(nlogn)
+
+### 输入描述：
+
+题目保证输入的数组中没有的相同的数字
+
+## 示例1
+
+输入：
+
+```
+[1,2,3,4,5,6,7,0]
+```
+
+返回值：
+
+```
+7
+```
+
+## 示例2
+
+输入：
+
+```
+[1,2,3]
+```
+
+返回值：
+
+```
+0
+```
+
+## 解析
+
+### 解析1-暴力求解
+
+按照定义进行模拟就可以。时间复杂度O(n^2)
+
+### 解析2-归并排序
+
+我们举个例子,对于序列`1,2,3,4,5`的逆序对数是0，但是对于`5,4,3,2,1`的逆序对数是`4+3+2+1`个，只要是部分有序的，我们就可以O(1)的时间复杂度求得逆序数。对于我们使用的归并排序，所有排序的数组是部分有序的，比如要归并`2,4,6,8`和`1,3,5,7`,1小，归并1，但是左边的序列都比`1`大，都可以组成逆序数，逆序数数量`+4`，
+
+| 左边    | 右边    | 归并数  | 逆序数                                                    |
+| ------- | ------- | ------- | --------------------------------------------------------- |
+| 2,4,6,8 | 1,3,5,7 | -       | 0                                                         |
+| 2,4,6,8 | 3,5,7   | 1       | 0+4，（1比左边的2小，就是和左边的所有数都可以组成逆序数） |
+| 4,6,8   | 3,5,7   | 1，2    | 0+4+0(3比左边的2大，也就是和左边的组成不了逆序数)         |
+| 4,6,8   | 5,7     | 1，2，3 | 0+4+0+3，(3比4小，和左边的所有数都可以组成逆序数)         |
+| ....    | ...     | ...     | ...                                                       |
+
+这样就可以求得所有的逆序数对数了。
+
+```c++
+const int kmod = 1000000007;
+    int InversePairs(vector<int> data) {
+        int ret = 0;
+        vector<int> tmp(data.size());
+        mergeSort(data, tmp, 0, data.size() - 1, ret);
+        return ret;
+    }
+    void mergeSort(vector<int>&array,vector<int>&temp,int left,int right,int &ret){
+        if(left==right){
+            return ;
+        }
+        int mid = left+((right-left)>>1);
+        mergeSort(array,temp,left, mid,ret);
+        mergeSort(array,temp,mid+1, right,ret);
+        merge(array,temp,left,mid,right,ret);
+    }
+    void merge(vector<int>&array,vector<int>&temp,int left,int mid,int right,int &ret){
+        int k = 0;
+        int l = left,r = mid+1;
+        while(l<=mid&&r<=right){
+            // 左边的比右边的大，
+            if(array[l]>array[r]){
+                temp[k++] = array[r++];
+                // 计算逆序对数了
+                ret+=(mid-l+1);
+                ret%=kmod;
+            }else{
+                temp[k++] = array[l++];
+            }
+        }
+        while(l<=mid){
+            temp[k++] = array[l++];
+        }
+        while(r<=right){
+            temp[k++] = array[r++];
+        }
+        for(k = 0,l=left;l<=right;l++,k++){
+            array[l] = temp[k];
+        }
+    }
+```
+
+
+
 
 
 # 总结
@@ -416,8 +527,10 @@ int minNumberInRotateArray(vector<int> rotateArray) {
 | 4-29 | 二维数组中的查找   |
 | 4-30 | 寻找峰值           |
 | 5-2  | 旋转数组的最小数字 |
+| 5-3  | 数组中的逆序对     |
 
 ## 技巧总结
 
 1. 二分查找一定要清楚`left`和`right`的关系，他们两个能不能相等，相等代表的是
 2. 二维数组中的查找，虽然是知道二分查找，但是要记住从那开始
+2. 数组中的逆序对要多刷。理解这个思想。
