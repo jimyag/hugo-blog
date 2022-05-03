@@ -104,6 +104,138 @@ vector<int> preorderTraversal(TreeNode* root){
 }
 ```
 
+## 二叉树的中序遍历
+
+### 描述
+
+给定一个二叉树的根节点root，返回它的中序遍历结果。
+
+数据范围：树上节点数满足 $0 \le n \le 1000$，树上每个节点的值满足 $0 \le val \le 1000$
+进阶：空间复杂度 O(n)，时间复杂度 O(n)
+
+### 示例1
+
+输入：
+
+```
+{1,2,#,#,3}
+```
+
+返回值：
+
+```
+[2,3,1]
+```
+
+说明：
+
+![img](index/DB3124E4AB48ACA166EAC6A59F5ADCE9.png)
+
+### 示例2
+
+输入：
+
+```
+{}
+```
+
+返回值：
+
+```
+[]
+```
+
+### 示例3
+
+输入：
+
+```
+{1,2}
+```
+
+返回值：
+
+```
+[2,1]
+```
+
+说明：
+
+![img](index/348BF14EF65EB6D94D5EAD8895712DF1.png)
+
+### 示例4
+
+输入：
+
+```
+{1,#,2}
+```
+
+返回值：
+
+```
+[1,2]
+```
+
+说明：
+
+![img](index/FF7B3016FB0274E8D3CBD7C082DBFFC9.png)
+
+### 解析
+
+#### 解析1-递归法
+
+根据题意进行模拟
+
+```c++
+void inorderTraversal(vector<int> &res,TreeNode* root){
+        if(root==nullptr){
+            return ;
+        }
+        if(root->left){
+            inorderTraversal(res,root->left);
+        }
+        res.push_back(root->val);
+        if(root->right){
+            inorderTraversal(res,root->right);
+        }
+    }
+    vector<int> inorderTraversal(TreeNode* root) {
+        vector<int>res;
+        inorderTraversal(res,root);
+        return res;
+    }
+```
+
+#### 解析2-迭代法
+
+由于中序遍历是先访问左孩子，我们就要先找到左孩子，一直要找到树叶的左孩子。一直深度优先找到左孩子，然后访问左孩子，之后访问中间结点，之后对右孩子进行这样迭代遍历。
+
+```c++
+vector<int> inorderTraversal(TreeNode* root){
+    vector<int>res;
+    if(root==nullptr){
+        return res;
+    }
+    stack<TreeNode*>help;
+    while(root||!help.empty()){
+        while(root){
+            help.push(root);
+            root = root->left;
+        }
+        TreeNode*temp = help.top();
+        help.pop();
+        res.push_back(temp->val);
+        root = temp->right;
+    }
+    return res;
+}
+```
+
+
+
+
+
 ## 总结
 
 ### 刷题时间
@@ -111,8 +243,10 @@ vector<int> preorderTraversal(TreeNode* root){
 | 时间 | 题目     |
 | ---- | -------- |
 | 5-3  | 前序遍历 |
+| 5-3  | 中序遍历 |
 
 ### 总结
 
-1. 前序遍历要先遍历左孩子，再遍历右孩子，但是要先在栈中放入右孩子，再放入左孩子。
+1. 前序遍历要先遍历中间结点，之后遍历左孩子，再遍历右孩子，但是要先在栈中放入右孩子，再放入左孩子。
+2. 中序遍历是要先遍历左孩子，之后遍历中间结点，再遍历右孩子。要找到最左边的孩子，就要深度优先可是进行搜索(root = root->left),之后访问中间结点。对访问的中间结点的右孩子也执行这个过程。
 
