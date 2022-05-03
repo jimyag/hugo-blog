@@ -232,7 +232,146 @@ vector<int> inorderTraversal(TreeNode* root){
 }
 ```
 
+## 二叉树的后序遍历
 
+### 描述
+
+给定一个二叉树，返回他的后序遍历的序列。
+
+后序遍历是值按照 左节点->右节点->根节点 的顺序的遍历。
+
+数据范围：二叉树的节点数量满足 $0 \le n \le 100$，二叉树节点的值满足 $1 \le val \le 100$ ，树的各节点的值各不相同
+
+样例图
+
+![img](index/64547759EAC75079FDBF501CAA589890.png)
+
+### 示例1
+
+输入：
+
+```
+{1,#,2,3}
+```
+
+返回值：
+
+```
+[3,2,1]
+```
+
+### 示例2
+
+输入：
+
+```
+{1}
+```
+
+返回值：
+
+```
+[1]
+```
+
+### 解析
+
+#### 解析1-递归
+
+根据题意进行模拟
+
+```c++
+ void postorderTraversal(vector<int>&res,TreeNode*root){
+        if(root==nullptr){
+            return;
+        }
+        postorderTraversal(res,root->left);
+        postorderTraversal(res,root->right);
+        res.push_back(root->val);
+    }
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int>res;
+        postorderTraversal(res,root);
+        return res;
+    }
+```
+
+#### 解析2-迭代
+
+根据后序遍历“左右中”的顺序，那么后序遍历也与中序遍历类似，要先找到每棵子树的最左端节点：
+
+```c++
+//每次找到最左节点
+while(root != NULL){ 
+    s.push(root);
+    root = root->left;
+}
+```
+
+然后我们就要访问该节点了嘛？不不不，如果它还有一个右节点呢？根据“左右根”的原则，我还要先访问右子树。我们只能说它是最左端的节点，它左边为空，但是右边不一定，因此这个节点必须被看成是这棵最小的子树的根。要怎么访问根节点呢？
+
+我们都知道从栈中弹出根节点，一定是左节点已经被访问过了，因为左节点是子问题，访问完了才回到父问题，那么我们还必须要确保右边也已经被访问过了。如果右边为空，那肯定不用去了，如果右边不为空，那我们肯定优先进入右边，此时再将根节点加入栈中，等待右边的子树结束。
+
+```c++
+//该节点再次入栈
+s.push(node);
+//先访问右边
+root = node->right;
+```
+
+不过，当右边被访问了，又回到了根，我们的根怎么知道右边被访问了呢？用一个前序指针pre标记一下，每个根节点只对它的右节点需要标记，而每个右节点自己本身就是一个根节点，因此每次访问根节点的时候，我们可以用pre标记为该节点，回到上一个根节点时，检查一下，如果pre确实是它的右子节点，哦那正好，刚刚已经访问过了，我现在可以安心访问这个根了。
+
+```c++
+//如果该元素的右边没有或是已经访问过
+if(node->right == NULL || node->right == pre){ 
+    //访问中间的节点
+    res.push_back(node->val); 
+    //且记录为访问过了
+    pre = node; 
+}
+```
+
+**具体做法：**
+
+- step 1：开辟一个辅助栈，用于记录要访问的子节点，开辟一个前序指针pre。
+- step 2：从根节点开始，每次优先进入每棵的子树的最左边一个节点，我们将其不断加入栈中，用来保存父问题。
+- step 3：弹出一个栈元素，看成该子树的根，判断这个根的右边有没有节点或是有没有被访问过，如果没有右节点或是被访问过了，可以访问这个根，并将前序节点标记为这个根。
+- step 4：如果没有被访问，那这个根必须入栈，进入右子树继续访问，只有右子树结束了回到这里才能继续访问根。
+
+**图示：**
+
+![alt](index/05EE17BA6FA1FB90EDDEF5A26D0FEEF4.gif)
+
+```c++
+    vector<int> postorderTraversal(TreeNode* root) {
+        vector<int>res;
+        stack<TreeNode*>help;
+        TreeNode*pre = nullptr;
+        while(root||!help.empty()){
+            //每次先找到最左边的节点
+            while(root){
+                help.push(root);
+                root = root->left;
+            }
+            //弹出栈顶
+            TreeNode*temp = help.top();
+            help.pop();
+            //如果该元素的右边没有或是已经访问过
+            if(temp->right==nullptr||temp->right==pre){
+                //访问中间的节点
+                res.push_back(temp->val);
+                //且记录为访问过了
+                pre = temp;
+            }else{
+                //该节点入栈
+                help.push(temp);
+                //先访问右边
+                root = temp->right;
+            }
+        }
+        return res;
+    }
+```
 
 
 
@@ -244,9 +383,11 @@ vector<int> inorderTraversal(TreeNode* root){
 | ---- | -------- |
 | 5-3  | 前序遍历 |
 | 5-3  | 中序遍历 |
+| 5-3  | 后序遍历 |
 
 ### 总结
 
 1. 前序遍历要先遍历中间结点，之后遍历左孩子，再遍历右孩子，但是要先在栈中放入右孩子，再放入左孩子。
 2. 中序遍历是要先遍历左孩子，之后遍历中间结点，再遍历右孩子。要找到最左边的孩子，就要深度优先可是进行搜索(root = root->left),之后访问中间结点。对访问的中间结点的右孩子也执行这个过程。
+3. 后序遍历看解析
 
