@@ -34,20 +34,6 @@ weight: 100
 
 ![img](index/FE67E09E9BA5661A7AB9DF9638FB1FAC.png)
 
-### 示例1
-
-输入：
-
-```
-{1,#,2,3}
-```
-
-返回值：
-
-```
-[1,2,3]
-```
-
 ### 解析
 
 #### 解析1-递归
@@ -246,34 +232,6 @@ vector<int> inorderTraversal(TreeNode* root){
 
 ![img](index/64547759EAC75079FDBF501CAA589890.png)
 
-### 示例1
-
-输入：
-
-```
-{1,#,2,3}
-```
-
-返回值：
-
-```
-[3,2,1]
-```
-
-### 示例2
-
-输入：
-
-```
-{1}
-```
-
-返回值：
-
-```
-[1]
-```
-
 ### 解析
 
 #### 解析1-递归
@@ -373,6 +331,65 @@ if(node->right == NULL || node->right == pre){
     }
 ```
 
+## 求二叉树的层序遍历
+
+### 描述
+
+给定一个二叉树，返回该二叉树层序遍历的结果，（从左到右，一层一层地遍历）
+例如：
+给定的二叉树是{3,9,20,#,#,15,7},
+![img](index/036DC34FF19FB24652AFFEB00A119A76.png)
+该二叉树层序遍历的结果是
+
+> [
+> [3],
+> [9,20],
+> [15,7]
+>
+> ]
+
+数据范围：二叉树的节点数满足 $1 \le n \le 10^5$ 
+
+### 解析
+
+主要思路：广度优先，一层一层的遍历二叉树，
+1、遍历到一个节点，将左右个孩子加入队列；
+2、一次遍历二叉树的一层；
+3、怎么确定能遍历一层：每次遍历队列，先记录队列的大小size，出队size次，这些值即为一层，存入res数组，并通过1、2将下一层的节点存入队列；
+
+```c++
+  vector<vector<int> > levelOrder(TreeNode* root) {
+        vector<vector<int>> res;
+        if(root==nullptr){
+            return res;
+        }
+        queue<TreeNode*> q;
+        q.push(root);
+        while(!q.empty()){
+            // 对每一层都进行处理
+            int size = q.size();
+            vector<int> levelVals;
+            // 这一层右多少个结点
+            while(size--){
+
+                TreeNode* cur = q.front();
+                q.pop();
+                levelVals.push_back(cur->val);
+                // 将这层的孩子结点加入队列
+                if(cur->left){
+                    q.push(cur->left);
+                }
+                if(cur->right){
+                    q.push(cur->right);
+                }
+            }
+            // 这层的结果
+            res.push_back(levelVals);
+        }
+        return res;
+    }
+```
+
 
 
 ## 总结
@@ -384,10 +401,12 @@ if(node->right == NULL || node->right == pre){
 | 5-3  | 前序遍历 |
 | 5-3  | 中序遍历 |
 | 5-3  | 后序遍历 |
+| 5-4  | 层序遍历 |
 
 ### 总结
 
 1. 前序遍历要先遍历中间结点，之后遍历左孩子，再遍历右孩子，但是要先在栈中放入右孩子，再放入左孩子。
 2. 中序遍历是要先遍历左孩子，之后遍历中间结点，再遍历右孩子。要找到最左边的孩子，就要深度优先可是进行搜索(root = root->left),之后访问中间结点。对访问的中间结点的右孩子也执行这个过程。
 3. 后序遍历看解析
+3. 层序遍历是要记录当前层有多少个结点，对这些结点进行遍历。
 
