@@ -9,7 +9,7 @@ featured: false
 comment: false 
 toc: true 
 diagram: true 
-series: [ "专栏" ] 
+series: [  ] 
 pinned: false
 weight: 100
 ---

@@ -338,15 +338,14 @@ if(node->right == NULL || node->right == pre){
 给定一个二叉树，返回该二叉树层序遍历的结果，（从左到右，一层一层地遍历）
 例如：
 给定的二叉树是{3,9,20,#,#,15,7},
+
 ![img](index/036DC34FF19FB24652AFFEB00A119A76.png)
+
 该二叉树层序遍历的结果是
 
-> [
-> [3],
+> [[3],
 > [9,20],
-> [15,7]
->
-> ]
+> [15,7]]
 
 数据范围：二叉树的节点数满足 $1 \le n \le 10^5$ 
 
@@ -390,18 +389,89 @@ if(node->right == NULL || node->right == pre){
     }
 ```
 
+## 按之字形顺序打印二叉树
+
+### 描述
+
+给定一个二叉树，返回该二叉树的之字形层序遍历，（第一层从左向右，下一层从右向左，一直这样交替）
+
+数据范围：0≤*n*≤1500,树上每个节点的val满足 |val| <= 1500
+
+要求：空间复杂度：O(n)，时间复杂度：O(n)
+
+### 解析
+
+如果我们不按照之字形打印二叉树，只是按照层遍历，那么就成了层序遍历。在层序遍历中都是从左到右遍历，之字形是要相反的，先放进“队列”里面的要最后出来。如下图
+
+![alt](index/4001D0A4E11E0FA0428C08B35F9ABAB8.gif)
+
+可以用两个栈交替保存“父节点和子节点”。
+
+```c++
+vector<vector<int> > Print(TreeNode* pRoot) {
+        TreeNode* head = pRoot;
+        vector<vector<int>> res;
+        if(head==nullptr){
+            return res;
+        }
+  			// 交替保存 父亲节点和子节点
+        stack<TreeNode*> cen;
+        stack<TreeNode*> children;
+        cen.push(head);
+  			// 如果有一个不为空就可以执行
+        while(!cen.empty() || !children.empty()){
+            vector<int> temp;
+            // 父亲节点有 这里的父亲节点和子节点是相对的，由于这里一次可以遍历两层，所以第一层就是父亲节点，
+            while(!cen.empty()){
+                TreeNode*node  = cen.top();
+                temp.push_back(node->val);
+              	// 父亲节点，是从左到右 要先从左孩子判断
+                if(node->left){
+                    children.push(node->left);
+                }
+                if(node->right){
+                    children.push(node->right);
+                }
+                cen.pop();
+            }
+            if(temp.size()){
+                res.push_back(temp);
+            }
+            temp.clear();
+          	// 孩子不为空就是
+            while(!children.empty()){
+                TreeNode*node = children.top();
+                temp.push_back(node->val);
+              	// 偶数层是从右向左遍历的，要先开始判断右边的。
+                if(node->right){
+                    cen.push(node->right);
+                }
+                if(node->left){
+                    cen.push(node->left);
+                }
+                children.pop();
+            }
+            if(temp.size()){
+                res.push_back(temp);
+            }
+        }
+        return res;
+    }
+```
+
 
 
 ## 总结
 
 ### 刷题时间
 
-| 时间 | 题目     |
-| ---- | -------- |
-| 5-3  | 前序遍历 |
-| 5-3  | 中序遍历 |
-| 5-3  | 后序遍历 |
-| 5-4  | 层序遍历 |
+| 时间 | 题目               |
+| ---- | ------------------ |
+| 5-3  | 前序遍历           |
+| 5-3  | 中序遍历           |
+| 5-3  | 后序遍历           |
+| 5-4  | 层序遍历           |
+| 6-22 | 按之字形打印二叉树 |
 
 ### 总结
 
@@ -409,4 +479,5 @@ if(node->right == NULL || node->right == pre){
 2. 中序遍历是要先遍历左孩子，之后遍历中间结点，再遍历右孩子。要找到最左边的孩子，就要深度优先可是进行搜索(root = root->left),之后访问中间结点。对访问的中间结点的右孩子也执行这个过程。
 3. 后序遍历看解析
 3. 层序遍历是要记录当前层有多少个结点，对这些结点进行遍历。
+3. 按之字形打印是交替打印的，要考虑好两层的打印方式
 
