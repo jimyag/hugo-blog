@@ -2,7 +2,7 @@
 title: "将博客迁移到七牛云"
 date: 2022-06-28T21:16:21+08:00
 draft: false
-slug: 3aafaaaf
+slug: /3aafaaaf
 tags: ["Hugo","教程","七牛云"]
 categories: ["教程"]
 featured: false 
@@ -78,6 +78,9 @@ vi upload.conf
 {
     "src_dir" : "./public",
     "bucket" : "jimyag-blog",
+    "rescan_local": true,
+    "overwrite" : true,
+    "check_exists" : true,
     "check_hash" : true
 }
 ```
