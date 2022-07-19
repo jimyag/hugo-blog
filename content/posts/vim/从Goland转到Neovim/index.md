@@ -39,6 +39,10 @@ weight: 100
 8.   显示 当前行时被谁更改的
 9.   复制当前行的信息 类似 project/xxx/xx/xxx.go:143
 10.   括号补全
+10.   同一个文件左右分屏
+10.   打开的文件是新的窗口
+
+
 
 # 我的配置过程
 
@@ -544,9 +548,9 @@ packer.startup({
 
 通常我们都会选择专门为 Neovim 制作的第三方主题，因为它们大多都会支持基于 `TreeSitter` 的语法高亮（后续代码高亮章节会详细说明），我认为这是考量是否应该选择一个主题最基础也是重要的事。
 
-也就是说，一个现代化的主题，必须支持 [nvim-treesitter](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fnvim-treesitter%2Fnvim-treesitter) 语法高亮。
+也就是说，一个现代化的主题，必须支持 [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 语法高亮。
 
-nvim-treesitter 的官方 wiki 上列出了许多支持 Treesitter 的主题，如果你想寻找更多的主题配色，可以到 [nvim-treesitter wiki](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fnvim-treesitter%2Fnvim-treesitter%2Fwiki%2FColorschemes) 页里查看。
+nvim-treesitter 的官方 wiki 上列出了许多支持 Treesitter 的主题，如果你想寻找更多的主题配色，可以到 [nvim-treesitter wiki](https://github.com/nvim-treesitter/nvim-treesitter/wiki/Colorschemes) 页里查看。
 
 选择喜欢的样式后修改 `lua/colorscheme.lua` 内 `colorscheme` 变量的名字保存，重启后即可生效。
 
@@ -861,7 +865,7 @@ require("plugin-config.nvim-tree")
     use({ "akinsho/bufferline.nvim", tag = "v2.*",requires = { "kyazdani42/nvim-web-devicons", "moll/vim-bbye" }})
 ```
 
-这里我增加了一个 [vim-bbye](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2Fmoll%2Fvim-bbye) 依赖，因为这个插件安装后会增加一个 `:Bdelete` 命令，相比内置的 `:bdelete`, 它删除 buffer 的同时，并不会搞乱布局 。 待会儿我们会配置 `Bdelete` 为关闭 Tab 的命令。
+这里我增加了一个 [vim-bbye](https://github.com/moll/vim-bbye) 依赖，因为这个插件安装后会增加一个 `:Bdelete` 命令，相比内置的 `:bdelete`, 它删除 buffer 的同时，并不会搞乱布局 。 待会儿我们会配置 `Bdelete` 为关闭 Tab 的命令。
 
 新建配置文件 `lua/plugin-config/bufferline.lua`，代码如下：
 
@@ -1160,7 +1164,7 @@ require("plugin-config.telescope")
 
 下边通过一个简单的扩展，演示如何安装扩展。
 
-要安装的扩展叫做 [telescope-env.nvim](https://link.juejin.cn/?target=https%3A%2F%2Fgithub.com%2FLinArcX%2Ftelescope-env.nvim) 用于列出系统环境变量.
+要安装的扩展叫做 [telescope-env.nvim](https://github.com/LinArcX/telescope-env.nvim) 用于列出系统环境变量.
 
 打开 `lua/plugins.lua` 文件，新增 `telescope-env.nvim` 相关的内容：
 
@@ -1401,3 +1405,455 @@ require("plugin-config.project")
 
 ## 语法高亮
 
+提到代码高亮，首先要提到的是 [Tree-sitter](https://tree-sitter.github.io/tree-sitter/) 项目， Tree-sitter 是一个解析器生成器工具和增量解析库，它可以在源文件编辑的同时高效的实时生成语法树.
+
+接着出现的是 [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) 项目，`nvim-treesitter` 是 `Neovim` 下的 `Tree-sitter` 配置和抽象层，它的目标是给 `Neovim` 提供一个简单的 `Tree-sitter` 接口，并且提供多个基于 `Tree-sitter` 的基础功能模块，它可以让你在 nvim 中高效的实现 **代码高亮**，**增量选择** 等基础功能。
+
+### 安装
+
+修改 `lua/plugins.lua` 文件中添加 `nvim-treesitter/nvim-treesitter` 插件
+
+```lua
+ use({ "nvim-treesitter/nvim-treesitter" })
+```
+
+### 安装Language parser
+
+你可以运行 `:TSInstallInfo` 命令查看 language parsers 列表与安装状态。
+
+如果我们要安装指定的 `Language parser`，则我们需要调用命令：
+
+```vim
+:TSInstall <language_to_install>
+```
+
+比如我们要安装 `Golang` ，则应该调 `:TSInstall go`
+
+当我们调用 `TSInstall` 命令的时候，插件会我们生成一个 `<language>.so` 语法文件，放在插件的 `parser` 文件夹内，比如我的系统中完整目录在：
+
+```bash
+➜  parser git:(master) pwd
+/Users/jimyag/.local/share/nvim/site/pack/packer/start/nvim-treesitter/parser
+➜  parser git:(master) ls
+cpp.so    go.so     gomod.so  gowork.so java.so   lua.so    python.so vim.so
+```
+
+进入目录会发现我安装的 `go.so` ，每个文件只有几百 KB 大小。
+
+如果这个时候运行 `:TSInstallInfo` 则 `go` 也会对应打上勾勾。
+
+对应的 `:TSUninstall <language_to_uninstall>` 命令用于卸载 language parser 。
+
+其实我们可以不必手动安装 `language parsers` ，可以在 `nvim-treesitter` 的配置文件中指定自动安装，下边开始配置 `nvim-treesitter`。
+
+### 配置 nvim-treesitter
+
+创建 `lua/plugin-config/nvim-treesitter.lua` 文件。
+
+```lua
+local status, treesitter = pcall(require, "nvim-treesitter.configs")
+if not status then
+    vim.notify("没有找到 nvim-treesitter")
+    return
+end
+
+treesitter.setup({
+  -- 安装 language parser
+  -- :TSInstallInfo 命令查看支持的语言
+  ensure_installed =  { "go", "python", "cpp", "vim", "lua", "java" },
+  -- 启用代码高亮模块
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
+})
+```
+
+`ensure_installed` 就是自动安装 parsers，不必提前手动安装，只要这里列出，下次重启后就会自动安装，当然如果设置过多那么首次重启会卡一下，而且网络不好的话每个下载失败都会报错。
+
+你可以和上述代码一样为`ensure_installed` 制定一个列表，也可以是直接设置为 `"all"` 或 `"maintained"` ，表示一次下载所有的 parsers。下次重启后就会下载对应的语法文件了。 这里建议你还是自定义用到的语言列表，其次是设置成 `maintained` 如果设置成 `maintained` ，那么我这里的下载量大概在 45MB 左右，给你作为参考。
+
+`highlight` 是 `nvim-treesitter` 的语法高亮模块，设置 `enable` 为 `true` 则开启语法高亮功能，由于使用基于 `treesitter` 的语法高亮，所以将`additional_vim_regex_highlighting` 设置为 `false` 关闭 vim 的正则语法高亮。
+
+保存后别忘了在 **入口文件** 中引入该配置文件。
+
+```lua
+require("plugin-config.nvim-treesitter") -- （新增）
+```
+
+重启后，如果一切正常即可看到代码高亮效果，调用 `:TSBufToggle highlight` 命令可以切换打开关闭代码高亮功能.
+
+然而这个代码高亮颜色，和我们之前安装的 `colorscheme` 支持程度有关，不同的主题配色显示会不一样，你可以在 `nvim-treesitter` 的 [wiki](https://github.com/nvim-treesitter/nvim-treesitter/wiki/Colorschemes)里查看不同到皮肤的显示效果。
+
+除了代码高亮功能外，`nvim-treesitter` 还提供其他 3 个内置模块功能，可以根据你的需要添加，下边介绍增量选择模块。
+
+#### 增量选择模块
+
+什么是增量选择 (incremental selection) ？ 当你的光标在一个语法结点上时，可以设置一个增加键和一个减少键，敲击这两个，在表现上为不断外扩和收缩选中代码。
+
+如果你需要这个功能，需要打开 `lua/plugin-config/nvim-treesitter.lua` 文件，在 `highlight` 模块下方，增加如下代码：
+
+```lua
+-- 启用增量选择模块
+incremental_selection = {
+  enable = true,
+  keymaps = {
+    init_selection = "<CR>",
+    node_incremental = "<CR>",
+    node_decremental = "<BS>",
+    scope_incremental = "<TAB>",
+  },
+},
+```
+
+注意到上边代码，为了减少记忆额外快捷键的负担，我将增加和减少结点的快捷键设置成了 **回车** 和 **退格** 。通过不断的按 Enter 选择区域会从里层不断外扩， Backspace 则相反不断内收。
+
+除了增量选择模块，`nvim-treesitter` 还内置了一个比较实用的代码缩进模块，用于简单的代码缩进调整，下边介绍一下。
+
+#### 代码缩进模块
+
+启用该模块后，可以使用 `=` 操作符对代码缩进
+
+先选中要缩进的代码，然后按 `=` 键，即可对选中代码缩进。
+
+如果要对整个文件进行缩进，可以使用 `gg=G` 组合键，因为 `gg` 是跳到首行，`G` 是跳到尾行，`gg=G` 就是从首行一直缩进到尾行，相当于 `ggvG` 选中整个文件然后用 `=` 格式化。
+
+如果你经常使用这个组合键，那么你可以考虑像我们之前一样，添加一个快捷键到 `lua/keybindings.lua`，这里不再详述。
+
+想要启用代码缩进功能模块，需要打开 `lua/plugin-config/nvim-treesitter.lua` 文件，在 `incremental_selection` 模块下方，增加如下代码：
+
+```lua
+  -- 启用代码缩进模块 (=)
+  indent = {
+    enable = true,
+  },
+```
+
+`nvim-treesitter` 还内置了一个基于 `Tree-sitter` 的代码折叠功能模块，下边介绍一下。
+
+#### 代码折叠模块
+
+代码折叠可以使代码更清晰，更易于阅读，基于 `Tree-sitter` 的代码折叠可以精确的折叠 `{}` 中的内容。
+
+使用了 `zc` 组合键来折叠 `{}` 中的内容，还可以使用 `zo` 组合键来打开对应的折叠。
+
+如果你需要这个功能，那么打开 `lua/plugin-config/nvim-treesitter.lua`，在文件的最下方插入代码：
+
+```lua
+-- 开启 Folding 模块
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+-- 默认不要折叠
+-- https://stackoverflow.com/questions/8316139/how-to-set-the-default-to-unfolded-when-you-open-a-file
+vim.opt.foldlevel = 99
+```
+
+注意这次是插入在文件的最下方，因为这个功能严格意义上不是一个模块，因为它对应的是 windows 而不是一个 buffer。
+
+最后，你可以运行 `:TSModuleInfo` 命令来查看你的模块是否开启成功	
+
+### LSP 配置
+
+想要在 `Neovim` 中配置代码补全、代码悬停、代码提示等等功能，首先要了解什么是 LSP (Language Server Protocol) 语言服务协议?
+
+在 LSP 出现之前，传统的 IDE 都要为其支持的每个语言实现类似的代码补全、文档提示、跳转到定义等功能，不同的 IDE 做了很多重复的工作，并且兼容性也不是很好。 LSP 的出现将编程工具解耦成了 **Language Server** 与 **Language Client** 两部分。定义了编辑器与语言服务器之间交互协议。
+
+![12-1.png](index/11556d465ae2488a81ced76c51a36bd0~tplv-k3u1fbpfcp-zoom-in-crop-mark:3024:0:0:0.awebp)
+
+Client 专注于显示样式实现， Server 负责提供语言支持，包括常见的自动补全、跳转到定义、查找引用、悬停文档提示等功能。
+
+而我们所说的 Neovim 内置 LSP 就是说 Neovim 内置了一套 Language Client 端的实现，这样我们就可以连接到和 VSCode 相同的第三方 language servers ，实现高质量的语法补全等功能。
+
+#### 开启 Neovim 内置 LSP
+
+通过命令 `:h lsp` 查看 LSP 文档的 QUICKSTART 部分写了 4 步：
+
+1.  安装 nvim-lspconfig
+2.  安装对应 language server
+3.  配置对应语言 require('lspconfig').xx.setup{…}
+4.  :lua print(vim.inspect(vim.lsp.buf_get_clients())) 查看 LSP 连接状态
+
+首先第一步就是要配置客户端，之所以要安装 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) ，是因为 `nvim-lspconfig` 提供了一堆常见服务的配置方式。
+
+第二步就是安装语言服务器,现在有了 [nvim-lsp-installer](https://github.com/williamboman/nvim-lsp-installer) 项目，可以帮助我们管理，并自动安装 Language Server。
+
+所以我们把这两个插件一并安装起来，打开 `lua/plugins.lua` 添加 `nvim-lspconfig` 和 `nvim-lsp-installer` 组件。
+
+```lua
+    --------------------- LSP --------------------
+    use({ "williamboman/nvim-lsp-installer"})
+    -- Lspconfig
+    use({ "neovim/nvim-lspconfig" })
+
+```
+
+#### 安装 LSP Servers
+
+我们先来看一下最简单的方式，运行 `:LspInstallInfo` 命令，会打开一个图形化界面
+
+`Available servers` 中列出了可以安装的 servers，这时你可以使用 `j / k` 移动光标到你要安装的 server，点击键盘 `i` 安装，i 表示 install。
+
+在该界面还有一些其他的快捷键，比如：
+
+-   大写的 `X` 是卸载该 server
+-   `u` 是更新 server
+-   大写 `U` 更新所有 servers
+-   `c` 检查 server 新版本
+-   大写 `C` 检查所有 servers 的新版本
+-   `ESC` 关闭窗口
+-   `?` 显示其他帮助信息
+
+几乎所有 Language Server 的管理都可以在这个界面搞定。下边 LSP 的配置部分。
+
+#### 配置 LSP Server
+
+因为会创建很多文件，所以我们首先创建一个新的目录 `lua/lsp/` 专门存放 lsp 相关的配置，这样可以使配置文件组织更加清晰。
+
+然后创建第一个文件 `lua/lsp/setup.lua`，内容如下：
+
+```lua
+local lsp_installer = require("nvim-lsp-installer")
+
+-- 安装列表
+-- { key: 语言 value: 配置文件 }
+-- key 必须为下列网址列出的名称
+-- https://github.com/williamboman/nvim-lsp-installer#available-lsps
+local servers = {
+  sumneko_lua = require("lsp.config.lua"), -- lua/lsp/config/lua.lua
+}
+-- 自动安装 Language Servers
+for name, _ in pairs(servers) do
+  local server_is_found, server = lsp_installer.get_server(name)
+  if server_is_found then
+    if not server:is_installed() then
+      print("Installing " .. name)
+      server:install()
+    end
+  end
+end
+
+lsp_installer.on_server_ready(function(server)
+    local config = servers[server.name]
+    if config == nil then
+        return
+    end
+    if config.on_setup then
+        config.on_setup(server)
+    else
+        server:setup({})
+    end
+end)
+```
+
+简单解释一下上述代码和配置文件的目录结构。首先我们创建了一个 `servers` 字典变量，用来存放所有的 LSP Server 的配置。
+
+```lua
+local servers = {
+  sumneko_lua = require("lsp.config.lua"), -- lua/lsp/config/lua.lua
+}
+```
+
+-   这里的 key `sumneko_lua` 不是随意设置的，而是 `nvim-lsp-installer` 中 lua 语言的 server name，你可以在 [这个网址](https://github.com/williamboman/nvim-lsp-installer#available-lsps) 中查到合法的值。
+-   这里的 value `require("lsp.config.lua")` 表示该 Server 对应的配置文件 `lua/lsp/config/lua.lua` 内容，这个文件需要我们自己创建，这个我们稍后创建。
+
+接下来的这段代码，是遍历 `servers` 字典，检查每个 server 是否已经安装，如果没有安装，就调用 `install()` 方法来安装。
+
+```lua
+for name, _ in pairs(servers) do
+  local server_is_found, server = lsp_installer.get_server(name)
+  if server_is_found then
+    if not server:is_installed() then
+      print("Installing " .. name)
+      server:install()
+    end
+  end
+end
+```
+
+也就是说，如果你还没有按照之前的方法手动安装过 lua server ，那么这里会自动帮你安装上。
+
+下边这段代码，是 `lsp_installer` 的回调函数，这个函数会在每个 LSP Server 准备好时调用。
+
+```lua
+lsp_installer.on_server_ready(function(server)
+    local config = servers[server.name]
+    if config == nil then
+        return
+    end
+    if config.on_setup then
+        config.on_setup(server)
+    else
+        server:setup({})
+    end
+end)
+```
+
+在回调函数中，我会先查看我们的 `servers` 字典中有没有这个 server 的配置文件，如果没有，就什么都不执行。 然后我会查看配置文件中，是否有 `on_setup` 函数，如果有，就执行这个函数，否则就用默认无配置参数。
+
+之后我会在每个 Language Server 配置文件中导出一个 `on_setup` 函数，用于初始化该 Server，这样做是因为我发现每个 Server 初始化方法并不完全相同， 用同一套初始化流程并不能满足不同语言定制的需要，所以我将初始化方法抽离出来，让每个 Server 的配置文件来负责初始化。
+
+我们第一个要创建的 Language Server 配置文件就是之前 require 的 lua 文件。
+
+#### 配置 Lua Server
+
+创建文件 `lua/lsp/config/lua.lua`，内容如下：
+
+```lua
+-- https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#sumneko_lua
+local runtime_path = vim.split(package.path, ';')
+table.insert(runtime_path, 'lua/?.lua')
+table.insert(runtime_path, 'lua/?/init.lua')
+
+local opts = {
+    settings = {
+        Lua = {
+            runtime = {
+                -- Tell the language server which version of Lua you're using (most likely LuaJIT in the case of Neovim)
+                version = 'LuaJIT',
+                -- Setup your lua path
+                path = runtime_path,
+            },
+            diagnostics = {
+                -- Get the language server to recognize the `vim` global
+                globals = { 'vim' },
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = vim.api.nvim_get_runtime_file('', true),
+                checkThirdParty = false,
+            },
+            -- Do not send telemetry data containing a randomized but unique identifier
+            telemetry = {
+                enable = false,
+            },
+        },
+    },
+    flags = {
+        debounce_text_changes = 150,
+    },
+    on_attach = function(client, bufnr)
+        -- 禁用格式化功能，交给专门插件插件处理
+        client.resolved_capabilities.document_formatting = false
+        client.resolved_capabilities.document_range_formatting = false
+
+        local function buf_set_keymap(...)
+            vim.api.nvim_buf_set_keymap(bufnr, ...)
+        end
+        -- 绑定快捷键
+        require('keybindings').mapLSP(buf_set_keymap)
+        -- 保存时自动格式化
+        vim.cmd('autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()')
+    end,
+}
+
+-- 查看目录等信息
+return {
+    on_setup = function(server)
+        server:setup(opts)
+    end,
+}
+```
+
+简单解释一下上述代码。先看最后 5 行代码，之前说过我们会让每个 Language Server 配置文件都导出一个 `on_setup` 函数，用于初始化该 Language Server。 这个函数会接收一个 `server` 参数， 我们通常会在这个函数中调用 `server:setup` 方法，并传入我们定制的 `opts` 参数来初始化语言服务。
+
+在这个 `opts` 参数里通常会有两个关键项需要你来定制： `settings` 和 `on_attach`。
+
+-   `settings` 主要用来配置语言服务，我们一般会在 `nvim-lspconfig` 项目的 [服务器配置项页面](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md) 找到对应语言的示例配置。
+-   `on_attach` 是一个回调函数，当语言服务成功绑定到一个 buffer 上时会调用这个函数，所以通常我们会在这个函数里做一些比如快捷键绑定，自动命令，或者设置 buffer 的某些特性等操作。
+
+上边代码 `on_attach` 中调用了 `keybindings` 文件的 `mapLSP` 方法。
+
+```lua
+`require("keybindings").mapLSP(buf_set_keymap)`
+```
+
+这样做的目的是为了把定义快捷键的代码抽离出来，都放在`lua/keybindings.lua` 这一个位置来统一管理，那么看一下都定义了哪些快捷键。
+
+#### 配置 Go Server
+
+创建文件 `lua/lsp/config/go.lua`，内容如下：
+
+```lua
+local nvim_lsp = require("lspconfig")
+
+local opts = {
+	on_attach = function(client,bufnr)
+		local function buf_set_keymap(...)
+			vim.api.nvim_buf_set_keymap(bufnr,...)
+		end
+
+		require("keybindings").mapLSP(buf_set_keymap)
+		vim.cmd('autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()')
+	end,
+    -- capabilities = capabilities,
+    root_dir = nvim_lsp.util.root_pattern('.git', 'go.mod','go.work'),
+    init_options = {
+        usePlaceholders = false,
+    },
+	single_file_support = true,
+}
+
+-- 查看目录等信息
+return {
+    on_setup = function(server)
+        server:setup(opts)
+    end,
+}
+```
+在`lua/lsp/setup.lua`中添加
+
+```lua
+local servers = {
+  	sumneko_lua = require("lsp.config.lua"), -- lua/lsp/config/lua.lua
+		gopls = require("lsp.config.go") -- lua/lsp/config/go.lua  新增
+}
+```
+
+
+
+#### 定义 LSP 快捷键
+
+现在打开 `lua/keybindings.lua` 文件，在 pluginKeys 变量声明的后边添加 `mapLSP` 方法:
+
+```lua
+-- lsp 回调函数快捷键设置
+pluginKeys.mapLSP = function(mapbuf)
+  -- rename
+  mapbuf("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opt)
+  -- code action
+  mapbuf("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opt)
+  -- go xx
+  mapbuf("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opt)
+  mapbuf("n", "gh", "<cmd>lua vim.lsp.buf.hover()<CR>", opt)
+  mapbuf("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opt)
+  mapbuf("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opt)
+  mapbuf("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opt)
+  -- diagnostic
+  mapbuf("n", "gp", "<cmd>lua vim.diagnostic.open_float()<CR>", opt)
+  mapbuf("n", "gk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opt)
+  mapbuf("n", "gj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opt)
+  mapbuf("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opt)
+  -- 没用到
+  -- mapbuf('n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opt)
+  -- mapbuf("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opt)
+  -- mapbuf('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opt)
+  -- mapbuf('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opt)
+  -- mapbuf('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opt)
+  -- mapbuf('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opt)
+end
+```
+
+注意这里的快捷键是所有语言服务器通用的，也就是说未来添加任何语言，都会调用到这里的 mapLSP 方法。
+
+大部分都设置为 g 开头，为方便记忆，表示 go XX，比如 `gd` 跳转到定义， 然后 `gh` 显示提示等。
+
+建议根据你自己的习惯修改，这是我目前的配置，未来也可能随时会有修改。
+
+最后一步，别忘了在 **入口文件** 中引入 `lua/lsp/setup.lua` 才能生效。
+
+```lua
+-- 内置LSP (新增)
+require("lsp.setup")
+```
+
+`:wq` 保存后重启，如果没有报错的话，就应该生效了，下边测试一下基本操作。
