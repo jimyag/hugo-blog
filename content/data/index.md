@@ -37,6 +37,20 @@ layout: "data"
 
 https://www.onemodel.app/  高颜值画架构图
 
+## utils
+
+### loov/lensm
+
+https://github.com/loov/lensm 查看汇编和源代码对应的工具
+
+### multipass
+
+https://github.com/canonical/multipass 可以启动多个 ubuntu 的实例
+
+### chaos-mesh
+
+https://github.com/chaos-mesh/chaos-mesh 一个混沌工程的工具，可以模拟各种环境
+
 
 
 ## blog
