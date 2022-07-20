@@ -1856,4 +1856,250 @@ end
 require("lsp.setup")
 ```
 
-`:wq` 保存后重启，如果没有报错的话，就应该生效了，下边测试一下基本操作。
+`:wq` 保存后重启，如果没有报错的话，就应该生效了。
+
+### LSP 补全
+
+Neovim 本身不支持代码补全，需要通过插件实现，我这里使用最流行的 [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) 插件。
+
+在安装自动代码补全之前，需要了解几个概念：
+
+1.  补全引擎
+
+    补全引擎就是为 Neovim 提供代码补全核心功能的插件，比如 [nvim-cmp](https://github.com/hrsh7th/nvim-cmp)。
+
+2.  补全源
+
+    补全源就是补全引擎需要的数据来源，最常见的来源是来自 Language Server 提供的数据，它会知道某个类有哪些属性和方法等。
+
+3.  snippet 引擎
+
+    snippet 引擎就是自定义代码段的引擎，常见的有 `vsnip`、`luasnip` 等
+
+三个词组一个句子，可以说：
+
+nvim-cmp 是使用 Lua 编写的 **补全引擎** 插件。可以配置多种外部的**补全源**，支持 `vsnip`、`luasnip`、`snippy`、 `ultisnips` 4 种 **snippet 引擎** 。
+
+#### 安装补全相关插件
+
+```lua
+packer.startup({
+    function(use)
+        ...
+        -- 补全引擎
+        use("hrsh7th/nvim-cmp")
+        -- snippet 引擎
+        use("hrsh7th/vim-vsnip")
+        -- 补全源
+        use("hrsh7th/cmp-vsnip")
+        use("hrsh7th/cmp-nvim-lsp") -- { name = nvim_lsp }
+        use("hrsh7th/cmp-buffer") -- { name = 'buffer' },
+        use("hrsh7th/cmp-path") -- { name = 'path' }
+        use("hrsh7th/cmp-cmdline") -- { name = 'cmdline' }
+
+        -- 常见编程语言代码段
+        use("rafamadriz/friendly-snippets")
+
+        ...
+    end,
+    ...
+})
+```
+
+简单解释一下上述代码，我们好像这一次装了好多插件，其实只有 `hrsh7th/nvim-cmp` 是补全引擎插件本身，其他 `cmp-xxx` 基本都是插件补全来源，也就是说当你输入一个变量的时候，可以从多个来源显示补全的内容。
+
+像 `hrsh7th/cmp-nvim-lsp` 就是 Neovim 内置 LSP 提供的补全内容，`hrsh7th/cmp-buffer` 补全当前 buffer 的内容， `hrsh7th/cmp-cmdline` 是命令行的补全，`hrsh7th/cmp-path` 则是用来补全路径，如果配置了这个，当输入一个路径的时候会补全路径。
+
+`hrsh7th/vim-vsnip` 就是一个 snippet 引擎，也就是自定义代码段，文档中提到了 4 种，都是支持的
+
+snippet engine
+
+-   vsnip
+-   luasnip
+-   ultisnips
+-   snippy
+
+`rafamadriz/friendly-snippets` 包含了大部分常用语言的代码段，非常强大，可以到他的 github 主页查看详细内容。
+
+不多说 `:wq` 保存后重启，如遇问题可 `:PackerSync` 再次安装。
+
+#### 配置自动补全
+
+新建文件 `lua/lsp/cmp.lua` ，内容如下：
+
+```lua
+local cmp = require("cmp")
+
+cmp.setup({
+  -- 指定 snippet 引擎
+  snippet = {
+    expand = function(args)
+      -- For `vsnip` users.
+      vim.fn["vsnip#anonymous"](args.body)
+
+      -- For `luasnip` users.
+      -- require('luasnip').lsp_expand(args.body)
+
+      -- For `ultisnips` users.
+      -- vim.fn["UltiSnips#Anon"](args.body)
+
+      -- For `snippy` users.
+      -- require'snippy'.expand_snippet(args.body)
+    end,
+  },
+  -- 补全源
+  sources = cmp.config.sources({
+    { name = "nvim_lsp" },
+    -- For vsnip users.
+    { name = "vsnip" },
+
+    -- For luasnip users.
+    -- { name = 'luasnip' },
+
+    --For ultisnips users.
+    -- { name = 'ultisnips' },
+
+    -- -- For snippy users.
+    -- { name = 'snippy' },
+  }, { { name = "buffer" }, { name = "path" } }),
+
+  -- 快捷键设置
+  mapping = require("keybindings").cmp(cmp),
+})
+
+-- / 查找模式使用 buffer 源
+cmp.setup.cmdline("/", {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = {
+    { name = "buffer" },
+  },
+})
+
+-- : 命令行模式中使用 path 和 cmdline 源.
+cmp.setup.cmdline(":", {
+  mapping = cmp.mapping.preset.cmdline(),
+  sources = cmp.config.sources({
+    { name = "path" },
+  }, {
+    { name = "cmdline" },
+  }),
+})
+```
+
+上述代码中，设置了 3 件事，指定了 snippet 引擎，补全来源，和设置了快捷键。
+
+我这里选择了 `vsnip` 作为 snippet 引擎，是因为它是 `nvim-cmp` 同一个作者开发的，应该稳定性会好些，而且貌似很强大可支持 VSCode 相同代码格式。
+
+补全来源最重要的是 `nvim_lsp`，这个是 Neovim 内置的 LSP 提供的补全内容，如果你使用了 LSP，那么这个补全源就是必须的，然后 `vsnip` 也是重要的补全来源之一，buffer 和 path 根据需要放在第二组补全源里。
+
+快捷键的设置跟以前一样, 这里调用了 `keybindings` 的 `cmp` 方法。
+
+打开 `lua/keybindings.lua` 在 pluginKeys 变量下边增加 `cmp` 方法：
+
+```lua
+-- nvim-cmp 自动补全
+pluginKeys.cmp = function(cmp)
+    return {
+        -- 出现补全
+        ["<A-.>"] = cmp.mapping(cmp.mapping.complete(), {"i", "c"}),
+        -- 取消
+        ["<A-,>"] = cmp.mapping({
+            i = cmp.mapping.abort(),
+            c = cmp.mapping.close()
+        }),
+        -- 上一个
+        ["<C-k>"] = cmp.mapping.select_prev_item(),
+        -- 下一个
+        ["<C-j>"] = cmp.mapping.select_next_item(),
+        -- 确认
+        ["<CR>"] = cmp.mapping.confirm({
+            select = true,
+            behavior = cmp.ConfirmBehavior.Replace
+        }),
+        -- 如果窗口内容太多，可以滚动
+        ["<C-u>"] = cmp.mapping(cmp.mapping.scroll_docs(-4), {"i", "c"}),
+        ["<C-d>"] = cmp.mapping(cmp.mapping.scroll_docs(4), {"i", "c"}),
+    }
+end
+```
+
+上边代码主要定义了以下快捷键，你可以根据需要修改：
+
+-   `<A-.>` alt + . 出现补全弹窗
+-   `<A-,>` alt + , 取消补全弹窗
+-   `<C-k>` 上一个
+-   `<C-j>` 下一个
+-   `<CR>` 回车确认
+-   `<C-u>` 滚动上
+-   `<C-d>` 滚动下
+
+如果窗口内容太多，可以用 `Ctrl + u` / `Ctrl + d `滚动，很少见，就不再演示了。
+
+如果常用自定义代码段的话，就有一个需求是在各个预定义的参数位置快速跳转
+
+`nvim-cmp` 官网的 wiki 中有一个例子，使用 `Tab` 键和 `Shift + Tab` 键兼容跳转，叫做 [Super-Tab like mapping](https://github.com/hrsh7th/nvim-cmp/wiki/Example-mappings#super-tab-like-mapping)
+
+我不太喜欢 Tab 键有多种功能，我参考其代码增加了单独的 `<C-l>` 和 `<C-h>` 键做跳转。
+
+你如果也需要这样的功能，可以在 `lua/keybindings.lua` 修改刚才的 cmp 函数，增加如下代码：
+
+```lua
+-- nvim-cmp 自动补全
+pluginKeys.cmp = function(cmp)
+
+  local feedkey = function(key, mode)
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes(key, true, true, true), mode, true)
+  end
+
+  local has_words_before = function()
+    local line, col = unpack(vim.api.nvim_win_get_cursor(0))
+    return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
+  end
+
+  return {
+
+   ...
+
+    -- 自定义代码段跳转到下一个参数
+    ["<C-l>"] = cmp.mapping(function(_)
+      if vim.fn["vsnip#available"](1) == 1 then
+        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      end
+    end, {"i", "s"}),
+
+    -- 自定义代码段跳转到上一个参数
+    ["<C-h>"] = cmp.mapping(function()
+      if vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, {"i", "s"}),
+
+    -- Super Tab
+    ["<Tab>"] = cmp.mapping(function(fallback)
+      if cmp.visible() then
+        cmp.select_next_item()
+      elseif vim.fn["vsnip#available"](1) == 1 then
+        feedkey("<Plug>(vsnip-expand-or-jump)", "")
+      elseif has_words_before() then
+        cmp.complete()
+      else
+        fallback() -- The fallback function sends a already mapped key. In this case, it's probably `<Tab>`.
+      end
+    end, {"i", "s"}),
+
+    ["<S-Tab>"] = cmp.mapping(function()
+      if cmp.visible() then
+        cmp.select_prev_item()
+      elseif vim.fn["vsnip#jumpable"](-1) == 1 then
+        feedkey("<Plug>(vsnip-jump-prev)", "")
+      end
+    end, {"i", "s"})
+    -- end of super Tab
+  }
+end
+```
+
+最后一步，别忘了在 **入口文件** 中引入 `lua/lsp/cmp.lua` 才能生效。
+
+### LSP 功能增强
+
