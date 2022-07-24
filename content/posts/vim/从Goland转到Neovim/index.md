@@ -2103,3 +2103,35 @@ end
 
 ### LSP 功能增强
 
+当我们敲击错误的代码的时候，会在左侧显示改行的状态
+
+<img src="index/image-20220725000252573.png" alt="image-20220725000252573" style="zoom:50%;" />
+
+红色那行 `E` 表示错误，很好理解， 那 `W` 是什么呢？ 其实 `W` 是 Warn 的缩写，很不直观，我们把它替换成图标。
+
+### 左列符号图标
+
+新建文件 `lua/lsp/ui.lua` ，内容如下：
+
+```lua
+vim.diagnostic.config({
+  virtual_text = true,
+  signs = true,
+  -- 在输入模式下也更新提示，设置为 true 也许会影响性能
+  update_in_insert = true,
+})
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+end
+```
+
+简单解释一下，`virtual_text` 是右侧显示的文字，`signs` 就是左侧的图标，让它们都显示出来。
+
+默认的情况下，右侧提示文字只在切换回 normal 模式下才会更新，`update_in_insert` 可以让输入模式下也更新，但注意这里也许会影响性能。
+
+再下边一大段的 for 循环就是定义图标了。
+
+同时别忘了在 **入口文件** 中引入这个文件，打开 `init.lua`，加入：`require("lsp.ui")`
+
