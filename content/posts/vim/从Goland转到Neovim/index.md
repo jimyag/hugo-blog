@@ -2135,3 +2135,387 @@ end
 
 同时别忘了在 **入口文件** 中引入这个文件，打开 `init.lua`，加入：`require("lsp.ui")`
 
+当一行代码很长的时候，右侧的提示文字就会显示不全，看不到提示的是什么，这个时候怎么办？ 我们之前在 `keybindings.lua` 的 mapLSP 函数定义过这么几个快捷键。
+
+```lua
+ -- diagnostic
+  mapbuf("n", "gp", "<cmd>lua vim.diagnostic.open_float()<CR>", opt)
+  mapbuf("n", "gk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opt)
+  mapbuf("n", "gj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opt)
+```
+
+### 自动补全样式修改
+
+默认情况下，当我们敲入字母的时候，会弹出补全弹窗，左侧列出备选内容，右侧列出备选的变量类型.
+
+还可以在补全弹窗里添加更多的内容显示，比如一个比较常见的改进，当我们配置了很多不同补全来源的时候，我们可以右侧增加一列显示补全源来自哪里。
+
+新增一个插件：[lspkind-nvim](https://github.com/onsails/lspkind.nvim),这个插件封装了很多常见的小图标，非常方便，不用我们手动再创建了。
+
+`lua/lsp/ui.lua`，在下边增加代码如下
+
+```lua
+-- lspkind
+local lspkind = require('lspkind')
+lspkind.init({
+    -- default: true
+    -- with_text = true,
+    -- defines how annotations are shown
+    -- default: symbol
+    -- options: 'text', 'text_symbol', 'symbol_text', 'symbol'
+    mode = 'symbol_text',
+    -- default symbol map
+    -- can be either 'default' (requires nerd-fonts font) or
+    -- 'codicons' for codicon preset (requires vscode-codicons font)
+    --
+    -- default: 'default'
+    preset = 'codicons',
+    -- override preset symbols
+    --
+    -- default: {}
+    symbol_map = {
+      Text = "",
+      Method = "",
+      Function = "",
+      Constructor = "",
+      Field = "ﰠ",
+      Variable = "",
+      Class = "ﴯ",
+      Interface = "",
+      Module = "",
+      Property = "ﰠ",
+      Unit = "塞",
+      Value = "",
+      Enum = "",
+      Keyword = "",
+      Snippet = "",
+      Color = "",
+      File = "",
+      Reference = "",
+      Folder = "",
+      EnumMember = "",
+      Constant = "",
+      Struct = "פּ",
+      Event = "",
+      Operator = "",
+      TypeParameter = ""
+    },
+})
+
+local M ={}
+-- 为 cmp.lua 提供参数格式
+M.formatting = {
+    format = lspkind.cmp_format({
+      mode = 'symbol_text',
+      --mode = 'symbol', -- show only symbol annotations
+
+      maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
+      -- The function below will be called before any actual modifications from lspkind
+      -- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
+      before = function (entry, vim_item)
+        -- Source 显示提示来源
+        vim_item.menu = "[" .. string.upper(entry.source.name) .. "]"
+        return vim_item
+      end
+    })
+}
+
+return M
+```
+
+简单解释一下上述代码，首先引入刚刚安装的 `lspkind` 插件，调用 `lspkind.init` 方法初始化。
+
+初始化参数中的 `symbol_map` 就是变量类型和其对应的自定义图标，由于图标是 Nerdfont 的，所以只在命令行中可见。
+
+接下来我们导出一个 `M`，这在 lua 中是很常见的写法。 导出后在其他文件中就可以 `require('lsp.ui').formatting` 取到该值了。
+
+接着我们回到 `lua/lsp/cmp.lua` 文件中，在 `cmp.setup()` 的初始化参数中添加一个 `formatting` 值，如下：
+
+```lua
+...
+cmp.setup({
+  -- 指定 snippet 引擎
+  snippet = {...},
+  -- 来源
+  sources = cmp.config.sources({ ... }),
+  -- 快捷键
+  mapping = require("keybindings").cmp(cmp),
+  -- 使用lspkind-nvim显示类型图标 (新增)
+  formatting = require('lsp.ui').formatting
+})
+...
+```
+
+### 配置 indent_blankline.nvim 插件
+
+[它](https://github.com/lukas-reineke/indent-blankline.nvim)会随着光标的移动提醒我们在哪个上下文中。如果你需要他的话，打开 `plugins.lua`，增加插件：
+
+```lua
+-- indent-blankline
+    use("lukas-reineke/indent-blankline.nvim")
+```
+
+安装后新建配置文件：`lua/plugin-config/indent-blankline.lua`
+
+```lua
+local status, ident_blankline = pcall(require, "indent_blankline")
+if not status then
+  vim.notify("没有找到 indent_blankline")
+  return
+end
+
+ident_blankline.setup({
+  -- 空行占位
+  space_char_blankline = " ",
+  -- 用 treesitter 判断上下文
+  show_current_context = true,
+  show_current_context_start = true,
+  context_patterns = {
+    "class",
+    "function",
+    "method",
+    "element",
+    "^if",
+    "^while",
+    "^for",
+    "^object",
+    "^table",
+    "block",
+    "arguments",
+  },
+  -- :echo &filetype
+  filetype_exclude = {
+    "dashboard",
+    "packer",
+    "terminal",
+    "help",
+    "log",
+    "markdown",
+    "TelescopePrompt",
+    "lsp-installer",
+    "lspinfo",
+    "toggleterm",
+  },
+  -- 竖线样式
+  -- char = '¦'
+  -- char = '┆'
+  -- char = '│'
+  -- char = "⎸",
+  char = "▏",
+})
+```
+
+这里需要注意的是该插件会在任何界面都添加这种竖线，但是在我们之前的首页 dashboard 中就不该加入这种竖线。这个时候我们就要在 `filetype_exclude` 中排除 "dashboard" 这个界面。上边代码中我已经排除了好多界面，但如果你还在哪个不该出现竖线的窗口中看到了竖线，要怎么办呢？
+
+方法为： 当光标在该界面内时输入 `:echo &filetype` 回车，这时下边状态栏会输出该文件的类型，把他加入到上边的 `filetype_exclude` 变量中排除就好了。
+
+对了，要生效可别忘了在 **入口文件** 中引入：
+
+```lua
+require("plugin-config.indent-blankline")
+```
+
+重启后生效。
+
+### 配置 lspsaga.nvim
+
+安装[lspsage](https://github.com/kkharji/lspsaga.nvim)
+
+```lua
+use("tami5/lspsaga.nvim" ) -- 新增
+```
+
+打开 `lua/lsp/ui.lua` ，在 `lspkind` 配置后边加入代码：
+
+```lua
+local lspsaga = require 'lspsaga'
+lspsaga.setup { -- defaults ...
+  debug = false,
+  use_saga_diagnostic_sign = true,
+  -- diagnostic sign
+  error_sign = "",
+  warn_sign = "",
+  hint_sign = "",
+  infor_sign = "",
+  diagnostic_header_icon = "   ",
+  -- code action title icon
+  code_action_icon = " ",
+  code_action_prompt = {
+    enable = true,
+    sign = true,
+    sign_priority = 40,
+    virtual_text = true,
+  },
+  finder_definition_icon = "  ",
+  finder_reference_icon = "  ",
+  max_preview_lines = 10,
+  finder_action_keys = {
+    -- open = "o",
+    open = "<CR>",
+    vsplit = "s",
+    split = "i",
+    -- quit = "q",
+    quit = "<ESC>",
+    scroll_down = "<C-f>",
+    scroll_up = "<C-b>",
+  },
+  code_action_keys = {
+    -- quit = "q",
+    quit = "<ESC>",
+    exec = "<CR>",
+  },
+  rename_action_keys = {
+    -- quit = "<C-c>",
+    quit = "<ESC>",
+    exec = "<CR>",
+  },
+  definition_preview_icon = "  ",
+  border_style = "single",
+  rename_prompt_prefix = "➤",
+  rename_output_qflist = {
+    enable = false,
+    auto_open_qflist = false,
+  },
+  server_filetype_map = {},
+  diagnostic_prefix_format = "%d. ",
+  diagnostic_message_format = "%m %c",
+  highlight_prefix = false,
+}
+```
+
+这里基本上都是默认配置，我只修改了几个快捷键，注释的部分是原快捷键。
+
+lspsaga 厉害之处是，安装后会有一系列新命令来替换原有功能，比如我们在之前看见过这个 rename 的操作。
+
+你需要做的就是找到之前定义的快捷键，根据需要将原本的功能替换为 Lspsaga 提供的新命令。
+
+这是我目前的设置，请参考，找到 `lua/keybindings.lua` 将之前的 mapLSP 函数替换为：
+
+```lua
+-- lsp 回调函数快捷键设置
+pluginKeys.mapLSP = function(mapbuf)
+  -- rename
+  --[[
+  Lspsaga 替换 rn
+  mapbuf("n", "<leader>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opt)
+  --]]
+  mapbuf("n", "<leader>rn", "<cmd>Lspsaga rename<CR>", opt)
+  -- code action
+  --[[
+  Lspsaga 替换 ca
+  mapbuf("n", "<leader>ca", "<cmd>lua vim.lsp.buf.code_action()<CR>", opt)
+  --]]
+  mapbuf("n", "<leader>ca", "<cmd>Lspsaga code_action<CR>", opt)
+  -- go xx
+  --[[
+    mapbuf('n', 'gd', '<cmd>Lspsaga preview_definition<CR>', opt)
+  --]]
+  mapbuf("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opt)
+  --[[
+  Lspsaga 替换 gh
+  mapbuf("n", "gh", "<cmd>lua vim.lsp.buf.hover()<CR>", opt)
+  --]]
+  mapbuf("n", "gh", "<cmd>Lspsaga hover_doc<cr>", opt)
+  --[[
+  Lspsaga 替换 gr
+  mapbuf("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opt)
+  --]]
+  mapbuf("n", "gr", "<cmd>Lspsaga lsp_finder<CR>", opt)
+  --[[
+  Lspsaga 替换 gp, gj, gk
+  mapbuf("n", "gp", "<cmd>lua vim.diagnostic.open_float()<CR>", opt)
+  mapbuf("n", "gj", "<cmd>lua vim.diagnostic.goto_next()<CR>", opt)
+  mapbuf("n", "gk", "<cmd>lua vim.diagnostic.goto_prev()<CR>", opt)
+  --]]
+  -- diagnostic
+  mapbuf("n", "gp", "<cmd>Lspsaga show_line_diagnostics<CR>", opt)
+  mapbuf("n", "gj", "<cmd>Lspsaga diagnostic_jump_next<cr>", opt)
+  mapbuf("n", "gk", "<cmd>Lspsaga diagnostic_jump_prev<cr>", opt)
+  mapbuf("n", "<leader>f", "<cmd>lua vim.lsp.buf.formatting()<CR>", opt)
+  -- 未用
+  -- mapbuf("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opt)
+  -- mapbuf("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opt)
+  -- mapbuf('n', '<leader>q', '<cmd>lua vim.diagnostic.setloclist()<CR>', opt)
+  -- mapbuf("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opt)
+  -- mapbuf('n', '<space>wa', '<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>', opt)
+  -- mapbuf('n', '<space>wr', '<cmd>lua vim.lsp.buf.remove_workspace_folder()<CR>', opt)
+  -- mapbuf('n', '<space>wl', '<cmd>lua print(vim.inspect(vim.lsp.buf.list_workspace_folders()))<CR>', opt)
+  -- mapbuf('n', '<space>D', '<cmd>lua vim.lsp.buf.type_definition()<CR>', opt)
+end
+
+```
+
+### 代码格式化
+
+null-ls 非常强大，可以作为一个通用 Language Server 来给编辑器注入代码补全，格式化，提示，code actions 等新功能。
+
+简单来说就是你在编辑的同一个 buffer 时，不只可以挂一个 Language Server，还可以多挂一个通用的 null-ls Server 作为补充，这样无论我们使用哪个 Server 都可以共享 null-ls 提供的功能。
+
+null-ls 不仅可以做为代码格式化的工具，他更像一个 Lua 语言与 Language Server 的桥梁，它可以通过注入的方式给编辑器带来更多有趣的功能。
+
+我们先来安装，打开`lua/plugins.lua` 文件，增加代码：
+
+```lua
+ use({ "jose-elias-alvarez/null-ls.nvim", requires = "nvim-lua/plenary.nvim" })
+```
+
+#### 配置 null-ls.nvim
+
+继续添加配置文件 `lua/lsp/null-ls.lua`。
+
+```lua
+local status, null_ls = pcall(require, "null-ls")
+if not status then
+  vim.notify("没有找到 null-ls")
+  return
+end
+
+local formatting = null_ls.builtins.formatting
+
+null_ls.setup({
+  debug = false,
+  sources = {
+    -- Formatting ---------------------
+    --  brew install shfmt
+    formatting.shfmt,
+    -- StyLua
+    formatting.stylua,
+    -- frontend
+    formatting.prettier.with({ -- 只比默认配置少了 markdown
+      filetypes = {
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "vue",
+        "css",
+        "scss",
+        "less",
+        "html",
+        "json",
+        "yaml",
+        "graphql",
+      },
+      prefer_local = "node_modules/.bin",
+    }),
+    -- formatting.fixjson,
+    -- formatting.black.with({ extra_args = { "--fast" } }),
+  },
+  -- 保存自动格式化
+  on_attach = function(client)
+    if client.resolved_capabilities.document_formatting then
+      vim.cmd("autocmd BufWritePre <buffer> lua vim.lsp.buf.formatting_sync()")
+    end
+  end,
+})
+```
+
+简单解释一下代码，首先查找 null-ls 插件是否存在，如果不存在则提示并 return，不再继续执行。 然后注意看下边的 `null_ls.setup` 配置中一大串代码只是在配置一个参数 `sources`， null-ls 有很多内置源，需要哪个就把哪个列在这里就好了。本节只配置了几个常见的 Formatting 源。null-ls 不只内置有 Formatting 源，还有其他共功能的源可配置，也许后续章节会涉及，本节我们专注在代码格式化功能上。
+
+null-ls 支持的 Formatting 源非常非常的多，你可以在其 GitHub 目录中查看：https://github.com/jose-elias-alvarez/null-ls.nvim/tree/main/lua/null-ls/builtins/formatting.上述目录中所有的源，在配置文件中都在 `null_ls.builtins.formatting` 命名空间下，需要哪个列上去就好了。
+
+最后别忘了在 **入口文件** 中引入该文件，同时注释掉 formatter 插件。
+
+当你重启并成功安装 null-ls.nvim 后，可以运行命令 `:LspInfo` 查看绑定的 Language Server 信息。null-ls 作为通用 LSP，可以在任何 filetypes 中运行。
+
+我们可以运行 `:NullLsInfo` 查看源的激活情况
