@@ -17,7 +17,7 @@ palette = "blue" # Default palette. Optional. You'll need to clear the browser c
 # palettes = ["blue", "blue gray", "brown"] # Available palettes. Default to ALL.
 # palettes = [] # Disable palette switcher.
 
-color = "dark" # light, dark or dynamic. Default to dynamic.
+color = "dynamic" # light, dark or dynamic. Default to dynamic.
 
 # fullWidth = true # Full width.
 # fixedHeader = false # Turn on/off fixed header.
@@ -29,7 +29,7 @@ comment = false
 # googleAdsense = ""
 
 # math = true # Enable math globally.
-# toc = false # Disable TOC globally.
+toc = true # Disable TOC globally.
 # tocPosition = "content"
 # breadcrumb = false # Disable breadcrumb
 # breadcrumbDivider = ">" # Breadcrumb divider
@@ -40,7 +40,7 @@ comment = false
 poweredBy = false # Whether to show powered by.
 
 readingTime = true # Whether to display the reading time.
-postDate = false # Whether to display the post date in the post meta section.
+postDate = true # Whether to display the post date in the post meta section.
 
 # featuredPostCount = 10 # The number of featured posts shown in sidebar. Turn off by setting it to false.
 # recentPostCount = 10 # The number of recent posts shown in sidebar. Turn off by setting it to false.
