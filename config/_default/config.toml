@@ -1,8 +1,8 @@
 baseURL = "https://jimyag.cn"
-title = "步履不停"
+title = "步履不停-编程日记"
 theme = "hugo-theme-bootstrap" # install via git submodule
 # theme = "github.com/razonyang/hugo-theme-bootstrap" # install via hugo module
-copyright = "Copyright © 2019-{year} jimyag. All Rights Reserved. 陕ICP备2020018182号-1"
+copyright = "Copyright © 2019-{year} jimyag. All Rights Reserved. "
 
 # Multilingual mode
 defaultContentLanguage = "zh-cn"
