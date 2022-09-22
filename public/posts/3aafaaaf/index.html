@@ -1,0 +1,626 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>将博客迁移到七牛云 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="七牛云对注册的用户提供永久免费存储和CDN额度CDN 优惠专场 (qiniu.com)，所以打算将自己博客迁移过来。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="将博客迁移到七牛云">
+<meta itemprop="description" content="七牛云对注册的用户提供永久免费存储和CDN额度CDN 优惠专场 (qiniu.com)，所以打算将自己博客迁移过来。"><meta itemprop="datePublished" content="2022-06-28T21:16:21+08:00" />
+<meta itemprop="dateModified" content="2022-06-28T21:16:21+08:00" />
+<meta itemprop="wordCount" content="980">
+<meta itemprop="keywords" content="Hugo,教程,七牛云," /><meta property="og:title" content="将博客迁移到七牛云" />
+<meta property="og:description" content="七牛云对注册的用户提供永久免费存储和CDN额度CDN 优惠专场 (qiniu.com)，所以打算将自己博客迁移过来。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/3aafaaaf/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-06-28T21:16:21+08:00" />
+<meta property="article:modified_time" content="2022-06-28T21:16:21+08:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="将博客迁移到七牛云"/>
+<meta name="twitter:description" content="七牛云对注册的用户提供永久免费存储和CDN额度CDN 优惠专场 (qiniu.com)，所以打算将自己博客迁移过来。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e5%b0%86%e5%8d%9a%e5%ae%a2%e8%bf%81%e7%a7%bb%e5%88%b0%e4%b8%83%e7%89%9b%e4%ba%91&url=%2fposts%2f3aafaaaf%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f3aafaaaf%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">将博客迁移到七牛云</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">将博客迁移到七牛云
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-06-28 21:16:21 &#43;0800 CST。">
+    2022-06-28
+  </span><span class="post-reading-time">
+    2 分钟阅读
+  </span><span class="post-taxonomies"><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a><a href="/tags/hugo/" class="badge post-taxonomy">Hugo</a><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a><a href="/tags/%E4%B8%83%E7%89%9B%E4%BA%91/" class="badge post-taxonomy">七牛云</a></span>
+</div>
+<div class="post-content mb-3"><p>七牛云对注册的用户提供永久免费存储和CDN额度<a href="https://marketing.qiniu.com/activity/2021618-act-cdn" target="_blank" rel="noopener noreferrer">CDN 优惠专场 (qiniu.com)</a>，所以打算将自己博客迁移过来。</p>
+<h2 id="账号以及环境准备">账号以及环境准备<a class="anchor ms-1" href="#账号以及环境准备"><i class="fas fa-link"></i></a></h2>
+<h3 id="账号">账号<a class="anchor ms-1" href="#账号"><i class="fas fa-link"></i></a></h3>
+<ul>
+<li>如果是新用户首先在<a href="https://portal.qiniu.com/" target="_blank" rel="noopener noreferrer">门户</a>注册账号，注册完成之后要进行实名认证，这一步跟着官网教程走即可。</li>
+<li>注册完成之后可以在<a href="https://portal.qiniu.com/kodo/bucket" target="_blank" rel="noopener noreferrer">七牛云 - 对象存储 - 空间管理 (qiniu.com)</a>中可以自己新建bucket玩玩，或者<a href="https://developer.qiniu.com/kodo/4263/operational-guidelines-for-the-new-bucket" target="_blank" rel="noopener noreferrer">新建存储空间_快速入门_对象存储 - 七牛开发者中心 (qiniu.com)</a>进行操作。</li>
+<li>新建一个放博客的 bucket ，我这里的 bucket 名称为 <code>jimyag-blog</code></li>
+</ul>
+<h3 id="hugo-环境准备">Hugo 环境准备<a class="anchor ms-1" href="#hugo-环境准备"><i class="fas fa-link"></i></a></h3>
+<p>根据官方文档和自己的系统进行安装</p>
+<p><a href="https://gohugo.io/getting-started/quick-start/" target="_blank" rel="noopener noreferrer">Quick Start | Hugo (gohugo.io)</a></p>
+<ul>
+<li>
+<p>Windows 10 hugo <a href="https://jimyag.cn/posts/642ecc47/#%e5%ae%89%e8%a3%85hugo" target="_blank" rel="noopener noreferrer">安装</a></p>
+</li>
+<li>
+<p>Mac</p>
+<ul>
+<li>
+<p>使用 homebrew 进行安装</p>
+<p>brew install hugo</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="qshell">qshell<a class="anchor ms-1" href="#qshell"><i class="fas fa-link"></i></a></h3>
+<ul>
+<li>
+<p><a href="https://developer.qiniu.com/kodo/1302/qshell" target="_blank" rel="noopener noreferrer">qshell的安装</a></p>
+</li>
+<li>
+<p>配置 AccessKey/SecretKey 。在<a href="https://portal.qiniu.com/user/key" target="_blank" rel="noopener noreferrer">密钥管理</a>中复制自己的 AK 和 SK</p>
+</li>
+<li>
+<p>在终端执行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">qshell</span> <span class="n">account</span> <span class="n">AK</span> <span class="n">Sk</span> <span class="n">name</span>
+</span></span></code></pre></div><p>name 是账号的别称，可以随便输入。</p>
+</li>
+</ul>
+<h2 id="同步-public-内容">同步 public 内容<a class="anchor ms-1" href="#同步-public-内容"><i class="fas fa-link"></i></a></h2>
+<p>qshell 提供了同步本地文件到 bucket 的参数<a href="https://developer.qiniu.com/kodo/kb/1685/using-qshell-synchronize-directories" target="_blank" rel="noopener noreferrer">使用 qshell 同步目录 - 七牛开发者中心 (qiniu.com)</a>。</p>
+<p>我们先到 hugo 博客的目录，这里是我自己的目录</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="nb">cd hugo-blog</span>
+</span></span></code></pre></div><h3 id="创建同步目录的配置文件">创建同步目录的配置文件<a class="anchor ms-1" href="#创建同步目录的配置文件"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">vi</span> <span class="n">upload</span><span class="p">.</span><span class="n">conf</span>
+</span></span></code></pre></div><h3 id="写入">写入<a class="anchor ms-1" href="#写入"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="ln">1</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nt">&#34;src_dir&#34;</span> <span class="p">:</span> <span class="s2">&#34;./public&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nt">&#34;bucket&#34;</span> <span class="p">:</span> <span class="s2">&#34;jimyag-blog&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nt">&#34;rescan_local&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="nt">&#34;overwrite&#34;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="nt">&#34;check_exists&#34;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="nt">&#34;check_hash&#34;</span> <span class="p">:</span> <span class="kc">true</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>“src_dir” 是要同步的文件夹</p>
+<p>“bucket” 是同步到的 bucket的name，在上面已经创建了</p>
+<p>“check_hash” = true 是检查文件的 hash ，如果一样就忽略改文件上传。</p>
+<p>详细的参数见：<a href="https://github.com/qiniu/qshell/blob/master/docs/qupload.md" target="_blank" rel="noopener noreferrer">qshell/qupload.md at master · qiniu/qshell (github.com)</a></p>
+<h3 id="生成-public-文件">生成 public 文件<a class="anchor ms-1" href="#生成-public-文件"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">hugo</span> <span class="n">-D</span>
+</span></span></code></pre></div><h3 id="同步目录">同步目录<a class="anchor ms-1" href="#同步目录"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">qshell</span> <span class="n">qupload</span> <span class="n">upload</span><span class="p">.</span><span class="n">conf</span>
+</span></span></code></pre></div><p><picture><img class="img-fluid" alt="image-20220628230529056" src="/posts/3aafaaaf/index/image-20220628230529056.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="开启默认首页设置">开启默认首页设置<a class="anchor ms-1" href="#开启默认首页设置"><i class="fas fa-link"></i></a></h3>
+<p>在七牛云<a href="https://portal.qiniu.com/kodo/bucket" target="_blank" rel="noopener noreferrer">七牛云 - 对象存储 - 空间设置</a>空间管理-&gt;空间设置-&gt; 打开默认首页设置。</p>
+<p>在 空间预览 中会生成一个测试的域名，可以通过qiniu的域名访问我们的博客了</p>
+<p><picture><img class="img-fluid" alt="image-20220628220520598" src="/posts/3aafaaaf/index/image-20220628220520598.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h2 id="配置-cdn-和自定义域名">配置 CDN 和自定义域名<a class="anchor ms-1" href="#配置-cdn-和自定义域名"><i class="fas fa-link"></i></a></h2>
+<p>虽然我们现在能通过 域名 访问我们的博客了，但是这个测试域名是有期限的，并且不是我们自己的，很难记。</p>
+<h3 id="配置-cdn-加速域名">配置 CDN 加速域名<a class="anchor ms-1" href="#配置-cdn-加速域名"><i class="fas fa-link"></i></a></h3>
+<p>在<a href="https://portal.qiniu.com/cdn/domain/create?bucket=jimyag-blog&amp;fixBucket" target="_blank" rel="noopener noreferrer">七牛云 - 添加域名 (qiniu.com)</a>中 根据提示填写自己的域名</p>
+<p><picture><img class="img-fluid" alt="image-20220628223801791" src="/posts/3aafaaaf/index/image-20220628223801791.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>如果没有证书的话可以在qiniu中申请，点击上面的 <code>SSL证书服务</code>即可申请，其余的默认即可。</p>
+<p>在<a href="https://portal.qiniu.com/certificate/ssl#cert" target="_blank" rel="noopener noreferrer">七牛云 - 证书管理 (qiniu.com)</a>可以上传或者购买证书。</p>
+<p>在上传证书中qiniu只支持 pem 格式的</p>
+<p><picture><img class="img-fluid" alt="image-20220628224633761" src="/posts/3aafaaaf/index/image-20220628224633761.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>点击完成，按照提示进行配置CNAME。<a href="https://developer.qiniu.com/fusion/kb/1322/how-to-configure-cname-domain-name" target="_blank" rel="noopener noreferrer">如何配置域名的 CNAME - 七牛开发者中心 (qiniu.com)</a></p>
+<p><picture><img class="img-fluid" alt="image-20220628225033015" src="/posts/3aafaaaf/index/image-20220628225033015.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>这样CDN 加速就配置完成了</p>
+<p>(这里的域名和刚刚配置的不一样是，刚刚(newblog.jimyag.cn)的是演示的域名)</p>
+<h3 id="自定义域名配置">自定义域名配置<a class="anchor ms-1" href="#自定义域名配置"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="image-20220628225330929" src="/posts/3aafaaaf/index/image-20220628225330929.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>点击 绑定域名 ，输入之前的域名。</p>
+<p>配置CANME</p>
+<p>配置HTTPS</p>
+<p><picture><img class="img-fluid" alt="image-20220628225442331" src="/posts/3aafaaaf/index/image-20220628225442331.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>至此，博客就已经迁移到七牛云 OSS 存储了。</p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/7a57e53d/">LRU缓存实现
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/e84c3531/">Vimtutor翻译
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/642ecc47/">从hexo迁移到Hugo
+</a>
+          <span class="float-end post-date">2022-04-11
+</span>
+        </li><li>
+          <a href="/posts/bf108eb3/">解决win端口没被占用提示access Permissions
+</a>
+          <span class="float-end post-date">2022-04-12
+</span>
+        </li><li>
+          <a href="/posts/173a3c06/">服务器环境的配置
+</a>
+          <span class="float-end post-date">2022-04-11
+</span>
+        </li><li>
+          <a href="/posts/11a90fe7/">Go中rpc包的使用
+</a>
+          <span class="float-end post-date">2022-03-25
+</span>
+        </li><li>
+          <a href="/posts/8d24f484/">RPC基础介绍
+</a>
+          <span class="float-end post-date">2022-03-25
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#账号以及环境准备">账号以及环境准备</a>
+      <ul>
+        <li><a href="#账号">账号</a></li>
+        <li><a href="#hugo-环境准备">Hugo 环境准备</a></li>
+        <li><a href="#qshell">qshell</a></li>
+      </ul>
+    </li>
+    <li><a href="#同步-public-内容">同步 public 内容</a>
+      <ul>
+        <li><a href="#创建同步目录的配置文件">创建同步目录的配置文件</a></li>
+        <li><a href="#写入">写入</a></li>
+        <li><a href="#生成-public-文件"><strong>生成 public 文件</strong></a></li>
+        <li><a href="#同步目录"><strong>同步目录</strong></a></li>
+        <li><a href="#开启默认首页设置">开启默认首页设置</a></li>
+      </ul>
+    </li>
+    <li><a href="#配置-cdn-和自定义域名">配置 CDN 和自定义域名</a>
+      <ul>
+        <li><a href="#配置-cdn-加速域名">配置 CDN 加速域名</a></li>
+        <li><a href="#自定义域名配置">自定义域名配置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script><script defer src="/assets/mermaid/bundle.min.e0678d67a61d9ab297dc3f1de9ca8e43614ce49e9e0d310b80787e532fca37a1.js" integrity="sha256-4GeNZ6YdmrKX3D8d6cqOQ2FM5J6eDTELgHh&#43;Uy/KN6E=" crossorigin="anonymous"></script>
+
+</body>
+</html>

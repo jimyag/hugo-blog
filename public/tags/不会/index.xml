@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>不会 on 编程日记</title>
+    <link>/tags/%E4%B8%8D%E4%BC%9A/</link>
+    <description>Recent content in 不会 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Tue, 04 Jan 2022 21:15:17 +0000</lastBuildDate><atom:link href="/tags/%E4%B8%8D%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode-913-猫和老鼠</title>
+      <link>/posts/e1f1048f/</link>
+      <pubDate>Tue, 04 Jan 2022 21:15:17 +0000</pubDate>
+      
+      <guid>/posts/e1f1048f/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;两位玩家分别扮演猫和老鼠，在一张 无向 图上进行游戏，两人轮流行动。&lt;/p&gt;
+&lt;p&gt;图的形式是：graph[a] 是一个列表，由满足 ab 是图中的一条边的所有节点 b 组成。&lt;/p&gt;
+&lt;p&gt;老鼠从节点 1 开始，第一个出发；猫从节点 2 开始，第二个出发。在节点 0 处有一个洞。&lt;/p&gt;
+&lt;p&gt;在每个玩家的行动中，他们 必须 沿着图中与所在当前位置连通的一条边移动。例如，如果老鼠在节点 1 ，那么它必须移动到 graph[1] 中的任一节点。&lt;/p&gt;
+&lt;p&gt;此外，猫无法移动到洞中（节点 0）。&lt;/p&gt;
+&lt;p&gt;然后，游戏在出现以下三种情形之一时结束：&lt;/p&gt;
+&lt;p&gt;如果猫和老鼠出现在同一个节点，猫获胜。
+如果老鼠到达洞中，老鼠获胜。
+如果某一位置重复出现（即，玩家的位置和移动顺序都与上一次行动相同），游戏平局。
+给你一张图 graph ，并假设两位玩家都都以最佳状态参与游戏：&lt;/p&gt;
+&lt;p&gt;如果老鼠获胜，则返回 1；
+如果猫获胜，则返回 2；
+如果平局，则返回 0 。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

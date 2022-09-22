@@ -1,0 +1,626 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Golang调度器的由来 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Golang调度器的由来" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="Golang调度器的由来">
+<meta itemprop="description" content="Golang调度器的由来"><meta itemprop="datePublished" content="2022-01-16T23:52:10+00:00" />
+<meta itemprop="dateModified" content="2022-01-16T23:52:10+00:00" />
+<meta itemprop="wordCount" content="2448">
+<meta itemprop="keywords" content="教程," /><meta property="og:title" content="Golang调度器的由来" />
+<meta property="og:description" content="Golang调度器的由来" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/46db0928/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-16T23:52:10+00:00" />
+<meta property="article:modified_time" content="2022-01-16T23:52:10+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Golang调度器的由来"/>
+<meta name="twitter:description" content="Golang调度器的由来"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=Golang%e8%b0%83%e5%ba%a6%e5%99%a8%e7%9a%84%e7%94%b1%e6%9d%a5&url=%2fposts%2f46db0928%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f46db0928%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">Golang调度器的由来</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">Golang调度器的由来
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-01-17 07:52:10 &#43;0800 CST。">
+    2022-01-16
+  </span><span class="post-reading-time">
+    5 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a></span>
+</div>
+<div class="post-content mb-3"><p>Golang调度器的由来</p>
+<h2 id="单进程时代">单进程时代<a class="anchor ms-1" href="#单进程时代"><i class="fas fa-link"></i></a></h2>
+<p>我们知道，一切的软件都是跑在操作系统上，真正用来干活(计算)的是CPU。早期的操作系统每个程序就是一个进程，知道一个程序运行完，才能进行下一个进程，就是“单进程时代”</p>
+<p>一切的程序只能串行发生。</p>
+<p><picture><img class="img-fluid" alt="image-20220117112440702" src="/posts/46db0928/index/image-20220117112440702.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>早期的单进程操作系统，面临2个问题：</p>
+<p>1.单一的执行流程，计算机只能一个任务一个任务处理。</p>
+<p>2.进程阻塞所带来的CPU时间浪费。</p>
+<p>那么能不能有多个进程来宏观一起来执行多个任务呢？</p>
+<p>后来操作系统就具有了<strong>最早的并发能力：多进程并发</strong>，当一个进程阻塞的时候，切换到另外等待执行的进程，这样就能尽量把CPU利用起来，CPU就不浪费了。</p>
+<h2 id="多进程多线程">多进程/多线程<a class="anchor ms-1" href="#多进程多线程"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="image-20220117112535523" src="/posts/46db0928/index/image-20220117112535523.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>在多进程/多线程的操作系统中，就解决了阻塞的问题，因为一个进程阻塞cpu可以立刻切换到其他进程中去执行，而且调度cpu的算法可以保证在运行的进程都可以被分配到cpu的运行时间片。这样从宏观来看，似乎多个进程是在同时被运行。</p>
+<p>多进程/多线程解决了阻塞的问题，如果一个进程被阻塞时，时间片到了之后就能切换到另一个进程执行。</p>
+<p><picture><img class="img-fluid" alt="image-20220117112611720" src="/posts/46db0928/index/image-20220117112611720.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>但新的问题就又出现了，进程拥有太多的资源，进程的<strong>创建、切换、销毁</strong>，都会占用很长的时间，CPU虽然利用起来了，但如果进程过多，CPU有很大的一部分都被用来进行进程调度了。</p>
+<blockquote>
+<p>切换主要是把CPU寄存器里当前进程的数据保存到内存中，然后从内存中把另一个进程的数据加载到CPU中</p>
+</blockquote>
+<p>如果进程/线程的数量越多，切换成本越大，也就越浪费。</p>
+<p>看起来CPU100%运行，实际上只有60%执行程序，剩余的在切换</p>
+<p><strong>怎么才能提高CPU的利用率呢？</strong></p>
+<p>但是对于Linux操作系统来讲，cpu对进程的态度和线程的态度是一样的。</p>
+<p>很明显，CPU调度切换的是进程和线程。尽管线程看起来很美好，但实际上多线程开发设计会变得更加复杂，要考虑很多同步竞争等问题，如锁、竞争冲突等。</p>
+<h2 id="协程来提高cpu利用率">协程来提高CPU利用率<a class="anchor ms-1" href="#协程来提高cpu利用率"><i class="fas fa-link"></i></a></h2>
+<p>多进程、多线程已经提高了系统的并发能力，但是在当今互联网高并发场景下，为每个任务都创建一个线程是不现实的，因为会消耗大量的内存(进程<strong>虚拟内存</strong>会占用4GB[32位操作系统], 而线程也要大约4MB)。</p>
+<p>大量的进程/线程出现了新的问题</p>
+<ul>
+<li>高内存占用</li>
+<li>调度的高消耗CPU</li>
+</ul>
+<p>好了，然后工程师们就发现，其实一个线程分为“内核态“线程和”用户态“线程。</p>
+<p>一个“用户态线程”必须要绑定一个“内核态线程”，但是<strong>CPU并不知道有“用户态线程”的存在</strong>，它只知道它运行的是一个“内核态线程”(Linux的PCB进程控制块)。</p>
+<p><picture><img class="img-fluid" alt="image-20220117112923573" src="/posts/46db0928/index/image-20220117112923573.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>这样，我们再去细化去分类一下，内核线程依然叫“线程(thread)”，用户线程叫“协程(co-routine)&quot;.</p>
+<p><picture><img class="img-fluid" alt="image-20220117112945254" src="/posts/46db0928/index/image-20220117112945254.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>看到这里，我们就要开脑洞了，既然一个协程(co-routine)可以绑定一个线程(thread)，那么能不能多个协程(co-routine)绑定一个或者多个线程(thread)上呢。</p>
+<p>之后，我们就看到了有3中协程和线程的映射关系：</p>
+<h4 id="n1关系">N:1关系<a class="anchor ms-1" href="#n1关系"><i class="fas fa-link"></i></a></h4>
+<p>N个协程绑定1个线程，优点就是<strong>协程在用户态线程即完成切换，不会陷入到内核态，这种切换非常的轻量快速</strong>。但也有很大的缺点，1个进程的所有协程都绑定在1个线程上</p>
+<p>缺点：</p>
+<ul>
+<li>某个程序用不了硬件的多核加速能力</li>
+<li>一旦某协程阻塞，造成线程阻塞，本进程的其他协程都无法执行了，根本就没有并发的能力了。</li>
+</ul>
+<p><picture><img class="img-fluid" alt="image-20220117113155576" src="/posts/46db0928/index/image-20220117113155576.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="11-关系">1:1 关系<a class="anchor ms-1" href="#11-关系"><i class="fas fa-link"></i></a></h4>
+<p>1个协程绑定1个线程，这种最容易实现。协程的调度都由CPU完成了，不存在N:1缺点，</p>
+<p>缺点：</p>
+<ul>
+<li>协程的创建、删除和切换的代价都由CPU完成，有点略显昂贵了。</li>
+</ul>
+<p><picture><img class="img-fluid" alt="image-20220117113223504" src="/posts/46db0928/index/image-20220117113223504.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="mn关系">M:N关系<a class="anchor ms-1" href="#mn关系"><i class="fas fa-link"></i></a></h4>
+<p>M个协程绑定1个线程，是N:1和1:1类型的结合，克服了以上2种模型的缺点，但实现起来最为复杂。</p>
+<p><picture><img class="img-fluid" alt="image-20220117113245937" src="/posts/46db0928/index/image-20220117113245937.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>协程跟线程是有区别的，线程由CPU调度是抢占式的，<strong>协程由用户态调度是协作式的</strong>，一个协程让出CPU后，才执行下一个协程。</p>
+<p>调度器主要是协调线程消费协程，还有一些阻塞的协程的切换</p>
+<p>在M:N模型中所有的瓶颈都来自于<code>协程调度器</code>,如果协程调度器越好，则CPU利用率越来越高。</p>
+<h2 id="go的协程goroutine">Go的协程goroutine<a class="anchor ms-1" href="#go的协程goroutine"><i class="fas fa-link"></i></a></h2>
+<p><strong>Go为了提供更容易使用的并发方法，使用了goroutine和channel</strong>。goroutine来自协程的概念，让一组可复用的函数运行在一组线程之上，即使有协程阻塞，该线程的其他协程也可以被<code>runtime</code>调度，转移到其他可运行的线程上。最关键的是，程序员看不到这些底层的细节，这就降低了编程的难度，提供了更容易的并发。</p>
+<p>Go中，协程被称为goroutine，它非常轻量，一个goroutine只占几KB，并且这几KB就足够goroutine运行完，这就能在有限的内存空间内支持大量goroutine，支持了更多的并发。虽然一个goroutine的栈只占几KB，但实际是可伸缩的，如果需要更多内容，<code>runtime</code>会自动为goroutine分配。</p>
+<p>Goroutine特点：</p>
+<ul>
+<li>占用内存更小（几kb）</li>
+<li>调度更灵活(runtime调度)</li>
+</ul>
+<h2 id="被废弃的goroutine调度器">被废弃的goroutine调度器<a class="anchor ms-1" href="#被废弃的goroutine调度器"><i class="fas fa-link"></i></a></h2>
+<p>好了，既然我们知道了协程和线程的关系，那么最关键的一点就是调度协程的调度器的实现了。</p>
+<p>Go目前使用的调度器是2012年重新设计的，因为之前的调度器性能存在问题，所以使用4年就被废弃了，那么我们先来分析一下被废弃的调度器是如何运作的？</p>
+<blockquote>
+<p>大部分文章都是会用G来表示Goroutine，用M来表示线程，那么我们也会用这种表达的对应关系。</p>
+</blockquote>
+<p><picture><img class="img-fluid" alt="image-20220117113402905" src="/posts/46db0928/index/image-20220117113402905.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>下面我们来看看被废弃的golang调度器是如何实现的？</p>
+<p><picture><img class="img-fluid" alt="image-20220117113422621" src="/posts/46db0928/index/image-20220117113422621.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>M想要执行、放回G都必须访问全局G队列，并且M有多个，即多线程访问同一资源需要加锁进行保证互斥/同步，所以全局G队列是有互斥锁进行保护的。</p>
+<p>老调度器有几个缺点：</p>
+<ol>
+<li>创建、销毁、调度G都需要每个M获取锁，这就形成了<strong>激烈的锁竞争</strong>。</li>
+<li>M转移G会造成<strong>延迟和额外的系统负载</strong>。比如当G中包含创建新协程的时候，M创建了G’，为了继续执行G，需要把G’交给M’执行，也造成了<strong>很差的局部性</strong>，因为G’和G是相关的，最好放在M上执行，而不是其他M&rsquo;。</li>
+<li>系统调用(CPU在M之间的切换)导致频繁的线程阻塞和取消阻塞操作增加了系统开销。</li>
+</ol>
+<h2 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h2>
+<p><a href="https://www.bilibili.com/video/BV19r4y1w7Nx?spm_id_from=333.999.0.0" target="_blank" rel="noopener noreferrer">Golang深入理解GPM模型_哔哩哔哩_bilibili</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/e6a3ea27/">Docker部署Go项目
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/61098f97/">Goroutine调度器的GMP模型的设计思想
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/e6a3ea27/">Docker部署Go项目
+</a>
+          <span class="float-end post-date">2022-01-10
+</span>
+        </li><li>
+          <a href="/posts/26f6376f/">Docker-配置文档-图片
+</a>
+          <span class="float-end post-date">2022-01-06
+</span>
+        </li><li>
+          <a href="/posts/ddeb9b11/">Docker-配置文档
+</a>
+          <span class="float-end post-date">2022-01-06
+</span>
+        </li><li>
+          <a href="/posts/8b63f587/">Docker基础入门
+</a>
+          <span class="float-end post-date">2022-01-03
+</span>
+        </li><li>
+          <a href="/posts/37cab689/">Hexo-NexT使用LaTeX公式
+</a>
+          <span class="float-end post-date">2021-08-03
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#单进程时代">单进程时代</a></li>
+    <li><a href="#多进程多线程">多进程/多线程</a></li>
+    <li><a href="#协程来提高cpu利用率">协程来提高CPU利用率</a>
+      <ul>
+        <li></li>
+      </ul>
+    </li>
+    <li><a href="#go的协程goroutine">Go的协程goroutine</a></li>
+    <li><a href="#被废弃的goroutine调度器">被废弃的goroutine调度器</a></li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>链路追踪 on 编程日记</title>
+    <link>/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/</link>
+    <description>Recent content in 链路追踪 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 28 Mar 2022 22:13:56 +0000</lastBuildDate><atom:link href="/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从0到1实现完整的微服务框架-链路追踪</title>
+      <link>/posts/c8b300d9/</link>
+      <pubDate>Mon, 28 Mar 2022 22:13:56 +0000</pubDate>
+      
+      <guid>/posts/c8b300d9/</guid>
+      <description>&lt;p&gt;在分布式系统，尤其是微服务系统中，一次外部请求往往需要内部多个模块，多个中间件，多台机器的相互调用才能完成。在这一系列的调用中，可能有些是串行的，而有些是并行的。在这种情况下，我们如何才能确定这整个请求调用了哪些应用？哪些模块？哪些节点？以及它们的先后顺序和各部分的性能如何呢？&lt;/p&gt;
+&lt;p&gt;这就是涉及到链路追踪。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

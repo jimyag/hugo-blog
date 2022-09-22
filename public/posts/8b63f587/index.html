@@ -1,0 +1,704 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Docker基础入门 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="Docker基础入门">
+<meta itemprop="description" content="Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。"><meta itemprop="datePublished" content="2022-01-03T19:10:41+00:00" />
+<meta itemprop="dateModified" content="2022-01-03T19:10:41+00:00" />
+<meta itemprop="wordCount" content="1667">
+<meta itemprop="keywords" content="教程,Docker," /><meta property="og:title" content="Docker基础入门" />
+<meta property="og:description" content="Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/8b63f587/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-03T19:10:41+00:00" />
+<meta property="article:modified_time" content="2022-01-03T19:10:41+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Docker基础入门"/>
+<meta name="twitter:description" content="Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=Docker%e5%9f%ba%e7%a1%80%e5%85%a5%e9%97%a8&url=%2fposts%2f8b63f587%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f8b63f587%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">Docker基础入门</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">Docker基础入门
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-01-04 03:10:41 &#43;0800 CST。">
+    2022-01-03
+  </span><span class="post-reading-time">
+    4 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a><a href="/tags/docker/" class="badge post-taxonomy">Docker</a></span>
+</div>
+<div class="post-content mb-3"><p>Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。</p>
+<h2 id="docker的简介">Docker的简介<a class="anchor ms-1" href="#docker的简介"><i class="fas fa-link"></i></a></h2>
+<h3 id="与虚拟机对比">与虚拟机对比<a class="anchor ms-1" href="#与虚拟机对比"><i class="fas fa-link"></i></a></h3>
+<table>
+<thead>
+<tr>
+<th>特性</th>
+<th>普通虚拟机</th>
+<th>Docker</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>跨平台</td>
+<td>通常只能在桌面级系统运行，例如 Windows/Mac，无法在不带图形界面的服务器上运行</td>
+<td>支持的系统非常多，各类 windows 和 Linux 都支持</td>
+</tr>
+<tr>
+<td>性能</td>
+<td>性能损耗大，内存占用高，因为是把整个完整系统都虚拟出来了</td>
+<td>性能好，只虚拟软件所需运行环境，最大化减少没用的配置</td>
+</tr>
+<tr>
+<td>自动化</td>
+<td>需要手动安装所有东西</td>
+<td>一个命令就可以自动部署好所需环境</td>
+</tr>
+<tr>
+<td>稳定性</td>
+<td>稳定性不高，不同系统差异大</td>
+<td>稳定性好，不同系统都一样部署方式</td>
+</tr>
+</tbody>
+</table>
+<h3 id="打包分发部署">打包、分发、部署<a class="anchor ms-1" href="#打包分发部署"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li><strong>打包</strong>：就是把你软件运行所需的依赖、第三方库、软件打包到一起，变成一个安装包</li>
+<li><strong>分发</strong>：你可以把你打包好的“安装包”上传到一个镜像仓库，其他人可以非常方便的获取和安装</li>
+<li><strong>部署</strong>：拿着“安装包”就可以一个命令运行起来你的应用，自动模拟出一摸一样的运行环境，不管是在 Windows/Mac/Linux。</li>
+</ol>
+<h3 id="docker-部署的优势">Docker 部署的优势<a class="anchor ms-1" href="#docker-部署的优势"><i class="fas fa-link"></i></a></h3>
+<p>常规应用开发部署方式：自己在 Windows 上开发、测试 &ndash;&gt; 到 Linux 服务器配置运行环境部署。</p>
+<blockquote>
+<p>问题：我机器上跑都没问题，怎么到服务器就各种问题了</p>
+</blockquote>
+<p>用 Docker 开发部署流程：自己在 Windows 上开发、测试 &ndash;&gt; 打包为 Docker 镜像（可以理解为软件安装包） &ndash;&gt; 各种服务器上只需要一个命令部署好</p>
+<blockquote>
+<p>优点：确保了不同机器上跑都是一致的运行环境，不会出现我机器上跑正常，你机器跑就有问题的情况。</p>
+</blockquote>
+<h3 id="docker-通常用来做什么">Docker 通常用来做什么<a class="anchor ms-1" href="#docker-通常用来做什么"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>应用分发、部署，方便传播给他人安装。特别是开源软件和提供私有部署的应用</li>
+<li>快速安装测试/学习软件，用完就丢（类似小程序），不把时间浪费在安装软件上。例如 Redis / MongoDB / ElasticSearch / ELK</li>
+<li>多个版本软件共存，不污染系统，例如 Python2、Python3，Redis4.0，Redis5.0</li>
+<li>Windows 上体验/学习各种 Linux 系统</li>
+</ol>
+<h3 id="镜像容器">镜像、容器<a class="anchor ms-1" href="#镜像容器"><i class="fas fa-link"></i></a></h3>
+<p><strong>镜像</strong>：可以理解为软件安装包，可以方便的进行传播和安装。
+<strong>容器</strong>：软件安装后的状态，每个软件运行环境都是独立的、隔离的，称之为容器。</p>
+<h3 id="安装">安装<a class="anchor ms-1" href="#安装"><i class="fas fa-link"></i></a></h3>
+<p>桌面版：https://www.docker.com/products/docker-desktop
+服务器版：https://docs.docker.com/engine/install/#server</p>
+<p>根据自己系统选择对应的官网教程进行安装即可。</p>
+<h3 id="windows设置镜像加速源">Windows设置镜像加速源<a class="anchor ms-1" href="#windows设置镜像加速源"><i class="fas fa-link"></i></a></h3>
+<table>
+<thead>
+<tr>
+<th>镜像加速器</th>
+<th>镜像加速器地址</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Docker 中国官方镜像</td>
+<td><a href="https://registry.docker-cn.com" target="_blank" rel="noopener noreferrer">https://registry.docker-cn.com</a></td>
+</tr>
+<tr>
+<td>DaoCloud 镜像站</td>
+<td><a href="http://f1361db2.m.daocloud.io" target="_blank" rel="noopener noreferrer">http://f1361db2.m.daocloud.io</a></td>
+</tr>
+<tr>
+<td>Azure 中国镜像</td>
+<td><a href="https://dockerhub.azk8s.cn" target="_blank" rel="noopener noreferrer">https://dockerhub.azk8s.cn</a></td>
+</tr>
+<tr>
+<td>科大镜像站</td>
+<td><a href="https://docker.mirrors.ustc.edu.cn" target="_blank" rel="noopener noreferrer">https://docker.mirrors.ustc.edu.cn</a></td>
+</tr>
+<tr>
+<td>阿里云</td>
+<td>https://&lt;your_code&gt;.mirror.aliyuncs.com</td>
+</tr>
+<tr>
+<td>七牛云</td>
+<td><a href="https://reg-mirror.qiniu.com" target="_blank" rel="noopener noreferrer">https://reg-mirror.qiniu.com</a></td>
+</tr>
+<tr>
+<td>网易云</td>
+<td><a href="https://hub-mirror.c.163.com" target="_blank" rel="noopener noreferrer">https://hub-mirror.c.163.com</a></td>
+</tr>
+<tr>
+<td>腾讯云</td>
+<td><a href="https://mirror.ccs.tencentyun.com" target="_blank" rel="noopener noreferrer">https://mirror.ccs.tencentyun.com</a></td>
+</tr>
+</tbody>
+</table>
+<p><picture><img class="img-fluid" alt="image-20220103193146138" src="/posts/8b63f587/index/image-20220103193146138.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>添加如下内容</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="ln">1</span><span class="cl"><span class="s2">&#34;registry-mirrors&#34;</span><span class="err">:</span><span class="p">[</span><span class="s2">&#34;https://registry.docker-cn.com&#34;</span><span class="p">,</span><span class="s2">&#34;https://reg-mirror.qiniu.com&#34;</span><span class="p">]</span><span class="err">,</span>
+</span></span></code></pre></div><p>点击重启即可。</p>
+<h2 id="docker-快速安装软件">Docker 快速安装软件<a class="anchor ms-1" href="#docker-快速安装软件"><i class="fas fa-link"></i></a></h2>
+<h3 id="直接安装的缺点">直接安装的缺点<a class="anchor ms-1" href="#直接安装的缺点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>安装麻烦，可能有各种依赖，运行报错。例如：WordPress，ElasticSearch，Redis，ELK</li>
+<li>可能对 Windows 并不友好，运行有各种兼容问题，软件只支持 Linux 上跑</li>
+<li>不方便安装多版本软件，不能共存。</li>
+<li>电脑安装了一堆软件，拖慢电脑速度。</li>
+<li>不同系统和硬件，安装方式不一样</li>
+</ol>
+<h3 id="docker-安装的优点">Docker 安装的优点<a class="anchor ms-1" href="#docker-安装的优点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>一个命令就可以安装好，快速方便</li>
+<li>有大量的镜像，可直接使用</li>
+<li>没有系统兼容问题，Linux 专享软件也照样跑</li>
+<li>支持软件多版本共存</li>
+<li>用完就丢，不拖慢电脑速度</li>
+<li>不同系统和硬件，只要安装好 Docker 其他都一样了，一个命令搞定所有</li>
+</ol>
+<h3 id="演示-docker-安装-redis">演示 Docker 安装 Redis<a class="anchor ms-1" href="#演示-docker-安装-redis"><i class="fas fa-link"></i></a></h3>
+<p>Redis 官网：https://redis.io/</p>
+<blockquote>
+<p>官网下载安装教程只有源码安装方式，没有 Windows 版本。想要自己安装 windows 版本需要去找别人编译好的安装包。</p>
+</blockquote>
+<p>在Redis官网我们没有找到Windows的安装方式，那么我们想要在在Windows下安装只能自己编译，配置起来很麻烦。</p>
+<p><picture><img class="img-fluid" alt="image-20220103194118848" src="/posts/8b63f587/index/image-20220103194118848.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>所以，我们选择用Docker进行安装。</p>
+<h4 id="在docker官方镜像仓库找到redis">在Docker官方镜像仓库找到Redis<a class="anchor ms-1" href="#在docker官方镜像仓库找到redis"><i class="fas fa-link"></i></a></h4>
+<p><a href="https://hub.docker.com/" target="_blank" rel="noopener noreferrer">https://hub.docker.com/</a></p>
+<p><picture><img class="img-fluid" alt="image-20220103194336644" src="/posts/8b63f587/index/image-20220103194336644.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="一条命令运行redis">一条命令运行Redis<a class="anchor ms-1" href="#一条命令运行redis"><i class="fas fa-link"></i></a></h4>
+<p>在终端执行以下命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">docker run -d -p 6379:6379 --name redis redis:latest
+</span></span></code></pre></div><p>Docker命令参数可以查看官网文档<a href="https://docs.docker.com/engine/reference/commandline/run/" target="_blank" rel="noopener noreferrer">docker run | Docker Documentation</a></p>
+<p>终端中显示如下信息表示成功安装</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln"> 1</span><span class="cl">C:<span class="se">\U</span>sers<span class="se">\j</span>imyag&gt;docker run -d -p 6379:6379 --name redis redis:latest
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">Unable to find image <span class="s1">&#39;redis:latest&#39;</span> locally
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">latest: Pulling from library/redis
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">a2abf6c4d29d: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">c7a4e4382001: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">4044b9ba67c9: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">c8388a79482f: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">413c8bb60be2: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">1abfd3011519: Pull <span class="nb">complete</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">Digest: sha256:db485f2e245b5b3329fdc7eff4eb00f913e09d8feb9ca720788059fdc2ed8339
+</span></span><span class="line"><span class="ln">11</span><span class="cl">Status: Downloaded newer image <span class="k">for</span> redis:latest
+</span></span><span class="line"><span class="ln">12</span><span class="cl">3b5a6af571d0d5117c4c339925e5fc30ce513ee17a06eb9475a2d372888380f2
+</span></span></code></pre></div><p>其中里面的hash值不同。</p>
+<p>我们可以在桌面版Docker中看到redis的运行情况</p>
+<p><picture><img class="img-fluid" alt="image-20220103195119617" src="/posts/8b63f587/index/image-20220103195119617.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>我们也可以进行Redis的终端进行测试</p>
+<p><picture><img class="img-fluid" alt="image-20220103195409559" src="/posts/8b63f587/index/image-20220103195409559.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid" alt="image-20220103195417658" src="/posts/8b63f587/index/image-20220103195417658.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h2 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h2>
+<p><a href="https://www.bilibili.com/video/BV11L411g7U1" target="_blank" rel="noopener noreferrer">Docker 1小时快速上手教程，无废话纯干货_哔哩哔哩_bilibili</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/95bcecc9/">LeetCode-1185-一周中的第几天
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/e1f1048f/">LeetCode-913-猫和老鼠
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/37cab689/">Hexo-NexT使用LaTeX公式
+</a>
+          <span class="float-end post-date">2021-08-03
+</span>
+        </li><li>
+          <a href="/posts/19323af8/">首次部署网站-Hexo-Nginx
+</a>
+          <span class="float-end post-date">2021-07-31
+</span>
+        </li><li>
+          <a href="/posts/95bcecc9/">LeetCode-1185-一周中的第几天
+</a>
+          <span class="float-end post-date">2022-01-03
+</span>
+        </li><li>
+          <a href="/posts/43ef6653/">LeetCode-第274场周赛
+</a>
+          <span class="float-end post-date">2022-01-02
+</span>
+        </li><li>
+          <a href="/posts/297384ed/">LeetCode-390-消除游戏
+</a>
+          <span class="float-end post-date">2022-01-02
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#docker的简介">Docker的简介</a>
+      <ul>
+        <li><a href="#与虚拟机对比">与虚拟机对比</a></li>
+        <li><a href="#打包分发部署">打包、分发、部署</a></li>
+        <li><a href="#docker-部署的优势">Docker 部署的优势</a></li>
+        <li><a href="#docker-通常用来做什么">Docker 通常用来做什么</a></li>
+        <li><a href="#镜像容器">镜像、容器</a></li>
+        <li><a href="#安装">安装</a></li>
+        <li><a href="#windows设置镜像加速源">Windows设置镜像加速源</a></li>
+      </ul>
+    </li>
+    <li><a href="#docker-快速安装软件">Docker 快速安装软件</a>
+      <ul>
+        <li><a href="#直接安装的缺点">直接安装的缺点</a></li>
+        <li><a href="#docker-安装的优点">Docker 安装的优点</a></li>
+        <li><a href="#演示-docker-安装-redis">演示 Docker 安装 Redis</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

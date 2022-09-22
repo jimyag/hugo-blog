@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>简单 on 编程日记</title>
+    <link>/tags/%E7%AE%80%E5%8D%95/</link>
+    <description>Recent content in 简单 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sun, 09 Jan 2022 00:21:39 +0000</lastBuildDate><atom:link href="/tags/%E7%AE%80%E5%8D%95/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode-1629-按键持续时间最长的键</title>
+      <link>/posts/81eca2cd/</link>
+      <pubDate>Sun, 09 Jan 2022 00:21:39 +0000</pubDate>
+      
+      <guid>/posts/81eca2cd/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;LeetCode 设计了一款新式键盘，正在测试其可用性。测试人员将会点击一系列键（总计 n 个），每次一个。&lt;/p&gt;
+&lt;p&gt;给你一个长度为 n 的字符串 keysPressed ，其中 keysPressed[i] 表示测试序列中第 i 个被按下的键。releaseTimes 是一个升序排列的列表，其中 releaseTimes[i] 表示松开第 i 个键的时间。字符串和数组的 下标都从 0 开始 。第 0 个键在时间为 0 时被按下，接下来每个键都 恰好 在前一个键松开时被按下。&lt;/p&gt;
+&lt;p&gt;测试人员想要找出按键 持续时间最长 的键。第 i 次按键的持续时间为 releaseTimes[i] - releaseTimes[i - 1] ，第 0 次按键的持续时间为 releaseTimes[0] 。&lt;/p&gt;
+&lt;p&gt;注意，测试期间，同一个键可以在不同时刻被多次按下，而每次的持续时间都可能不同。&lt;/p&gt;
+&lt;p&gt;请返回按键 持续时间最长 的键，如果有多个这样的键，则返回 按字母顺序排列最大 的那个键。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1614-括号的最大嵌套深度</title>
+      <link>/posts/965e3905/</link>
+      <pubDate>Fri, 07 Jan 2022 00:11:54 +0000</pubDate>
+      
+      <guid>/posts/965e3905/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;如果字符串满足以下条件之一，则可以称之为 有效括号字符串（valid parentheses string，可以简写为 VPS）：&lt;/p&gt;
+&lt;p&gt;字符串是一个空字符串 &amp;ldquo;&amp;quot;，或者是一个不为 &amp;ldquo;(&amp;rdquo; 或 &amp;ldquo;)&amp;rdquo; 的单字符。
+字符串可以写为 AB（A 与 B 字符串连接），其中 A 和 B 都是 有效括号字符串 。
+字符串可以写为 (A)，其中 A 是一个 有效括号字符串 。
+类似地，可以定义任何有效括号字符串 S 的 嵌套深度 depth(S)：&lt;/p&gt;
+&lt;p&gt;depth(&amp;rdquo;&amp;quot;) = 0
+depth(C) = 0，其中 C 是单个字符的字符串，且该字符不是 &amp;ldquo;(&amp;rdquo; 或者 &amp;ldquo;)&amp;rdquo;
+depth(A + B) = max(depth(A), depth(B))，其中 A 和 B 都是 有效括号字符串
+depth(&amp;quot;(&amp;quot; + A + &amp;ldquo;)&amp;rdquo;) = 1 + depth(A)，其中 A 是一个 有效括号字符串
+例如：&amp;quot;&amp;quot;、&amp;quot;()()&amp;quot;、&amp;quot;()(()())&amp;quot; 都是 有效括号字符串（嵌套深度分别为 0、1、2），而 &amp;ldquo;)(&amp;rdquo; 、&amp;quot;(()&amp;quot; 都不是 有效括号字符串 。&lt;/p&gt;
+&lt;p&gt;给你一个 有效括号字符串 s，返回该字符串的 s 嵌套深度 。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1576-替换所有的问号</title>
+      <link>/posts/68d43a4d/</link>
+      <pubDate>Wed, 05 Jan 2022 22:16:03 +0000</pubDate>
+      
+      <guid>/posts/68d43a4d/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个仅包含小写英文字母和 &amp;lsquo;?&amp;rsquo; 字符的字符串 s，请你将所有的 &amp;lsquo;?&amp;rsquo; 转换为若干小写字母，使最终的字符串不包含任何 连续重复 的字符。&lt;/p&gt;
+&lt;p&gt;注意：你 不能 修改非 &lt;code&gt;?&lt;/code&gt; 字符。&lt;/p&gt;
+&lt;p&gt;题目测试用例保证 除 &lt;code&gt;?&lt;/code&gt; 字符 之外，不存在连续重复的字符。&lt;/p&gt;
+&lt;p&gt;在完成所有转换（可能无需转换）后返回最终的字符串。如果有多个解决方案，请返回其中任何一个。可以证明，在给定的约束条件下，答案总是存在的。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1185-一周中的第几天</title>
+      <link>/posts/95bcecc9/</link>
+      <pubDate>Mon, 03 Jan 2022 12:14:06 +0000</pubDate>
+      
+      <guid>/posts/95bcecc9/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个日期，请你设计一个算法来判断它是对应一周中的哪一天。&lt;/p&gt;
+&lt;p&gt;输入为三个整数：day、month 和 year，分别表示日、月、年。&lt;/p&gt;
+&lt;p&gt;您返回的结果必须是这几个值中的一个 {&amp;ldquo;Sunday&amp;rdquo;, &amp;ldquo;Monday&amp;rdquo;, &amp;ldquo;Tuesday&amp;rdquo;, &amp;ldquo;Wednesday&amp;rdquo;, &amp;ldquo;Thursday&amp;rdquo;, &amp;ldquo;Friday&amp;rdquo;, &amp;ldquo;Saturday&amp;rdquo;}。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-第274场周赛</title>
+      <link>/posts/43ef6653/</link>
+      <pubDate>Sun, 02 Jan 2022 12:21:54 +0000</pubDate>
+      
+      <guid>/posts/43ef6653/</guid>
+      <description>&lt;p&gt;第一次参加LeetCode的周赛，记录一下自己AC的三道简单题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-2022-将一维数组转变成二维数组</title>
+      <link>/posts/9806fff7/</link>
+      <pubDate>Sat, 01 Jan 2022 15:33:21 +0000</pubDate>
+      
+      <guid>/posts/9806fff7/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个下标从 0 开始的一维整数数组 original 和两个整数 m 和  n 。你需要使用 original 中 所有 元素创建一个 m 行 n 列的二维数组。&lt;/p&gt;
+&lt;p&gt;original 中下标从 0 到 n - 1 （都 包含 ）的元素构成二维数组的第一行，下标从 n 到 2 * n - 1 （都 包含 ）的元素构成二维数组的第二行，依此类推。&lt;/p&gt;
+&lt;p&gt;请你根据上述过程返回一个 m x n 的二维数组。如果无法构成这样的二维数组，请你返回一个空的二维数组。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-507-完美数</title>
+      <link>/posts/9c98d12/</link>
+      <pubDate>Fri, 31 Dec 2021 08:16:09 +0000</pubDate>
+      
+      <guid>/posts/9c98d12/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;对于一个 正整数，如果它和除了它自身以外的所有 正因子 之和相等，我们称它为 「完美数」。&lt;/p&gt;
+&lt;p&gt;给定一个 整数 n， 如果是完美数，返回 true，否则返回 false&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1995-统计特殊四元组</title>
+      <link>/posts/ace15a6d/</link>
+      <pubDate>Wed, 29 Dec 2021 10:51:23 +0000</pubDate>
+      
+      <guid>/posts/ace15a6d/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个 下标从 0 开始 的整数数组 nums ，返回满足下述条件的 不同 四元组 (a, b, c, d) 的 数目 ：&lt;/p&gt;
+&lt;p&gt;nums[a] + nums[b] + nums[c] == nums[d] ，且
+a &amp;lt; b &amp;lt; c &amp;lt; d&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1078-Bigram-分词</title>
+      <link>/posts/e0d1a0/</link>
+      <pubDate>Sun, 26 Dec 2021 23:15:20 +0000</pubDate>
+      
+      <guid>/posts/e0d1a0/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给出第一个词 first 和第二个词 second，考虑在某些文本 text 中可能以 &amp;ldquo;first second third&amp;rdquo; 形式出现的情况，其中 second 紧随 first 出现，third 紧随 second 出现。&lt;/p&gt;
+&lt;p&gt;对于每种这样的情况，将第三个词 &amp;ldquo;third&amp;rdquo; 添加到答案中，并返回答案。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1154-一年中的第几天</title>
+      <link>/posts/bd5751e9/</link>
+      <pubDate>Tue, 21 Dec 2021 08:58:18 +0000</pubDate>
+      
+      <guid>/posts/bd5751e9/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个字符串 date ，按 YYYY-MM-DD 格式表示一个 现行公元纪年法 日期。请你计算并返回该日期是当年的第几天。&lt;/p&gt;
+&lt;p&gt;通常情况下，我们认为 1 月 1 日是每年的第 1 天，1 月 2 日是每年的第 2 天，依此类推。每个月的天数与现行公元纪年法（格里高利历）一致。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-997-找到小镇的法官</title>
+      <link>/posts/e18d9e0d/</link>
+      <pubDate>Sun, 19 Dec 2021 22:14:28 +0000</pubDate>
+      
+      <guid>/posts/e18d9e0d/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;在一个小镇里，按从 1 到 n 为 n 个人进行编号。传言称，这些人中有一个是小镇上的秘密法官。&lt;/p&gt;
+&lt;p&gt;如果小镇的法官真的存在，那么：&lt;/p&gt;
+&lt;p&gt;小镇的法官不相信任何人。
+每个人（除了小镇法官外）都信任小镇的法官。
+只有一个人同时满足条件 1 和条件 2 。
+给定数组 trust，该数组由信任对 trust[i] = [a, b] 组成，表示编号为 a 的人信任编号为 b 的人。&lt;/p&gt;
+&lt;p&gt;如果小镇存在秘密法官并且可以确定他的身份，请返回该法官的编号。否则，返回 -1。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-1518-换酒问题</title>
+      <link>/posts/656c6fd2/</link>
+      <pubDate>Fri, 17 Dec 2021 10:47:30 +0000</pubDate>
+      
+      <guid>/posts/656c6fd2/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;小区便利店正在促销，用 numExchange 个空酒瓶可以兑换一瓶新酒。你购入了 numBottles 瓶酒。&lt;/p&gt;
+&lt;p&gt;如果喝掉了酒瓶中的酒，那么酒瓶就会变成空的。&lt;/p&gt;
+&lt;p&gt;请你计算 最多 能喝到多少瓶酒。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>LeetCode-709-转换成小写字母</title>
+      <link>/posts/1af266db/</link>
+      <pubDate>Sun, 12 Dec 2021 07:43:09 +0000</pubDate>
+      
+      <guid>/posts/1af266db/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目：&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个字符串 &lt;code&gt;s&lt;/code&gt; ，将该字符串中的大写字母转换成相同的小写字母，返回新的字符串。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

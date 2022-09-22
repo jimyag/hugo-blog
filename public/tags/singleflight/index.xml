@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>SingleFlight on 编程日记</title>
+    <link>/tags/singleflight/</link>
+    <description>Recent content in SingleFlight on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Wed, 27 Apr 2022 13:17:31 +0800</lastBuildDate><atom:link href="/tags/singleflight/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>减少下层服务的压力 SingleFlight</title>
+      <link>/posts/34618820/</link>
+      <pubDate>Wed, 27 Apr 2022 13:17:31 +0800</pubDate>
+      
+      <guid>/posts/34618820/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/jimyag/singleflight&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;jimyag/singleflight&lt;/a&gt; 包主要是用来做并发控制，常见的比如&lt;code&gt;防止缓存击穿&lt;/code&gt; &lt;code&gt;合并查询请求&lt;/code&gt;。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

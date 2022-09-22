@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 编程日记</title>
+    <link>/tags/docker/</link>
+    <description>Recent content in Docker on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 10 Jan 2022 23:20:18 +0000</lastBuildDate><atom:link href="/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker部署Go项目</title>
+      <link>/posts/e6a3ea27/</link>
+      <pubDate>Mon, 10 Jan 2022 23:20:18 +0000</pubDate>
+      
+      <guid>/posts/e6a3ea27/</guid>
+      <description>&lt;p&gt;记录自己用dockers部署Go项目&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker-配置文档-图片</title>
+      <link>/posts/26f6376f/</link>
+      <pubDate>Thu, 06 Jan 2022 21:47:56 +0000</pubDate>
+      
+      <guid>/posts/26f6376f/</guid>
+      <description>&lt;p&gt;Docker-配置文档的图片&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker-配置文档</title>
+      <link>/posts/ddeb9b11/</link>
+      <pubDate>Thu, 06 Jan 2022 21:34:27 +0000</pubDate>
+      
+      <guid>/posts/ddeb9b11/</guid>
+      <description>&lt;p&gt;哔哩哔哩&lt;a href=&#34;https://www.bilibili.com/video/BV1wQ4y1Y7SE?spm_id_from=333.999.0.0&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;【编程不良人】Docker&amp;amp;Docker-Compose 实战!_哔哩哔哩_bilibili&lt;/a&gt;的教程的文档总结&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker基础入门</title>
+      <link>/posts/8b63f587/</link>
+      <pubDate>Mon, 03 Jan 2022 19:10:41 +0000</pubDate>
+      
+      <guid>/posts/8b63f587/</guid>
+      <description>&lt;p&gt;Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

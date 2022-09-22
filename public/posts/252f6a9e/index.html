@@ -1,0 +1,893 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>从0到1实现完整的微服务框架-分布式理论基础、分布式事务 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="从0到1实现完整的微服务框架-分布式理论基础、分布式事务">
+<meta itemprop="description" content="在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。"><meta itemprop="datePublished" content="2022-04-03T09:49:00+00:00" />
+<meta itemprop="dateModified" content="2022-04-03T09:49:00+00:00" />
+<meta itemprop="wordCount" content="7761">
+<meta itemprop="keywords" content="微服务,分布式,BASE理论,CAP理论," /><meta property="og:title" content="从0到1实现完整的微服务框架-分布式理论基础、分布式事务" />
+<meta property="og:description" content="在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/252f6a9e/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-03T09:49:00+00:00" />
+<meta property="article:modified_time" content="2022-04-03T09:49:00+00:00" /><meta property="og:site_name" content="编程日记" />
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从0到1实现完整的微服务框架-分布式理论基础、分布式事务"/>
+<meta name="twitter:description" content="在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e4%bb%8e0%e5%88%b01%e5%ae%9e%e7%8e%b0%e5%ae%8c%e6%95%b4%e7%9a%84%e5%be%ae%e6%9c%8d%e5%8a%a1%e6%a1%86%e6%9e%b6-%e5%88%86%e5%b8%83%e5%bc%8f%e7%90%86%e8%ae%ba%e5%9f%ba%e7%a1%80%e3%80%81%e5%88%86%e5%b8%83%e5%bc%8f%e4%ba%8b%e5%8a%a1&url=%2fposts%2f252f6a9e%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f252f6a9e%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">从0到1实现完整的微服务框架-分布式理论基础、分布式事务</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">从0到1实现完整的微服务框架-分布式理论基础、分布式事务
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-04-03 17:49:00 &#43;0800 CST。">
+    2022-04-03
+  </span><span class="post-reading-time">
+    16 分钟阅读
+  </span><span class="post-taxonomies"><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge post-taxonomy">从0到1实现完整的微服务框架</a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge post-taxonomy">微服务</a><a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/" class="badge post-taxonomy">分布式</a><a href="/tags/base%E7%90%86%E8%AE%BA/" class="badge post-taxonomy">BASE理论</a><a href="/tags/cap%E7%90%86%E8%AE%BA/" class="badge post-taxonomy">CAP理论</a></span>
+</div>
+<div class="post-content mb-3"><p>在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。</p>
+<h2 id="数据不一致">数据不一致<a class="anchor ms-1" href="#数据不一致"><i class="fas fa-link"></i></a></h2>
+<h3 id="事务性问题代码问题">事务性问题(代码问题)<a class="anchor ms-1" href="#事务性问题代码问题"><i class="fas fa-link"></i></a></h3>
+<h4 id="先扣库存还是后扣库存">先扣库存还是后扣库存<a class="anchor ms-1" href="#先扣库存还是后扣库存"><i class="fas fa-link"></i></a></h4>
+<h5 id="先扣库存">先扣库存<a class="anchor ms-1" href="#先扣库存"><i class="fas fa-link"></i></a></h5>
+<p>扣完库存之后，新建订单出错了，而库存的事务以及提交了。库存就拜拜扣了</p>
+<h5 id="后扣库存">后扣库存<a class="anchor ms-1" href="#后扣库存"><i class="fas fa-link"></i></a></h5>
+<p>先建订单成功了，之后调用库存服务失败了</p>
+<ol>
+<li>库存服务挂了：直接回滚就行</li>
+<li>网络出现问题了：已经扣减了，但是扣减库存的响应的时候挂了。这时候订单服务那边收到超时了，自己回滚了，但是库存已经扣除了。</li>
+</ol>
+<h3 id="业务问题-用户下单之后没有支付">业务问题-用户下单之后没有支付<a class="anchor ms-1" href="#业务问题-用户下单之后没有支付"><i class="fas fa-link"></i></a></h3>
+<p>库存已经被扣减了，但是用户一直没有支付。</p>
+<h3 id="解决">解决<a class="anchor ms-1" href="#解决"><i class="fas fa-link"></i></a></h3>
+<p>对于事务性问题，采用分布式的事务解决。</p>
+<p>对于业务下单不支付，采用超时机制进行，超时之后将库存归还。</p>
+<h3 id="事务和分布式事务">事务和分布式事务<a class="anchor ms-1" href="#事务和分布式事务"><i class="fas fa-link"></i></a></h3>
+<h4 id="事务概念">事务概念:<a class="anchor ms-1" href="#事务概念"><i class="fas fa-link"></i></a></h4>
+<p>一组sq|语句操作单元，组内所有SQL语句完成一个业务, 如果整组成功:意味着全部SQL都实现;如
+果其中任何一个失败,意味着整个操作都失败。失败,意味着整个过程都是没有意义的。应该是数据库回
+到操作前的初始状态。这种特性，就叫“事务”。</p>
+<h4 id="为什么要存在事务">为什么要存在事务?<a class="anchor ms-1" href="#为什么要存在事务"><i class="fas fa-link"></i></a></h4>
+<p>1)失败后，可以回到开始位置
+2)没都成功之前，别的用户(进程，会话)是不能看到操作内的数据修改的</p>
+<h4 id="事务4大特征acid">事务4大特征ACID:<a class="anchor ms-1" href="#事务4大特征acid"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>原子性[atomicity]</p>
+<p>功能不可再分，要么全部成功，要么全部失败</p>
+</li>
+<li>
+<p>一致性[consistency]
+一致性是指数据处于一种语义上的有意义且正确的状态。一致性是对数据可见性的约束，保证在一个事务中的多次操作的数据<strong>中间状态</strong>对其他事务<strong>不可见</strong>的。因为这些中间状态，是一个过渡状态，与事务的开始状态和事务的结束状态是不一致的。
+举个例子，张三给李四转账100元。事务要做的是从张三账户上减掉100元，李四账户上加上100元。一致性的含义是其他事务要么看到张三还没有给李四转账的状态，要么张三已经成功转账给李四的状态，而对于张三少了100元，李四还没加上100元这个中间状态是不可见的。
+我们来看一下转账过程中可能存在的状态:</p>
+<ol>
+<li>张三未扣减、李四未收到</li>
+<li>张三已扣减、李四未收到</li>
+<li>张三已扣减，李四已收到</li>
+</ol>
+<p>上述过程中: 1. 是初始状态、2是中间状态、3是最终状态，1和3是我们期待的状态，但是2这种状态却不是我们期待出现的状态。</p>
+<p>那么反驳的声音来了:</p>
+<p>要么转账操作全部成功，要么全部失败,这是原子性。从例子上看全部成功，那么<strong>一致性就是原子性</strong>的一部分咯,为什么还要单独说一致性和原子性?
+你说的不对。在未提交读的隔离级别下是事务内部操作是可见的，明显违背了一致性,怎么解释?
+好吧，需要注意的是:
+原子性和一致性的的侧重点不同:<strong>原子性关注状态</strong>，要么全部成功，要么全部失败，不存在部分成功的状态。而<strong>一致性关注数据的可见性</strong>,中间状态的数据对外部不可见，只有最初状态和最终状态的数据对外可见。</p>
+</li>
+<li>
+<p>隔离性[isolation]
+事务的隔离性是指多个事务并发访问数据库时，一个用户的事务不能被其它用户的事务所干扰,多个并发事务之间数据要相互隔离。
+隔离性是多个事务的时候,相互不能干扰，</p>
+<p>一致性是要保证操作前和操作后数据或者数据结构的一致性，而我提到的事务的一致性是关注数据的中间状态,也就是一致性需要监视中间状态的数据， 如果有变化，即刻回滚。</p>
+<p>如果不考虑隔离性，事务存在3种并发访问数据问题,也就是事务里面的脏读、不可重复读、虚
+度/幻读</p>
+</li>
+<li>
+<p>持久性[durability]
+是事务的保证，事务终结的标志(内存的数据持久到硬盘文件中)</p>
+</li>
+</ol>
+<h3 id="分布式事务">分布式事务<a class="anchor ms-1" href="#分布式事务"><i class="fas fa-link"></i></a></h3>
+<p>分布式事务顾名思义就是要在分布式系统中实现事务,它其实是由多个本地事务组合而成。</p>
+<p>对于分布式事务而言几乎满足不了ACID,其实对于单机事务而言大部分情况下也没有满足ACID,不然怎么会有mysql四种隔离级别呢?所以更别说分布在不同数据库或者不同应用上的分布式事务了。</p>
+<h2 id="造成数据不一致的原因">造成数据不一致的原因<a class="anchor ms-1" href="#造成数据不一致的原因"><i class="fas fa-link"></i></a></h2>
+<h3 id="网络问题">网络问题<a class="anchor ms-1" href="#网络问题"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>硬件故障
+<ol>
+<li>网卡</li>
+<li>路由器</li>
+<li>网线</li>
+</ol>
+</li>
+<li>网络抖动
+<ol>
+<li>跨服务调用，</li>
+</ol>
+</li>
+<li>网络拥塞
+<ol>
+<li>收不到回复的消息。</li>
+</ol>
+</li>
+</ol>
+<p>没有发送出去？</p>
+<p>发送了，没有收到，导致以为出错了</p>
+<h3 id="程序出错">程序出错<a class="anchor ms-1" href="#程序出错"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>代码异常</li>
+<li>宕机
+<ol>
+<li>断电</li>
+<li>系统问题
+<ol>
+<li>磁盘满了</li>
+<li>电脑坏了</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h2 id="分布式事务的理论">分布式事务的理论<a class="anchor ms-1" href="#分布式事务的理论"><i class="fas fa-link"></i></a></h2>
+<h3 id="cap理论">CAP理论<a class="anchor ms-1" href="#cap理论"><i class="fas fa-link"></i></a></h3>
+<p>cap理论是分布式系统的理论基石</p>
+<h4 id="consistency-一致性">Consistency (一致性):<a class="anchor ms-1" href="#consistency-一致性"><i class="fas fa-link"></i></a></h4>
+<p>“all nodes see the same data at the same time ”,即更新操作成功并返回客户端后，所有节点在同一时间的数据
+完全一致，这就是分布式的一致性。</p>
+<p>一致性的问题在并发系统中不可避免， 对于客户端来说，一致性指的是并发访问时更新过的数据如何获取的问题。从服务端来看,则是更新如何复制分布到整个系统，以保证数据最终一致。</p>
+<h5 id="主从复制">主从复制<a class="anchor ms-1" href="#主从复制"><i class="fas fa-link"></i></a></h5>
+<p>一个是<code>写数据库</code>一个是<code>读数据库</code></p>
+<p>一个服务将记录写入到<code>写数据库</code>,另一个服务从<code>读数据库</code>来读取刚刚的记录，这要保证，我只要写入进去了就一定可以读到。这里可以采用我写到数据库中，之后同步完成了，再响应给写的服务，这样可以保证我的<code>读数据库</code>中已经包含了之前写的数据了。</p>
+<h4 id="availability-可用性">Availability (可用性):<a class="anchor ms-1" href="#availability-可用性"><i class="fas fa-link"></i></a></h4>
+<p>可用性指“Reads and writes always succeed&quot;，即服务一直可用， 而且是正常响应时间。</p>
+<p>好的可用性主要是指系统能够很好的为用户服务，不出现用户操作失败或者访问超时等用户体验不好的情况。</p>
+<p>在前面的一致性中，我们要等到同步完成之后才响应，但是如果响应的时间很长(几秒),这时候，我要求必须要我写入了就可以从读数据库中获得。</p>
+<p>这时候会出现一个问题就是，我在同步的过程中肯定要对这条数据枷锁，但是如果加锁了，就不能保证数据的一致性，你就访问不到了，这就与<strong>一致性</strong>相违背了。</p>
+<p><strong>一致性和可用性是互斥的。</strong></p>
+<h4 id="partition-tolerance-分区容错性">Partition Tolerance (分区容错性)<a class="anchor ms-1" href="#partition-tolerance-分区容错性"><i class="fas fa-link"></i></a></h4>
+<p>即分布式系统在遇到某节点或网络分区故障的时候，仍然能够对外提供满足一致性和可用性的服务。</p>
+<p>分区容错性要求能够使应用虽然是一个分布式系统， 而看上去却好像是在一个可以运转正常的整体。</p>
+<p>比如现在的分布式系统中有某一个或者几个机器宕掉了,其他剩下的机器还能够正常运转满足系统需求,对于用户而言并没有什么体验上的影响。</p>
+<p>如果是一个分布式系统，一定要满足：分区容错性。</p>
+<h5 id="取舍策略">取舍策略<a class="anchor ms-1" href="#取舍策略"><i class="fas fa-link"></i></a></h5>
+<p>CAP三个特性只能满足其中两个，那么取舍的策略就共有三种:</p>
+<p>CA：单机的数据库</p>
+<p>CP：要保证一致性和分区容错性，这要等同步完成之后才能使用，在网络等有问题的时候不对外提供服务就行。NoSQL数据库，MongoDB、HBase、Redis</p>
+<p>AP：保证可用性。CoachDB、Cassandra、DynamoDB</p>
+<h3 id="base理论">BASE理论<a class="anchor ms-1" href="#base理论"><i class="fas fa-link"></i></a></h3>
+<p>BASE是Basically Available (基本可用)、Soft state (软状态)和Eventually consistent (最终一致性) 三个短语的缩写。</p>
+<p>BASE理论是对CAP中一致性和可用性权衡的结果，其来源于对大规模互联网系统分布式实践的总结，是基于CAP定理逐步演化而来的。</p>
+<p>BASE理论的核心思想是：即使无法做到强一致性, 但每个应用都可以根据自身业务特点，采用适当的方式来使系统达到最终一致性。</p>
+<p>接下来看一下BASE中的三要素:</p>
+<h4 id="基本可用">基本可用<a class="anchor ms-1" href="#基本可用"><i class="fas fa-link"></i></a></h4>
+<p>基本可用是指分布式系统在出现不可预知故障的时候，允许损失部分可用性一注意， 这绝不等价于系统不可用。比如:</p>
+<ol>
+<li>响应时间上的损失。正常情况下，一个在线搜索引擎需要在0.5秒之内返回给用户相应的查询结果，但由于出现故障，查询结果的响应时间增加了1~2秒，这是可以接受的</li>
+<li>系统功能上的损失:正常情况下，在一个电子商务网站上进行购物的时候,消费者几乎能够顺利完成每一笔订单，但是在一些节日大促购物高峰的时候,由于消费者的购物行为激增，为了保护购物系统的稳定性,部分消费者可能会被引导到一个降级页面</li>
+</ol>
+<h4 id="软状态">软状态<a class="anchor ms-1" href="#软状态"><i class="fas fa-link"></i></a></h4>
+<p>软状态指允许系统中的数据存在中间状态，并认为该中间状态的存在不会影响系统的整体可用性。即允许系统在不同节点的数据副本之间进行数据同步的过程存在延时。</p>
+<h4 id="最终一致性">最终一致性<a class="anchor ms-1" href="#最终一致性"><i class="fas fa-link"></i></a></h4>
+<p>最终一致性强调的是所有的数据副本，在经过一段时间的同步之后,最终都能够达到一个一致的状态。因此，最终一致性的本质是需要系统保证最终数据能够达到一致,而不需要实时保证系统数据的强一致性。</p>
+<h4 id="总结">总结<a class="anchor ms-1" href="#总结"><i class="fas fa-link"></i></a></h4>
+<p>总的来说，BASE理论面向的是大型高可用可扩展的分布式系统和传统的事物ACID特性是相反的，它完全不同于ACID的强一致性模型。而是通过牺牲强一致性来获得可用性，并允许数据在一段时间内是不一致的,但最终达到一致状态。但同时，在实际的分布式场景中，不同业务单元和组件对数据一致性的要求是不同的，因此在具体的分布式系统架构设计过程中,ACID特性和BASE理论往往又会结合在一起。</p>
+<p><strong>一句话: CAP就是告诉你:想要满足C、A、P就是做梦, BASE才是你最终的归宿</strong></p>
+<h2 id="两三阶段提交">两/三阶段提交<a class="anchor ms-1" href="#两三阶段提交"><i class="fas fa-link"></i></a></h2>
+<h3 id="常见分布式事务解决方案">常见分布式事务解决方案<a class="anchor ms-1" href="#常见分布式事务解决方案"><i class="fas fa-link"></i></a></h3>
+<ul>
+<li>两阶段提交(2PC, Two-phase Commit)</li>
+<li>TCC补偿模式</li>
+<li>基于本地消息表实现最终一致性</li>
+<li>最大努力通知</li>
+<li><strong>基于可靠消息最终一致性方案</strong></li>
+</ul>
+<h3 id="两阶段提交2pc">两阶段提交(2PC)<a class="anchor ms-1" href="#两阶段提交2pc"><i class="fas fa-link"></i></a></h3>
+<p>两阶段提交又称2PC,2PC是一个非常经典的中心化的原子提交协议。</p>
+<p>这里所说的中心化是指协议中有两类节点: 一个是中心化协调者节点(coordinator) 和N个参与者节点(partcipant)。</p>
+<p>两个阶段:第一阶段:投票阶段和第二阶段:提交/执行阶段。</p>
+<p>举例订单服务A,需要调用支付服务B去支付，支付成功则处理购物订单为待发货状态，否则就需要将购物订单处
+理为失败状态。</p>
+<p><picture><img class="img-fluid" alt="image-20220403190845300" src="/posts/252f6a9e/index/image-20220403190845300.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>对于订单服务来说，首先是要调用库存服务、开始执行扣减库存的事务，调用通知服务、通知服务将信息写入数据库、之后在订单服务本地执行新建订单、插入商品等一系列操作。如果在此之前包括现在没有出问题，那么久确认扣减库存commit、确认发送消息，业务结束。如果在此之前出现了问题，那么就要通知之前的服务进行rollback。业务结束。</p>
+<p>这里通知服务只是一个通知卖家或买家的服务，通知货物是否买/卖了。</p>
+<h4 id="2pc的缺陷">2pc的缺陷<a class="anchor ms-1" href="#2pc的缺陷"><i class="fas fa-link"></i></a></h4>
+<h5 id="性能问题γ">性能问题γ<a class="anchor ms-1" href="#性能问题γ"><i class="fas fa-link"></i></a></h5>
+<p>无论是在第一阶段的过程中，还是在第二阶段,所有的参与者(通知服务、库存服务)资源和协调者(订单服务)资源都是被锁住的,只有当所有节点准备完
+毕，事务协调者才会通知进行全局提交。
+<strong>参与者</strong>进行本地事务提交后才会释放资源。这样的过程会比较漫长，对<strong>性能影响比较大</strong>。</p>
+<p>如果是通知服务挂了或者超时了，那么就会导致库存服务的资源库存被锁住，只有在通知服务rollback之后库存服务才能释放资源。</p>
+<h5 id="单节点故障">单节点故障<a class="anchor ms-1" href="#单节点故障"><i class="fas fa-link"></i></a></h5>
+<p>由于协调者的重要性，一旦协调者发生故障。参与者会一直阻塞下去。 尤其在第二阶段,协调者发生故障，那么所有的参与者还都处于锁定事务资源的状态中，而无法继续完成事务操作。(虽然协调者挂掉, 可以重新选举一个协调者,但是无法解决因为协调者宕机导致的参与者处于阻塞状态的问题)。</p>
+<h2 id="tcctry-confirmcancel">TCC(try confirm/cancel)<a class="anchor ms-1" href="#tcctry-confirmcancel"><i class="fas fa-link"></i></a></h2>
+<p>一个订单支付之后，我们需要一下的步骤：</p>
+<ol>
+<li>更改订单的状态为已支付</li>
+<li>扣减商品库存（这里只是一个假设，在支付之前和在支付之后扣减库存都有许多问题）</li>
+<li>给会员增加积分</li>
+<li>创建销售出库单通知仓库发货。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220403192651986" src="/posts/252f6a9e/index/image-20220403192651986.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>好，业务场景有了，现在我们要更进一步，实现一个TCC分布式事务的效果。上述这几个步骤，要么一起成功， 要么一起失败,必须是一个整体性的事务。</p>
+<p>举个例子，现在订单的状态都修改为“已支付”了,结果库存服务扣减库存失败。那个商品的库存原来是100件，现在卖掉了2件，本来应该是98件了。结果呢? 由于库存服务操作数据库异常,导致库存数量还是100。这不是在坑人么，当然不能允许这种情况发生了!</p>
+<p><picture><img class="img-fluid" alt="image-20220403193315188" src="/posts/252f6a9e/index/image-20220403193315188.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>对于所有的我们都应该加一个中间状态，判断是否确认还是取消。</p>
+<h3 id="代码演示">代码演示<a class="anchor ms-1" href="#代码演示"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">type</span> <span class="nx">orderService</span> <span class="kd">struct</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">CreditSrvClient</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">CreditClient</span> <span class="c1">// 用户积分
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"></span>	<span class="nx">WmsSrvClient</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">WmsClient</span> <span class="c1">// 记录仓库的变动
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span>	<span class="nx">InventorySrvClient</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">InventoryClient</span> <span class="c1">//库存确认扣减
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="kd">func</span> <span class="nf">NewOrderService</span><span class="p">()</span> <span class="o">*</span><span class="nx">OrderService</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"> 	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">OrderService</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="nx">CreditSrvClient</span><span class="p">:</span> <span class="nx">proto</span><span class="p">.</span> <span class="nx">CreditClient</span><span class="p">{},</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">		<span class="nx">WmsSrvClient</span><span class="p">:</span> <span class="nx">proto</span><span class="p">.</span> <span class="nx">WmsClient</span><span class="p">{},</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">		<span class="nx">InventorySrvClient</span><span class="p">:</span> <span class="nx">proto</span> <span class="p">.</span> <span class="nx">InventoryClient</span><span class="p">{},</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="kd">func</span><span class="p">(</span><span class="nx">o</span> <span class="nx">OrderService</span><span class="p">)</span> <span class="nf">UpdateOrderStatus</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">o</span> <span class="nx">OrderService</span><span class="p">)</span> <span class="nf">Notify</span><span class="p">()</span> <span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="nx">o</span><span class="p">.</span><span class="nf">UpdateOrderStatus</span><span class="p">()</span> <span class="c1">// 更新订单的状态
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span>	<span class="nx">o</span><span class="p">.</span><span class="nx">CreditSrvClient</span><span class="p">.</span><span class="nf">AddCredit</span><span class="p">()</span> <span class="c1">// 增加积分
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span>	<span class="nx">o</span><span class="p">.</span><span class="nx">InventorySrvClient</span><span class="p">.</span><span class="nf">ReduceStock</span><span class="p">()</span> <span class="c1">// 库存确认扣减
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span>	<span class="nx">o</span><span class="p">.</span><span class="nx">WmsClient</span><span class="p">.</span><span class="nf">SaleDelivery</span><span class="p">()</span> <span class="c1">//记录仓库变更记录
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>以出售接口为例：在model中加一个freeze冻结字段，表示有多少库存的东西被冻结了，那么在获取库存详细的时候就应该是获得的数量-冻结的数量。</p>
+<p>在出售时应该就变为了try sell，不在是直接减库存了，给冻结库存加上出售的数量。</p>
+<p>另外还需要confirm sell,给他确认扣减，这时候吧冻结的减掉，然后把真正的库存数量减冻结数量。</p>
+<p>还有一个cancel sell ，出现问题之后我要取消冻结的库存，那么回滚冻结的数量<code>freeze-=sellNum</code>.</p>
+<p>跨服务调用库存微服务进行库存扣减</p>
+<ol>
+<li>调用库存服务的trysell</li>
+<li>调用仓库服务的trysell</li>
+<li>调用积分 服务的tryAdd</li>
+<li>任何一个服务出现了异常,那么你得调用对应的所有的微服务的cancel接口</li>
+<li>如果所有的微服务都正常,那么你得调用所有的微服务的confirm</li>
+</ol>
+<p>TCC 底层的实各个服务实现比较简单，在业务逻辑中的confirm和cancel是很复杂的。在什么情况下进行confirm，cancel都是问题。</p>
+<h3 id="tcc可能出现的问题">TCC可能出现的问题<a class="anchor ms-1" href="#tcc可能出现的问题"><i class="fas fa-link"></i></a></h3>
+<p>总结一下， 你要玩TCC分布式事务的话: .</p>
+<ol>
+<li>
+<p>首先需要选择某种TCC分布式事务框架，各个服务里就会有这个TCC分布式事务框架在运行。</p>
+</li>
+<li>
+<p>然后你原本的一个接口，要改造为3个逻辑，Try-Confirm-Cancel。</p>
+<ul>
+<li>
+<p>先是服务调用链路依次执行Try逻辑</p>
+</li>
+<li>
+<p>如果都正常的话，TCC分布式事务框架推进执行Confirm逻辑，完成整个事务</p>
+</li>
+<li>
+<p>如果某个服务的Try逻辑有问题，TCC分布式事务框架感知到之后就会推进执行各个服务的Cancel逻辑， 撤销之前执行的各种操作。</p>
+</li>
+<li>
+<p>这就是所谓的TCC分布式事务。</p>
+</li>
+<li>
+<p>TCC分布式事务的核心思想，说白了，就是当遇到下面这些情况时,</p>
+<ol>
+<li>某个服务的数据库宕机了</li>
+<li>某个服务自己挂了</li>
+<li>那个服务的redis、elasticsearch、 MQ等基础设施故障了</li>
+<li>某些资源不足了，比如说库存不够这些</li>
+</ol>
+<ul>
+<li>先来Try一下,不要把业务逻辑完成，先试试看，看各个服务能不能基本正常运转，能不能先冻结我需要的资源。</li>
+<li>如果Try都ok，也就是说，底层的数据库、redis、 elasticsearch、 MQ都是可以写入数据的，并且你保留好了需要使用的一些资源(比如冻结了-部分库存)。</li>
+<li>接着,再执行各个服务的Confirm逻辑，基本上Confirm就可以很大概率保证一个分布式事务的完成了。</li>
+<li>那如果Try阶段某个服务就失败了，比如说底层的数据库挂了，或者redis挂了，等等。</li>
+<li>此时就自动执行各个服务的Cancel逻辑，把之前的Try逻辑都回滚，所有服务都不要执行任何设计的业务逻辑。保证大家要么一起成功，要么一起失败。</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<h3 id="终极大招">终极大招<a class="anchor ms-1" href="#终极大招"><i class="fas fa-link"></i></a></h3>
+<ul>
+<li>如果有一些意外的情况发生了，比如说订单服务突然挂了，然后再次重启，TCC分布式事务框架是如何保证之前没执行完的分布式事务继续执行的呢? .</li>
+<li>TCC事务框架都是要记录一些分布式事务的活动日志的，可以在磁盘上的日志文件里记录,也可以在数据库里记录。保存下来分布式事务运行的各个阶段和状态。</li>
+<li>万一某个服务的Cancel或者Confirm逻辑执行一直失败怎么办呢?那也很简单，TCC事务框架会通过活动日志记录各个服务的状态。举个例子，比如发现某个服务的Cancel或者Confirm-直没成功，会不停的重试调用他的Cancel或者Confirm逻辑，务必要他成功!</li>
+<li>当然了，如果你的代码没有写什么bug，有充足的测试，而且Try阶段都基本尝试了一下，那么其实一般Confirm、Cancel都是可以成功的!</li>
+<li>如果实在解决不了，那么这个一定是很小概率的事件，这个时候发邮件通知人工处理</li>
+</ul>
+<h3 id="tcc优缺点">TCC优缺点<a class="anchor ms-1" href="#tcc优缺点"><i class="fas fa-link"></i></a></h3>
+<h4 id="优点">优点<a class="anchor ms-1" href="#优点"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>解决了跨服务的业务操作原子性问题，例如组合支付，订单减库存等场景非常实用</li>
+<li>TCC的本质原理是把数据库的二阶段提交上升到微服务来实现，从而避免了数据库2阶段中锁冲突的长事务低性能风险。</li>
+<li>TCC异步高性能，它采用了try先检查,然后异步实现confirm,真正提交的是在confirm方法中。（依旧要用锁）</li>
+</ol>
+<h4 id="缺点">缺点<a class="anchor ms-1" href="#缺点"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>对微服务的侵入性强，微服务的每个事务都必须实现try, confirm, cance等3个方法，开发成本高，今后维护改造的成本也高。</p>
+</li>
+<li>
+<p>为了达到事务的一致性要求，try, confirm、cance接口必须实现等幂性操作。(定时器+重试)</p>
+</li>
+<li>
+<p>由于事务管理器要记录事务日志，必定会损耗一定的性能，并使得整个TCC事务时间拉长，建议采用redis的方式来记录事务日志。</p>
+</li>
+<li>
+<p>tcc需要通过锁来确保数据的一致性，会加锁导致性能不高</p>
+</li>
+</ol>
+<h2 id="基于本地消息的最终一致性方案">基于本地消息的最终一致性方案<a class="anchor ms-1" href="#基于本地消息的最终一致性方案"><i class="fas fa-link"></i></a></h2>
+<p>本地消息表这个方案最初是eBay提出的，此方案的核心是通过本地事务保证数据业务操作和消息的一致性,然后通过定时任务将消息发送至消息中间件，待确认消息发送给消费方成功再将消息删除。</p>
+<p><picture><img class="img-fluid" alt="image-20220403211718522" src="/posts/252f6a9e/index/image-20220403211718522.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>订单服务将自己的业务完成之后，将信息发送到消息队列中去，库存服务和通知服务从队列中拿任务完成，如果消息消费完成了就确认删除，如果没有就重试。只要不确认都会在消息队列中。</p>
+<p>虽然当前数据没有一致，但最终一定会一致。</p>
+<p>隐患：</p>
+<p>先记录再发送消息，发送失败了</p>
+<ol>
+<li>发送了但是消息队列宕机了，我们可以等待恢复重新发送。</li>
+<li>发送消息了，消息队列在发送<code>已经接收到订单消息</code>时网络出问题超时了，这时候订单服务就会收到超时，订单就会回滚，但是库存和通知服务已经开始执行了。</li>
+</ol>
+<p>这时候要增加一个本地消息表来记录消息的生产和消费，这样才能保证消息不会丢失。</p>
+<p>这种情况下，本地数据库操作与存储消息日志处于同一事务中，本地数据库操作与记录消息日志操作具备原子性。</p>
+<h3 id="定时任务扫描日志">定时任务扫描日志<a class="anchor ms-1" href="#定时任务扫描日志"><i class="fas fa-link"></i></a></h3>
+<p>如何保证将消息发送给消息队列呢?
+经过第一步消息已经写到消息日志表中，可以启动独立的线程，定时对消息日志表中的消息进行扫描并发送至消息中间件，在消息中间件反馈发送成功后删除该消息日志，否则等待定时任务下一周期重试。</p>
+<h3 id="消费消息">消费消息<a class="anchor ms-1" href="#消费消息"><i class="fas fa-link"></i></a></h3>
+<p>如何保证消费者一-定能消费 到消息呢?
+这里可以使用MQ的ack (即消息确认)机制，消费者监听MQ,如果消费者接收到消息并且业务处理完成后向MQ发送ack (即消息确认)，此时说明消费者正常消费消息完成，MQ将不再向消费者推送消息，否则消费者会不断重试向消费者来发送消息。
+通知服务接收到“通知给用户”消息,开始通知用户，通知用户成功后消息中间件回应ack,否则消息中间件将重复投递此消息。</p>
+<p>由于消息会重复投递，积分服务的“增加积分”功能需要实现幂等性。</p>
+<h2 id="基于可靠消息的最终一致性方案-常用">基于可靠消息的最终一致性方案-常用<a class="anchor ms-1" href="#基于可靠消息的最终一致性方案-常用"><i class="fas fa-link"></i></a></h2>
+<p>通过使用基于RocketMQ的可靠消息实现最终一致性的分布式方案。</p>
+<p>调用的过程如下图所示：</p>
+<p><picture><img class="img-fluid" alt="image-20220404011602748" src="/posts/252f6a9e/index/image-20220404011602748.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>备注</p>
+<blockquote>
+<p>half消息不能被消费。</p>
+<p>这里使用MQ来保证订阅方收到的消息一定是可靠的。</p>
+<p>MQ的回查是在一段时间后没有进行这个事务没有进行commit/rollback就会查询事务的消息状态。</p>
+</blockquote>
+<h2 id="最大努力通知">最大努力通知<a class="anchor ms-1" href="#最大努力通知"><i class="fas fa-link"></i></a></h2>
+<p>最大努力通知型( Best-effort delivery)是最简单的一种柔性事务，适用于一些最终一致性时间敏感度低的业务，且被动方处理结果不影响主动方的处理结果。典型的使用场景：如银行通知、商户通知等。最大努力通知型的实现方案，一般符合以下特点：</p>
+<p>不可靠消息：业务活动主动方，在完成业务处理之后，向业务活动的被动方发送消息，直到通知N次后不再通知，允许消息丢失(不可靠消息)。
+定期校对：业务活动的被动方，根据定时策略，向业务活动主动方查询(主动方提供查询接口)，恢复丢失的业务消息。</p>
+<p>以下这个例子，用户在支付之后，支付宝要尽自己最大的努力来通知到商家某某人已经支付成功了，但是对方的服务可能会挂掉或者这个对方这个接口不存在，这个时候，就要努力尝试通知<code>商城</code>。对于通知的时间也是有讲究的，不能每一次都是1秒中通知一次，可以刚开始1秒钟尝试通知一次，之后2秒、5秒&hellip;但是也不能一直尝试通知，要有一定的上限。</p>
+<p><picture><img class="img-fluid" alt="image-20220404013701944" src="/posts/252f6a9e/index/image-20220404013701944.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>商城不能直接从支付宝系统MQ中直接拿消息，而是要通过支付宝提供的服务来拿到消息。</p>
+<p><picture><img class="img-fluid" alt="image-20220404014417973" src="/posts/252f6a9e/index/image-20220404014417973.png" loading="lazy"
+    
+     />
+</picture>
+
+</p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/c501f7ad/">从0到1实现完整的微服务框架-库存服务
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/897c83b3/">从0到1实现完整的微服务框架-RocketMQ
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/c501f7ad/">从0到1实现完整的微服务框架-库存服务
+</a>
+          <span class="float-end post-date">2022-03-31
+</span>
+        </li><li>
+          <a href="/posts/71ef7b9d/">从0到1实现完整的微服务框架-熔断限流和降级
+</a>
+          <span class="float-end post-date">2022-03-29
+</span>
+        </li><li>
+          <a href="/posts/c8b300d9/">从0到1实现完整的微服务框架-链路追踪
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li><li>
+          <a href="/posts/a97428cc/">从0到1实现完整的微服务框架-负载均衡
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li><li>
+          <a href="/posts/5763d21a/">从0到1实现完整的微服务框架-服务注册、发现、配置中心
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#数据不一致">数据不一致</a>
+      <ul>
+        <li><a href="#事务性问题代码问题">事务性问题(代码问题)</a></li>
+        <li><a href="#业务问题-用户下单之后没有支付">业务问题-用户下单之后没有支付</a></li>
+        <li><a href="#解决">解决</a></li>
+        <li><a href="#事务和分布式事务">事务和分布式事务</a></li>
+        <li><a href="#分布式事务">分布式事务</a></li>
+      </ul>
+    </li>
+    <li><a href="#造成数据不一致的原因">造成数据不一致的原因</a>
+      <ul>
+        <li><a href="#网络问题">网络问题</a></li>
+        <li><a href="#程序出错">程序出错</a></li>
+      </ul>
+    </li>
+    <li><a href="#分布式事务的理论">分布式事务的理论</a>
+      <ul>
+        <li><a href="#cap理论">CAP理论</a></li>
+        <li><a href="#base理论">BASE理论</a></li>
+      </ul>
+    </li>
+    <li><a href="#两三阶段提交">两/三阶段提交</a>
+      <ul>
+        <li><a href="#常见分布式事务解决方案">常见分布式事务解决方案</a></li>
+        <li><a href="#两阶段提交2pc">两阶段提交(2PC)</a></li>
+      </ul>
+    </li>
+    <li><a href="#tcctry-confirmcancel">TCC(try confirm/cancel)</a>
+      <ul>
+        <li><a href="#代码演示">代码演示</a></li>
+        <li><a href="#tcc可能出现的问题">TCC可能出现的问题</a></li>
+        <li><a href="#终极大招">终极大招</a></li>
+        <li><a href="#tcc优缺点">TCC优缺点</a></li>
+      </ul>
+    </li>
+    <li><a href="#基于本地消息的最终一致性方案">基于本地消息的最终一致性方案</a>
+      <ul>
+        <li><a href="#定时任务扫描日志">定时任务扫描日志</a></li>
+        <li><a href="#消费消息">消费消息</a></li>
+      </ul>
+    </li>
+    <li><a href="#基于可靠消息的最终一致性方案-常用">基于可靠消息的最终一致性方案-常用</a></li>
+    <li><a href="#最大努力通知">最大努力通知</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

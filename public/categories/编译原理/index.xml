@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>编译原理 on 编程日记</title>
+    <link>/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/</link>
+    <description>Recent content in 编译原理 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Thu, 14 Oct 2021 12:42:52 +0000</lastBuildDate><atom:link href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>编译原理 有限自动机</title>
+      <link>/posts/12879185/</link>
+      <pubDate>Thu, 14 Oct 2021 12:42:52 +0000</pubDate>
+      
+      <guid>/posts/12879185/</guid>
+      <description>&lt;p&gt;有限自动机是对语言有穷描述的一种方法，下面将介绍确定有限自动机、非确定有限自动机和他们之间的转化以及确定有限自动机的最小化。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>文法和语言</title>
+      <link>/posts/b68db71a/</link>
+      <pubDate>Thu, 14 Oct 2021 12:42:52 +0000</pubDate>
+      
+      <guid>/posts/b68db71a/</guid>
+      <description>&lt;p&gt;编译原理-文法和语言&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>编译原理-作业</title>
+      <link>/posts/29dc6b0/</link>
+      <pubDate>Wed, 06 Oct 2021 19:08:03 +0000</pubDate>
+      
+      <guid>/posts/29dc6b0/</guid>
+      <description>&lt;p&gt;课上不努力、课后徒伤悲。好好听网课，好好学习！&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

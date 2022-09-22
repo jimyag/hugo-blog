@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on 编程日记</title>
+    <link>/categories/go/</link>
+    <description>Recent content in Go on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sun, 08 May 2022 10:15:35 +0800</lastBuildDate><atom:link href="/categories/go/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go如何优雅进行错误处理</title>
+      <link>/posts/608465d8/</link>
+      <pubDate>Sun, 08 May 2022 10:15:35 +0800</pubDate>
+      
+      <guid>/posts/608465d8/</guid>
+      <description>&lt;p&gt;介绍Go语言如何优雅的处理错误。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>减少下层服务的压力 SingleFlight</title>
+      <link>/posts/34618820/</link>
+      <pubDate>Wed, 27 Apr 2022 13:17:31 +0800</pubDate>
+      
+      <guid>/posts/34618820/</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/jimyag/singleflight&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;jimyag/singleflight&lt;/a&gt; 包主要是用来做并发控制，常见的比如&lt;code&gt;防止缓存击穿&lt;/code&gt; &lt;code&gt;合并查询请求&lt;/code&gt;。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Go泛型的限制和对中间件的影响</title>
+      <link>/posts/33cd41f9/</link>
+      <pubDate>Tue, 26 Apr 2022 23:52:28 +0800</pubDate>
+      
+      <guid>/posts/33cd41f9/</guid>
+      <description>&lt;p&gt;本文是基于GoCN 2022年第八期泛型的讲座的笔记。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>为什么Request.Body需要被关闭</title>
+      <link>/posts/60b013aa/</link>
+      <pubDate>Thu, 24 Feb 2022 15:31:16 +0000</pubDate>
+      
+      <guid>/posts/60b013aa/</guid>
+      <description>&lt;p&gt;面试时被问到为什么request中的body被访问一次就不能再次访问了。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

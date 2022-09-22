@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>复习资料 on 编程日记</title>
+    <link>/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/</link>
+    <description>Recent content in 复习资料 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Tue, 17 May 2022 23:28:16 +0800</lastBuildDate><atom:link href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>软件测试技术</title>
+      <link>/posts/a0aa4897/</link>
+      <pubDate>Tue, 17 May 2022 23:28:16 +0800</pubDate>
+      
+      <guid>/posts/a0aa4897/</guid>
+      <description>&lt;p&gt;软件测试技术的复习资料&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>大数据技术及应用-复习资料</title>
+      <link>/posts/77d147b1/</link>
+      <pubDate>Sun, 24 Apr 2022 22:50:12 +0800</pubDate>
+      
+      <guid>/posts/77d147b1/</guid>
+      <description>&lt;p&gt;大数据技术及应用的复习资料。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>sit-计算机网络原理-复习</title>
+      <link>/posts/6e1fe6f1/</link>
+      <pubDate>Sun, 12 Dec 2021 19:23:01 +0000</pubDate>
+      
+      <guid>/posts/6e1fe6f1/</guid>
+      <description>&lt;p&gt;根据老师提供的范围整理的计算机网络原理的复习资料&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>编译原理 有限自动机</title>
+      <link>/posts/12879185/</link>
+      <pubDate>Thu, 14 Oct 2021 12:42:52 +0000</pubDate>
+      
+      <guid>/posts/12879185/</guid>
+      <description>&lt;p&gt;有限自动机是对语言有穷描述的一种方法，下面将介绍确定有限自动机、非确定有限自动机和他们之间的转化以及确定有限自动机的最小化。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>文法和语言</title>
+      <link>/posts/b68db71a/</link>
+      <pubDate>Thu, 14 Oct 2021 12:42:52 +0000</pubDate>
+      
+      <guid>/posts/b68db71a/</guid>
+      <description>&lt;p&gt;编译原理-文法和语言&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>编译原理-作业</title>
+      <link>/posts/29dc6b0/</link>
+      <pubDate>Wed, 06 Oct 2021 19:08:03 +0000</pubDate>
+      
+      <guid>/posts/29dc6b0/</guid>
+      <description>&lt;p&gt;课上不努力、课后徒伤悲。好好听网课，好好学习！&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

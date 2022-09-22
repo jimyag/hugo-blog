@@ -1,0 +1,740 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>数据库迁移工具-migrate - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="数据库迁移工具-migrate">
+<meta itemprop="description" content="在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。"><meta itemprop="datePublished" content="2022-03-24T19:44:28+00:00" />
+<meta itemprop="dateModified" content="2022-03-24T19:44:28+00:00" />
+<meta itemprop="wordCount" content="2350">
+<meta itemprop="keywords" content="工具,教程,数据库," /><meta property="og:title" content="数据库迁移工具-migrate" />
+<meta property="og:description" content="在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/e7121931/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-24T19:44:28+00:00" />
+<meta property="article:modified_time" content="2022-03-24T19:44:28+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="数据库迁移工具-migrate"/>
+<meta name="twitter:description" content="在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e6%95%b0%e6%8d%ae%e5%ba%93%e8%bf%81%e7%a7%bb%e5%b7%a5%e5%85%b7-migrate&url=%2fposts%2fe7121931%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2fe7121931%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">数据库迁移工具-Migrate</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">数据库迁移工具-Migrate
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-03-25 03:44:28 &#43;0800 CST。">
+    2022-03-24
+  </span><span class="post-reading-time">
+    5 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/%E5%B7%A5%E5%85%B7/" class="badge post-taxonomy">工具</a><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a><a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" class="badge post-taxonomy">数据库</a></span>
+</div>
+<div class="post-content mb-3"><p>在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。</p>
+<h3 id="安装migrate">安装migrate<a class="anchor ms-1" href="#安装migrate"><i class="fas fa-link"></i></a></h3>
+<p>根据<a href="https://github.com/golang-migrate/migrate/tree/master/cmd/migrate" target="_blank" rel="noopener noreferrer">migrate/cmd/migrate at master · golang-migrate/migrate (github.com)</a>中的提示选择对应的版本进行安装。</p>
+<p>以windows为例，在[<a href="https://github.com/golang-migrate/migrate/releases" target="_blank" rel="noopener noreferrer">Releases · golang-migrate/migrate (github.com)</a>](<a href="https://github.com/golang-migrate/migrate" target="_blank" rel="noopener noreferrer">https://github.com/golang-migrate/migrate</a>)中选择一个版本，找到<code>windows</code>的对应版本，我这里下载<code>migrate.windows-amd64</code>，将里面对应的.exe可执行文件添加到环境变量中。</p>
+<p>我将可执行文件放到<code>GOPATH/bin</code>中。</p>
+<p><code>GOPATH</code>的路径可通过<code>go env  GOPATH </code>得到。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">C:<span class="se">\U</span>sers<span class="se">\j</span>imyag&gt;migrate -version
+</span></span><span class="line"><span class="ln">2</span><span class="cl">4.15.1
+</span></span></code></pre></div><p>安装成功。</p>
+<h3 id="使用migrate">使用migrate<a class="anchor ms-1" href="#使用migrate"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">mkdir migration
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">migrate create -ext sql -dir migration -seq init_schema_user
+</span></span></code></pre></div><p>将文件拓展名设为<code>sql</code></p>
+<p>要存储的目录为<code>.\migration\</code>,</p>
+<p><code>-seq</code>迁移文件的顺序版本号</p>
+<p><code>init_schema</code> 迁移的名称</p>
+<p>执行完命令会生成两个文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">migration
+</span></span><span class="line"><span class="ln">2</span><span class="cl">├── 000001_init_schema_user.down.sql
+</span></span><span class="line"><span class="ln">3</span><span class="cl">├── 000001_init_schema_user.up.sql
+</span></span></code></pre></div><p>在<code>000001_init_schema_user.down.sql</code>中添加如下内容</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;accounts&#34;</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w">                            </span><span class="s2">&#34;id&#34;</span><span class="w"> </span><span class="n">bigserial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">                            </span><span class="s2">&#34;owner&#34;</span><span class="w"> </span><span class="nb">varchar</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">                            </span><span class="s2">&#34;balance&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">                            </span><span class="s2">&#34;currency&#34;</span><span class="w"> </span><span class="nb">varchar</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">                            </span><span class="s2">&#34;created_at&#34;</span><span class="w"> </span><span class="k">timestamp</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="p">(</span><span class="n">now</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;entries&#34;</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">                           </span><span class="s2">&#34;id&#34;</span><span class="w"> </span><span class="n">bigserial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">                           </span><span class="s2">&#34;account_id&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w">                           </span><span class="s2">&#34;amount&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="w">                           </span><span class="s2">&#34;created_at&#34;</span><span class="w"> </span><span class="k">timestamp</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="p">(</span><span class="n">now</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="w">                             </span><span class="s2">&#34;id&#34;</span><span class="w"> </span><span class="n">bigserial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="w">                             </span><span class="s2">&#34;from_account_id&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="w">                             </span><span class="s2">&#34;to_account_id&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="w">                             </span><span class="s2">&#34;amount&#34;</span><span class="w"> </span><span class="nb">bigint</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="w">                             </span><span class="s2">&#34;created_at&#34;</span><span class="w"> </span><span class="k">timestamp</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="p">(</span><span class="n">now</span><span class="p">())</span><span class="w">
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;entries&#34;</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;account_id&#34;</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="s2">&#34;accounts&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;from_account_id&#34;</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="s2">&#34;accounts&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">FOREIGN</span><span class="w"> </span><span class="k">KEY</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;to_account_id&#34;</span><span class="p">)</span><span class="w"> </span><span class="k">REFERENCES</span><span class="w"> </span><span class="s2">&#34;accounts&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">29</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;accounts&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;owner&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">32</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;entries&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;account_id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">33</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;from_account_id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">35</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">36</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;to_account_id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">37</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">38</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;transfers&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;from_account_id&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;to_account_id&#34;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p>在<code>000001_init_schema_user.up.sql</code>写入一下文件。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w">  </span><span class="n">entries</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w">  </span><span class="n">transfers</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w">  </span><span class="n">accounts</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>创建数据库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker run --name test-pg -p 35432:5432 -e <span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span>postgres -e <span class="nv">TZ</span><span class="o">=</span>PRC -d postgres:14-alpine
+</span></span></code></pre></div><p>创建一个<code>shop</code>的数据库。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker <span class="nb">exec</span> -it test-pg createdb --username<span class="o">=</span>postgres --owner<span class="o">=</span>postgres shop
+</span></span></code></pre></div><p>生成表结构。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 20:30:43 Start buffering 1/u init_schema_user
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 20:30:43 Read and execute 1/u init_schema_user
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24 20:30:43 Finished 1/u init_schema_user <span class="o">(</span><span class="nb">read</span> 9.4412ms, ran 8.1883ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/24 20:30:43 Finished after 38.1796ms
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/24 20:30:43 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>进入docker中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">&gt; docker <span class="nb">exec</span> -it test-pg /bin/sh
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">&gt; psql -U postgres
+</span></span></code></pre></div><p>已经有了之前的<code>shop</code>数据库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln"> 1</span><span class="cl">&gt; <span class="nv">postgres</span><span class="o">=</span><span class="c1"># \list</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">                                 List of databases
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">   Name    <span class="p">|</span>  Owner   <span class="p">|</span> Encoding <span class="p">|</span>  Collate   <span class="p">|</span>   Ctype    <span class="p">|</span>   Access privileges
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">-----------+----------+----------+------------+------------+-----------------------
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"> postgres  <span class="p">|</span> postgres <span class="p">|</span> UTF8     <span class="p">|</span> en_US.utf8 <span class="p">|</span> en_US.utf8 <span class="p">|</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"> shop      <span class="p">|</span> postgres <span class="p">|</span> UTF8     <span class="p">|</span> en_US.utf8 <span class="p">|</span> en_US.utf8 <span class="p">|</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"> template0 <span class="p">|</span> postgres <span class="p">|</span> UTF8     <span class="p">|</span> en_US.utf8 <span class="p">|</span> en_US.utf8 <span class="p">|</span> <span class="o">=</span>c/postgres          +
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">           <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>            <span class="p">|</span>            <span class="p">|</span> <span class="nv">postgres</span><span class="o">=</span>CTc/postgres
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"> template1 <span class="p">|</span> postgres <span class="p">|</span> UTF8     <span class="p">|</span> en_US.utf8 <span class="p">|</span> en_US.utf8 <span class="p">|</span> <span class="o">=</span>c/postgres          +
+</span></span><span class="line"><span class="ln">10</span><span class="cl">           <span class="p">|</span>          <span class="p">|</span>          <span class="p">|</span>            <span class="p">|</span>            <span class="p">|</span> <span class="nv">postgres</span><span class="o">=</span>CTc/postgres
+</span></span></code></pre></div><p>进入<code>shop</code>中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">&gt; <span class="nv">postgres</span><span class="o">=</span><span class="c1"># \c shop</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">You are now connected to database <span class="s2">&#34;shop&#34;</span> as user <span class="s2">&#34;postgres&#34;</span>.
+</span></span></code></pre></div><p>出现了四张表</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">&gt; <span class="k">select</span> tablename from pg_tables where <span class="nv">schemaname</span><span class="o">=</span><span class="s1">&#39;public&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">     tablename
+</span></span><span class="line"><span class="ln">3</span><span class="cl">-------------------
+</span></span><span class="line"><span class="ln">4</span><span class="cl"> schema_migrations
+</span></span><span class="line"><span class="ln">5</span><span class="cl"> accounts
+</span></span><span class="line"><span class="ln">6</span><span class="cl"> entries
+</span></span><span class="line"><span class="ln">7</span><span class="cl"> transfers
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="o">(</span><span class="m">4</span> rows<span class="o">)</span>
+</span></span></code></pre></div><p><code>schema_migrations</code>是用来同步表用的。</p>
+<p>回滚表，输入y</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln"> 1</span><span class="cl">&gt;migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose down
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">2022/03/24 20:48:35 Are you sure you want to apply all down migrations? <span class="o">[</span>y/N<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">y
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">2022/03/24 20:48:37 Applying all down migrations
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">2022/03/24 20:48:37 Start buffering 1/d init_schema_user
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">2022/03/24 20:48:37 Read and execute 1/d init_schema_user
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">2022/03/24 20:48:37 Finished 1/d init_schema_user <span class="o">(</span><span class="nb">read</span> 8.0654ms, ran 25.5793ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">2022/03/24 20:48:37 Finished after 2.240096s
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">2022/03/24 20:48:37 Closing <span class="nb">source</span> and database
+</span></span><span class="line"><span class="ln">10</span><span class="cl">&gt;shop<span class="o">=</span><span class="c1"># select tablename from pg_tables where schemaname=&#39;public&#39;;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">     tablename
+</span></span><span class="line"><span class="ln">12</span><span class="cl">-------------------
+</span></span><span class="line"><span class="ln">13</span><span class="cl"> schema_migrations
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="o">(</span><span class="m">1</span> row<span class="o">)</span>
+</span></span></code></pre></div><p>发现只剩<code>同步表了</code></p>
+<h4 id="多次同步">多次同步<a class="anchor ms-1" href="#多次同步"><i class="fas fa-link"></i></a></h4>
+<p>为了测试 migrations up [N] 执行多次修改的情形，第二次修改我们使用事务为 account表增加 COLUMN，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop&gt;migrate create -ext sql -dir migration -seq add_mood_to_user
+</span></span><span class="line"><span class="ln">2</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop<span class="se">\m</span>igration<span class="se">\0</span>00002_add_mood_to_user.up.sql
+</span></span><span class="line"><span class="ln">3</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop<span class="se">\m</span>igration<span class="se">\0</span>00002_add_mood_to_user.down.sql
+</span></span></code></pre></div><p>在<code>000002_add_mood_to_user.up.sql</code>中添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TYPE</span><span class="w"> </span><span class="n">enum_mood</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ENUM</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">	</span><span class="s1">&#39;happy&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">	</span><span class="s1">&#39;sad&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">	</span><span class="s1">&#39;neutral&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">accounts</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">mood</span><span class="w"> </span><span class="n">enum_mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>在<code>000002_add_mood_to_user.down.sql</code>中添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">accounts</span><span class="w"> </span><span class="k">DROP</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="k">TYPE</span><span class="w"> </span><span class="n">enum_mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop&gt;migrate create -ext sql -dir migration -seq add_roleid_to_users
+</span></span><span class="line"><span class="ln">2</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop<span class="se">\m</span>igration<span class="se">\0</span>00003_add_roleid_to_users.up.sql
+</span></span><span class="line"><span class="ln">3</span><span class="cl">D:<span class="se">\C</span>omputer<span class="se">\D</span>esktop<span class="se">\m</span>igration<span class="se">\0</span>00003_add_roleid_to_users.down.sql
+</span></span></code></pre></div><p>在<code>000003_add_roleid_to_users.up.sql</code>中添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">TYPE</span><span class="w"> </span><span class="n">enum_mood</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="n">ENUM</span><span class="w"> </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w">	</span><span class="s1">&#39;happy&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w">	</span><span class="s1">&#39;sad&#39;</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">	</span><span class="s1">&#39;neutral&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">accounts</span><span class="w"> </span><span class="k">ADD</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">mood</span><span class="w"> </span><span class="n">enum_mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>在<code>000003_add_roleid_to_users.down.sql</code>中添加</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">BEGIN</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w"></span><span class="k">ALTER</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="n">accounts</span><span class="w"> </span><span class="k">DROP</span><span class="w"> </span><span class="k">COLUMN</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="n">mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="w"></span><span class="k">DROP</span><span class="w"> </span><span class="k">TYPE</span><span class="w"> </span><span class="n">enum_mood</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="w"></span><span class="k">COMMIT</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p><code>migration</code>中有以下文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="ln">1</span><span class="cl">2022/03/24  20:46                <span class="m">97</span> 000001_init_schema_user.down.sql
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24  20:46             1,489 000001_init_schema_user.up.sql
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24  20:58                <span class="m">91</span> 000002_add_mood_to_user.down.sql
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24  20:57               <span class="m">147</span> 000002_add_mood_to_user.up.sql
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/24  21:02                <span class="m">51</span> 000003_add_roleid_to_users.down.sql
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/24  21:02                <span class="m">62</span> 000003_add_roleid_to_users.up.sql
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln"> 1</span><span class="cl">&gt; migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">2022/03/24 21:04:15 Start buffering 1/u init_schema_user
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">2022/03/24 21:04:15 Start buffering 2/u add_mood_to_user
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">2022/03/24 21:04:15 Start buffering 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">2022/03/24 21:04:15 Read and execute 1/u init_schema_user
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">2022/03/24 21:04:15 Finished 1/u init_schema_user <span class="o">(</span><span class="nb">read</span> 8.7174ms, ran 124.6018ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">2022/03/24 21:04:15 Read and execute 2/u add_mood_to_user
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">2022/03/24 21:04:15 Finished 2/u add_mood_to_user <span class="o">(</span><span class="nb">read</span> 141.2056ms, ran 10.1257ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">2022/03/24 21:04:15 Read and execute 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln">10</span><span class="cl">2022/03/24 21:04:15 Finished 3/u add_roleid_to_users <span class="o">(</span><span class="nb">read</span> 159.2213ms, ran 9.0379ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">2022/03/24 21:04:15 Finished after 189.4334ms
+</span></span><span class="line"><span class="ln">12</span><span class="cl">2022/03/24 21:04:15 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>以上可以看到所有的都已经同步成功，并且是按照序号的顺序进行执行。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln"> 1</span><span class="cl">&gt; migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose down
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">2022/03/24 21:04:39 Are you sure you want to apply all down migrations? <span class="o">[</span>y/N<span class="o">]</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">y
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">2022/03/24 21:04:41 Applying all down migrations
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">2022/03/24 21:04:41 Start buffering 3/d add_roleid_to_users
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">2022/03/24 21:04:41 Start buffering 2/d add_mood_to_user
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">2022/03/24 21:04:41 Start buffering 1/d init_schema_user
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">2022/03/24 21:04:41 Read and execute 3/d add_roleid_to_users
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">2022/03/24 21:04:41 Finished 3/d add_roleid_to_users <span class="o">(</span><span class="nb">read</span> 9.9293ms, ran 12.7524ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">2022/03/24 21:04:41 Read and execute 2/d add_mood_to_user
+</span></span><span class="line"><span class="ln">11</span><span class="cl">2022/03/24 21:04:41 Finished 2/d add_mood_to_user <span class="o">(</span><span class="nb">read</span> 30.9375ms, ran 10.6209ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">2022/03/24 21:04:41 Read and execute 1/d init_schema_user
+</span></span><span class="line"><span class="ln">13</span><span class="cl">2022/03/24 21:04:41 Finished 1/d init_schema_user <span class="o">(</span><span class="nb">read</span> 47.6036ms, ran 18.4846ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">2022/03/24 21:04:41 Finished after 1.6015872s
+</span></span><span class="line"><span class="ln">15</span><span class="cl">2022/03/24 21:04:41 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>以上可以看到所有的回滚成功，并按照序号的逆序进行。</p>
+<h4 id="测试失败的情况">测试失败的情况<a class="anchor ms-1" href="#测试失败的情况"><i class="fas fa-link"></i></a></h4>
+<p>我们回滚所有操作。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose down
+</span></span></code></pre></div><p>然后执行<code>注意有2</code>，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up <span class="m">2</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:10:33 Start buffering 1/u init_schema_user
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 21:10:33 Start buffering 2/u add_mood_to_user
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24 21:10:33 Read and execute 1/u init_schema_user
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/24 21:10:33 Finished 1/u init_schema_user <span class="o">(</span><span class="nb">read</span> 10.4179ms, ran 54.5128ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/24 21:10:33 Read and execute 2/u add_mood_to_user
+</span></span><span class="line"><span class="ln">7</span><span class="cl">2022/03/24 21:10:33 Finished 2/u add_mood_to_user <span class="o">(</span><span class="nb">read</span> 73.7285ms, ran 11.7561ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">2022/03/24 21:10:33 Finished after 107.6561ms
+</span></span><span class="line"><span class="ln">9</span><span class="cl">2022/03/24 21:10:33 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>这时候已经应用了前两个同步。</p>
+<p>接下来修改，<code>000003_add_roleid_to_users.up.sql</code>使其语法错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:13:46 Start buffering 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 21:13:46 Read and execute 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24 21:13:46 error: migration failed: syntax error at or near <span class="s2">&#34;%&#34;</span> <span class="o">(</span>column 63<span class="o">)</span> in line 1: ALTER TABLE accounts ADD COLUMN IF NOT EXISTS role_id INTEGER<span class="p">;</span>% <span class="o">(</span>details: pq: syntax error at or near <span class="s2">&#34;%&#34;</span><span class="o">)</span>
+</span></span></code></pre></div><p>此时执行，发现错误。</p>
+<p>这时候，我们进入数据库中查看<code>schema_migrations</code>表中的数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">shop</span><span class="p">.</span><span class="k">public</span><span class="p">.</span><span class="n">schema_migrations</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">dirty</span><span class="w">
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w"></span><span class="c1">---------+-------
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"></span><span class="w">       </span><span class="mi">3</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">true</span><span class="w">
+</span></span></span></code></pre></div><p>这时候显示，当前处于版本3，并且有脏数据。</p>
+<p>如果我们修改正确<code>000003_add_roleid_to_users.up.sql</code>再执行<code>up 1</code>命令</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:18:15 error: Dirty database version 3. Fix and force version.
+</span></span></code></pre></div><p>这时候需要使用<code>migrate force 3</code> 来确认说 version=3 的错误问题已修复，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose force <span class="m">3</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:19:34 Finished after 100.3292ms
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 21:19:34 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>而且需要执行 <code>migrate down 1</code> 将 version 回退到 version=2 ，才能继续执行。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose down <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:19:58 Start buffering 3/d add_roleid_to_users
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 21:19:58 Read and execute 3/d add_roleid_to_users
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24 21:19:58 Finished 3/d add_roleid_to_users <span class="o">(</span><span class="nb">read</span> 9.7019ms, ran 10.2768ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/24 21:19:58 Finished after 40.0968ms
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/24 21:19:58 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><p>同步到版本3</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path ./migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35432/shop?sslmode=disable&#34;</span> -verbose up <span class="m">1</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/24 21:20:19 Start buffering 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/24 21:20:19 Read and execute 3/u add_roleid_to_users
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/24 21:20:19 Finished 3/u add_roleid_to_users <span class="o">(</span><span class="nb">read</span> 10.9011ms, ran 11.6158ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/24 21:20:19 Finished after 45.0244ms
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/24 21:20:19 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><h3 id="migrate的工作流程">migrate的工作流程<a class="anchor ms-1" href="#migrate的工作流程"><i class="fas fa-link"></i></a></h3>
+<h4 id="up">up<a class="anchor ms-1" href="#up"><i class="fas fa-link"></i></a></h4>
+<p>原有的数据通过产生的<code>up</code>文件向上更改</p>
+<p>当我们使用命令<code>migrate up</code>时，产生的up脚本会按照前缀的顺序依次执行</p>
+<h4 id="down">down<a class="anchor ms-1" href="#down"><i class="fas fa-link"></i></a></h4>
+<p>新的数据通过<code>down</code>脚本进行还原</p>
+<p>当我们使用命令<code>migrate down</code>时，产生的down脚本会按照前缀顺序的逆序进行执行</p>
+<h3 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h3>
+<p><a href="https://blog.csdn.net/doyzfly/article/details/121096806" target="_blank" rel="noopener noreferrer">golang数据库迁移工具golang-migrate使用_doyzfly的博客-CSDN博客_golang migrate</a></p>
+<p><a href="https://github.com/golang-migrate/migrate/tree/master/cmd/migrate" target="_blank" rel="noopener noreferrer">migrate/cmd/migrate at master · golang-migrate/migrate (github.com)</a></p>
+<p><a href="https://github.com/golang-migrate/migrate/blob/master/GETTING_STARTED.md" target="_blank" rel="noopener noreferrer">migrate/GETTING_STARTED.md at master · golang-migrate/migrate (github.com)</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/acba46c5/">从单体应用到微服务
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/900c3133/">从SQL生成可直接调用的go接口-Sqlc
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/acba46c5/">从单体应用到微服务
+</a>
+          <span class="float-end post-date">2022-03-24
+</span>
+        </li><li>
+          <a href="/posts/1dc739af/">安装Go1.18环境
+</a>
+          <span class="float-end post-date">2022-03-16
+</span>
+        </li><li>
+          <a href="/posts/d5376d72/">为什么paseto比jwt好？
+</a>
+          <span class="float-end post-date">2022-03-09
+</span>
+        </li><li>
+          <a href="/posts/3259ac99/">GRPC-四种模式实践
+</a>
+          <span class="float-end post-date">2022-03-09
+</span>
+        </li><li>
+          <a href="/posts/17eab2e7/">在同一机器上安装Go的不同版本
+</a>
+          <span class="float-end post-date">2022-02-17
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#安装migrate">安装migrate</a></li>
+        <li><a href="#使用migrate">使用migrate</a></li>
+        <li><a href="#migrate的工作流程">migrate的工作流程</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

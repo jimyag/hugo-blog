@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>从0到1实现完整的微服务框架 on 编程日记</title>
+    <link>/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/</link>
+    <description>Recent content in 从0到1实现完整的微服务框架 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 18 Apr 2022 09:20:02 +0800</lastBuildDate><atom:link href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从0到1实现完整的微服务框架 总结</title>
+      <link>/posts/038c7636/</link>
+      <pubDate>Mon, 18 Apr 2022 09:20:02 +0800</pubDate>
+      
+      <guid>/posts/038c7636/</guid>
+      <description>&lt;p&gt;这一段时间又重构了之前的代码，这时候代码和项目的结构发生了很大的变化。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-新建订单接口的实现</title>
+      <link>/posts/6f5f2fac/</link>
+      <pubDate>Tue, 05 Apr 2022 09:21:06 +0000</pubDate>
+      
+      <guid>/posts/6f5f2fac/</guid>
+      <description>&lt;p&gt;新建订单的接口对数据的一致性要求很高，尤其是涉及到支付、金钱相关的事情。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-RocketMQ</title>
+      <link>/posts/897c83b3/</link>
+      <pubDate>Mon, 04 Apr 2022 14:47:32 +0000</pubDate>
+      
+      <guid>/posts/897c83b3/</guid>
+      <description>&lt;p&gt;在介绍分布式事务的时候我们介绍过MQ(消息队列),只是简单的提了一下，这篇文章会从mQ的基本概念、RocketMQ的概念，使用RocketMQ等几个方面介绍RocketMQ。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-分布式理论基础、分布式事务</title>
+      <link>/posts/252f6a9e/</link>
+      <pubDate>Sun, 03 Apr 2022 09:49:00 +0000</pubDate>
+      
+      <guid>/posts/252f6a9e/</guid>
+      <description>&lt;p&gt;在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-库存服务</title>
+      <link>/posts/c501f7ad/</link>
+      <pubDate>Thu, 31 Mar 2022 16:21:29 +0000</pubDate>
+      
+      <guid>/posts/c501f7ad/</guid>
+      <description>&lt;p&gt;在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-熔断限流和降级</title>
+      <link>/posts/71ef7b9d/</link>
+      <pubDate>Tue, 29 Mar 2022 13:58:43 +0000</pubDate>
+      
+      <guid>/posts/71ef7b9d/</guid>
+      <description>&lt;p&gt;使用sentinel实现熔断限流和降级。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-链路追踪</title>
+      <link>/posts/c8b300d9/</link>
+      <pubDate>Mon, 28 Mar 2022 22:13:56 +0000</pubDate>
+      
+      <guid>/posts/c8b300d9/</guid>
+      <description>&lt;p&gt;在分布式系统，尤其是微服务系统中，一次外部请求往往需要内部多个模块，多个中间件，多台机器的相互调用才能完成。在这一系列的调用中，可能有些是串行的，而有些是并行的。在这种情况下，我们如何才能确定这整个请求调用了哪些应用？哪些模块？哪些节点？以及它们的先后顺序和各部分的性能如何呢？&lt;/p&gt;
+&lt;p&gt;这就是涉及到链路追踪。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-负载均衡</title>
+      <link>/posts/a97428cc/</link>
+      <pubDate>Mon, 28 Mar 2022 20:56:26 +0000</pubDate>
+      
+      <guid>/posts/a97428cc/</guid>
+      <description>&lt;p&gt;本文主要介绍如何在grpc中使用负载均衡。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-服务注册、发现、配置中心</title>
+      <link>/posts/5763d21a/</link>
+      <pubDate>Mon, 28 Mar 2022 13:08:53 +0000</pubDate>
+      
+      <guid>/posts/5763d21a/</guid>
+      <description>&lt;p&gt;当某一个服务要以集群的形式进行部署，这时候就要用到服务注册和服务发现。主要介绍使用consul进行服务发现、服务注册以及配置中心。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-用户服务</title>
+      <link>/posts/dc2dadae/</link>
+      <pubDate>Fri, 25 Mar 2022 20:42:57 +0000</pubDate>
+      
+      <guid>/posts/dc2dadae/</guid>
+      <description>&lt;p&gt;本篇主要介绍实现用户服务中的相关内容。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从0到1实现完整的微服务框架-项目介绍</title>
+      <link>/posts/5f073a52/</link>
+      <pubDate>Fri, 25 Mar 2022 20:26:35 +0000</pubDate>
+      
+      <guid>/posts/5f073a52/</guid>
+      <description>&lt;p&gt;本系列使用gRPC从0到1实现一个完整的微服务的商城项目。主要用到的技术栈有：gin、postgresql、paseto、sqlc、migrate、docker、consul、jaeger、protobuf、elasticsearch。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从单体应用到微服务</title>
+      <link>/posts/acba46c5/</link>
+      <pubDate>Thu, 24 Mar 2022 16:04:13 +0000</pubDate>
+      
+      <guid>/posts/acba46c5/</guid>
+      <description>&lt;p&gt;从单体应用的痛点到微服务之间的过渡的说明。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

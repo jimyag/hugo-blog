@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>oh-my-zsh on 编程日记</title>
+    <link>/tags/oh-my-zsh/</link>
+    <description>Recent content in oh-my-zsh on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Tue, 26 Jul 2022 23:26:27 +0800</lastBuildDate><atom:link href="/tags/oh-my-zsh/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Oh My Zsh进入git目录卡顿</title>
+      <link>/posts/0f0b28a1/</link>
+      <pubDate>Tue, 26 Jul 2022 23:26:27 +0800</pubDate>
+      
+      <guid>/posts/0f0b28a1/</guid>
+      <description>&lt;p&gt;描述&lt;/p&gt;
+&lt;p&gt;在 clone 下的 git 仓库中查看文件，发现很卡顿。一条&lt;code&gt;ls&lt;/code&gt;的命令都需要 7,8 秒。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

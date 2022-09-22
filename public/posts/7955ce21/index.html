@@ -1,0 +1,1179 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>SSL TLS的完整概述及其加密方式 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="介绍SSL/TLS的原理及其加密方式。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="SSL TLS的完整概述及其加密方式">
+<meta itemprop="description" content="介绍SSL/TLS的原理及其加密方式。"><meta itemprop="datePublished" content="2022-05-02T11:17:09+08:00" />
+<meta itemprop="dateModified" content="2022-05-02T11:17:09+08:00" />
+<meta itemprop="wordCount" content="8580">
+<meta itemprop="keywords" content="SSL,TSL," /><meta property="og:title" content="SSL TLS的完整概述及其加密方式" />
+<meta property="og:description" content="介绍SSL/TLS的原理及其加密方式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/7955ce21/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-02T11:17:09+08:00" />
+<meta property="article:modified_time" content="2022-05-02T11:17:09+08:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="SSL TLS的完整概述及其加密方式"/>
+<meta name="twitter:description" content="介绍SSL/TLS的原理及其加密方式。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=SSL%20TLS%e7%9a%84%e5%ae%8c%e6%95%b4%e6%a6%82%e8%bf%b0%e5%8f%8a%e5%85%b6%e5%8a%a0%e5%af%86%e6%96%b9%e5%bc%8f&url=%2fposts%2f7955ce21%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f7955ce21%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">SSL TLS的完整概述及其加密方式</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">SSL TLS的完整概述及其加密方式
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-05-02 11:17:09 &#43;0800 CST。">
+    2022-05-02
+  </span><span class="post-reading-time">
+    18 分钟阅读
+  </span><span class="post-taxonomies"><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge post-taxonomy">计算机网络</a><a href="/tags/ssl/" class="badge post-taxonomy">SSL</a><a href="/tags/tsl/" class="badge post-taxonomy">TSL</a></span>
+</div>
+<div class="post-content mb-3"><p>介绍SSL/TLS的原理及其加密方式。</p>
+<p>我猜你们中的许多人都知道 HTTPS，有些人可能已经为你的 web 服务器设置了 SSL/TLS。但是，有多少人深刻理解 SSL/TLS 是如何工作的呢？</p>
+<p>你知道吗:</p>
+<ul>
+<li>
+<p>TLS 握手过程中到底发生了什么？</p>
+</li>
+<li>
+<p>TLS 使用哪些加密算法来保护数据？</p>
+</li>
+<li>
+<p>客户机和服务器如何交换密钥？</p>
+</li>
+<li>
+<p>Diffie-Hellman Ephemeral临时密钥交换是如何工作的？</p>
+</li>
+<li>
+<p>我们为何需要数字证书？</p>
+</li>
+<li>
+<p>为什么需要由证书颁发机构签署？</p>
+</li>
+<li>
+<p>什么是数字签名? 如何签名和验证？</p>
+</li>
+<li>
+<p>完备的前向安全性是什么意思？</p>
+</li>
+<li>
+<p>AEAD, MAC, HKDF, 0-RTT如何运作？</p>
+</li>
+<li>
+<p>什么是Elliptic-Curve加密体制？</p>
+</li>
+<li>
+<p>与 TLS 1.2相比，TLS 1.3有什么新特性？</p>
+</li>
+</ul>
+<p>有很多问题，我不想只触及表面。因此，这将是一篇非常详尽的文章，告诉您关于 SSL/TLS 的一切，SSL/TLS 是构建互联网安全性的一个极其重要的构件。</p>
+<h1 id="什么是-ssltls">什么是 SSL/TLS?<a class="anchor ms-1" href="#什么是-ssltls"><i class="fas fa-link"></i></a></h1>
+<p>SSL(Secure Socket Layer)代表安全套接字层，它是 TLS 的前身。</p>
+<p>TLS(Transport Layer Security)是传输层安全的简称，它是一个安全协议安全协议，通过计算机网络提供安全通信。</p>
+<h1 id="ssltls的历史">SSL/TLS的历史<a class="anchor ms-1" href="#ssltls的历史"><i class="fas fa-link"></i></a></h1>
+<p><picture><img class="img-fluid" alt="SSL/TLS history" src="/posts/7955ce21/index/0lb1buik85z6dkrn274b.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h2 id="ssl-和-tls-的一些历史">SSL 和 TLS 的一些历史<a class="anchor ms-1" href="#ssl-和-tls-的一些历史"><i class="fas fa-link"></i></a></h2>
+<ul>
+<li>SSL 最初是由 Netscape 开发的，1995年第一次发布了2.0版本</li>
+<li>由于一些严重的安全缺陷，SSL 版本1.0从未公开发布。</li>
+<li>1996年，SSL 版本3.0作为协议的重新设计发布。</li>
+<li>3年后，IETF 在 RFC 2246中首次定义了 TLS 1.0，作为 SSL Version 3.0的升级</li>
+<li>2006年，我们花了7年时间将其升级到 TLS 1.1</li>
+<li>1.2紧随其后在2008年发布。</li>
+<li>最终，经过10年的努力，我们在2018年得到了一个巨大的改进: TLS 1.3。</li>
+</ul>
+<h2 id="目前哪个-ssltls-版本仍然存在">目前哪个 SSL/TLS 版本仍然存在<a class="anchor ms-1" href="#目前哪个-ssltls-版本仍然存在"><i class="fas fa-link"></i></a></h2>
+<ul>
+<li>2.0在2011年就被弃用了</li>
+<li>3.0在2015年就被否决了</li>
+<li>最近，在2020年3月，TLS 1.0和 TLS 1.1也消失了。这意味着只有 TLS 1.2和1.3仍处于活动状态。</li>
+</ul>
+<h1 id="tls被用在哪里">TLS被用在哪里<a class="anchor ms-1" href="#tls被用在哪里"><i class="fas fa-link"></i></a></h1>
+<p>首先，它在网络上被广泛使用。所有你用 HTTPS 访问的网站都是用 TLS 保护的，或者我们常说的 HTTP over TLS。</p>
+<p>类似地，使用 SMTPS 协议的电子邮件实际上是 SMTP 和 TLS。</p>
+<p>然后 FTPS 的安全文件传输协议也是 FTP 加上 TLS。</p>
+<p><picture><img class="img-fluid" alt="image-20220502112940403" src="/posts/7955ce21/index/image-20220502112940403.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h1 id="为什么我们需要tls">为什么我们需要TLS<a class="anchor ms-1" href="#为什么我们需要tls"><i class="fas fa-link"></i></a></h1>
+<p><picture><img class="img-fluid" alt="Why TLS" src="/posts/7955ce21/index/yhz67zrdmc1vbowilecu.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>因为 TLS 给了我们三样东西:</p>
+<h2 id="认证">认证<a class="anchor ms-1" href="#认证"><i class="fas fa-link"></i></a></h2>
+<ul>
+<li>TLS 验证通信方的身份，通常是客户端和服务器。</li>
+<li>在非对称加密的帮助下，TLS 确保我们访问的是真实的网站，而不是假的网站。</li>
+</ul>
+<h2 id="加密">加密<a class="anchor ms-1" href="#加密"><i class="fas fa-link"></i></a></h2>
+<ul>
+<li>TLS 通过使用<strong>对称加密</strong>算法对交换的数据进行加密来保护数据不受未经授权的访问。</li>
+</ul>
+<h2 id="完整性">完整性<a class="anchor ms-1" href="#完整性"><i class="fas fa-link"></i></a></h2>
+<ul>
+<li>在传输过程中，TLS 可以通过检查消息代码来识别数据的任何变化，我们稍后将了解这一点。</li>
+</ul>
+<h1 id="tls是怎么工作的">TLS是怎么工作的？<a class="anchor ms-1" href="#tls是怎么工作的"><i class="fas fa-link"></i></a></h1>
+<p><picture><img class="img-fluid" alt="How TLS works" src="/posts/7955ce21/index/627y8nkwng8w79fsi6y5.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>基本上，TLS 由两个阶段或两个协议组成:</p>
+<h2 id="握手协议">握手协议<a class="anchor ms-1" href="#握手协议"><i class="fas fa-link"></i></a></h2>
+<p>在这个阶段，客户机和服务器将:</p>
+<ol>
+<li>协商协议版本</li>
+<li>选择加密算法(或密码组合)</li>
+<li>使用<strong>非对称密码</strong>系统进行身份验证</li>
+<li>建立一个<strong>共享密钥</strong>，该密钥将在下一阶段用于对称加密。</li>
+</ol>
+<p>因此，握手的主要目的是为了进行<strong>身份验证</strong>和<strong>密钥</strong>交换。</p>
+<h2 id="记录协议">记录协议<a class="anchor ms-1" href="#记录协议"><i class="fas fa-link"></i></a></h2>
+<p>在这个阶段</p>
+<ol>
+<li>所有发出的消息都将使用在握手中建立的<strong>共享密钥</strong>进行加密。</li>
+<li>然后将加密的消息传送到另一端。</li>
+<li>他们将验证，在传输过程中看看是否有任何修改。</li>
+<li>如果没有，则将使用相同的对称密钥解密消息。</li>
+</ol>
+<p>因此，我们将实现该记录协议的<strong>保密性</strong>和<strong>完整性</strong>。</p>
+<p>由于此阶段的加密数据量很大，因此通常称为批量加密。</p>
+<h1 id="为什么-tls-同时使用对称和非对称加密">为什么 TLS 同时使用对称和非对称加密<a class="anchor ms-1" href="#为什么-tls-同时使用对称和非对称加密"><i class="fas fa-link"></i></a></h1>
+<p>为什么不把一个用于所有目的呢？</p>
+<p>很容易看出，对称加密不能提供身份验证。由于客户机和服务器只有一个秘密密钥，因此它们不知道对方的任何信息以供验证。更不用说他们如何在不向公众泄露密钥的情况下找到相同的密钥是很困难的。</p>
+<p>那么非对称密码学呢？听起来是个不错的候选人。不幸的是，它比对称加密慢得多。我说的“很多”是指从100倍甚至10000倍慢下来。所以它显然不适合大容量加密。</p>
+<h1 id="对称加密">对称加密<a class="anchor ms-1" href="#对称加密"><i class="fas fa-link"></i></a></h1>
+<p><picture><img class="img-fluid" alt="Symmetric cryptography" src="/posts/7955ce21/index/c9wckcz85djydhfal2ob.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>好了，现在让我们学习更多关于对称密码学的知识。我想您已经了解了基础知识。</p>
+<ol>
+<li>首先，爱丽丝有一条纯文本信息，她想发给鲍勃，但不想让公共区域的任何人看到。</li>
+<li>所以她用他们之前<strong>共享的密钥</strong>加密了信息。然后她通过公共互联网将加密的信息发送给鲍勃。</li>
+<li>在收到加密消息后，Bob 将很容易地使用相同的秘密密钥对其进行解密。</li>
+<li>由于使用相同的密钥进行加密和解密，所以它是对称的，因此我们称之为对称密码术。</li>
+<li>现在可能有一个黑客哈里，他可以在公共网络上捕捉他们交换的信息。然而，消息已经被加密了，而 Harry 没有秘密密钥，所以他无法解密。</li>
+</ol>
+<p>但是他仍然可以改变它！</p>
+<h2 id="bit-flipping攻击">Bit-flipping攻击<a class="anchor ms-1" href="#bit-flipping攻击"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="Bit flipping" src="/posts/7955ce21/index/1xpcibbd4haxeh2b0lya.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>有一种技术叫做<strong>位翻转攻击</strong>，它是这样工作的:</p>
+<p>假设这次爱丽丝不是在和鲍勃说话，而是在和她的网上银行说话。她想寄100美元给某人。该信息用一个秘密密钥加密，并通过互联网发送到银行。</p>
+<p>现在哈利捕捉到了加密的信息。虽然他不能解密，但他可以将其中的一些比特从1翻转到0，从0翻转到1，然后将修改后的消息转发给银行。</p>
+<p>现在当银行解密它时，他们会得到一个不同的纯文本内容。在这种情况下，它变成了900美元而不是100美元。</p>
+<p>所以这是非常危险的，这就是为什么我们需要确保加密的信息在传输过程中没有被改变。</p>
+<p>但是怎么做呢？</p>
+<h2 id="认证加密authenticated-encryption-ae">认证加密Authenticated Encryption (AE)<a class="anchor ms-1" href="#认证加密authenticated-encryption-ae"><i class="fas fa-link"></i></a></h2>
+<p>一种方法是使用身份验证加密。这个想法不仅要加密，还要验证加密的消息。</p>
+<p><picture><img class="img-fluid" alt="Authenticated Encryption" src="/posts/7955ce21/index/g48ih13sohj4zlad9ch0.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="the-first-step-is-to-encrypt">The first step is to encrypt<a class="anchor ms-1" href="#the-first-step-is-to-encrypt"><i class="fas fa-link"></i></a></h3>
+<p>Alice 的明文消息通过一个对称加密算法，如 AES-256-GCM 或 cha20。</p>
+<p>这种加密算法还接受一个共享的密钥和一个随机的 nonce（Number once，一个只被使用一次的任意或非重复的随机数值），或者一个初始向量密码(IV，Initialization Vector)作为输入。它会返回加密的消息。</p>
+<h3 id="the-second-step-is-to-authenticate">The second step is to authenticate<a class="anchor ms-1" href="#the-second-step-is-to-authenticate"><i class="fas fa-link"></i></a></h3>
+<p>加密的消息、密钥和 nonce 成为 MAC 算法的输入，如果使用 AES-256-GCM，则为 GMAC; 如果使用 cha20加密算法，则为 POLY1305。</p>
+<p>这个 MAC 算法就像一个密码<strong>HASH</strong>函数，它的输出是一个 MAC（message authentication code消息的认证码）。</p>
+<p>现在，这个 MAC 将与加密的消息一起被标记，最终的结果将发送给 Bob。正因为如此，我们有时把这个 MAC 称为身份验证标记。</p>
+<h3 id="add-some-associated-data-ad">Add some Associated Data (AD)<a class="anchor ms-1" href="#add-some-associated-data-ad"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/by4s8o9wuunmb2tw7zkp.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>在 TLS 1.3中，除了加密消息之外，我们还希望对一些相关数据进行身份验证，例如: 地址、端口、协议版本或序列号。此信息未经加密，通信双方都知道。</p>
+<p>所以相关的数据也是 MAC 算法的输入。正因为如此，整个过程被称为带有相关数据的认证加密，或简称为 AEAD。</p>
+<h3 id="decryption-and-mac-verification">Decryption and MAC verification<a class="anchor ms-1" href="#decryption-and-mac-verification"><i class="fas fa-link"></i></a></h3>
+<p>现在让我们看看 Bob 如何检查加密消息在传输过程中是否被更改。</p>
+<p><picture><img class="img-fluid" alt="Decrypt" src="/posts/7955ce21/index/02ir295spos6dii1dtck.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>这只是一个简单的反向过程，从加密的 MAC 消息开始，我们从加密的消息中取消标记 MAC。</p>
+<p>然后将加密的消息与共享密钥和现有密钥一起送到 MAC 算法。注意，这与加密过程中使用的 nonce 是相同的。通常，nonce 在发送到接收方之前被填充到加密的消息中。</p>
+<p>相关的数据也将进入 MAC 算法，并且它的输出将是另一个 MAC。</p>
+<p><picture><img class="img-fluid" alt="Verify" src="/posts/7955ce21/index/niaw3gmz718b6s6rnfwm.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>现在 Bob 可以简单地比较2个 MAC 值。如果他们是不同的，那么他知道加密的信息已经被更改。否则，他可以安全地解密消息，并使用它的信心，它是相同的明文信息，爱丽丝发送。</p>
+<h2 id="secret-key-exchange">Secret key exchange<a class="anchor ms-1" href="#secret-key-exchange"><i class="fas fa-link"></i></a></h2>
+<p>但是，有一个问题: Bob 和 Alice 如何在不泄露给公众的情况下彼此共享密钥？</p>
+<p><picture><img class="img-fluid" alt="Key exchange" src="/posts/7955ce21/index/lglvuajoqugqkishyzah.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>答案是: 他们需要使用不对称或者公开密钥加密。具体地说，他们可以使用 Diffie-Hellman Ephemeral，或者椭圆曲线 Diffie-Hellman Ephemeral。</p>
+<h3 id="diffie-hellman-key-exchange">Diffie-Hellman key exchange<a class="anchor ms-1" href="#diffie-hellman-key-exchange"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/klhx6tgnjzkiq9w9n8o6.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>首先，Alice 和 Bobs 都同意两个数字: 基数 g 和模数 p。这些数字众所周知的。</p>
+<p>然后他们每个人秘密地选择一个私人号码。Alice 的私钥是 a ，Bob 的私钥是 b 。</p>
+<p>然后 Alice 计算她的公钥并发送给 Bob</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-tex" data-lang="tex"><span class="line"><span class="ln">1</span><span class="cl">A = (g<span class="nb">^</span>a) mod p
+</span></span></code></pre></div><p>类似地，Bob 计算他的公钥并将其发送给 Alice</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-tex" data-lang="tex"><span class="line"><span class="ln">1</span><span class="cl">B = (g<span class="nb">^</span>b) mod p
+</span></span></code></pre></div><p>然后爱丽丝将接收到鲍勃的公钥 b，而鲍勃将接收爱丽丝的公钥 a。</p>
+<p>现在奇迹发生了！</p>
+<p>爱丽丝计算:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-tex" data-lang="tex"><span class="line"><span class="ln">1</span><span class="cl">S = (B<span class="nb">^</span>a) mod p
+</span></span></code></pre></div><p>Bob计算：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">S = (A^b) mod p
+</span></span></code></pre></div><p>这两个值神奇地等于同一个数 s。</p>
+<p>为什么? 我们来算算</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-tex" data-lang="tex"><span class="line"><span class="ln">1</span><span class="cl">(B<span class="nb">^</span>a) mod p = (g<span class="nb">^</span>b)<span class="nb">^</span>a mod p = ( g<span class="nb">^</span>(b*a) ) mod p
+</span></span><span class="line"><span class="ln">2</span><span class="cl">(A<span class="nb">^</span>b) mod p = (g<span class="nb">^</span>a)<span class="nb">^</span>b mod p = ( g<span class="nb">^</span>(a*b) ) mod p
+</span></span></code></pre></div><p>所以爱丽丝和鲍勃想出了同样的密码 s，而没有泄露给公众</p>
+<p><picture><img class="img-fluid" alt="Derive secret key" src="/posts/7955ce21/index/qiun4qnrbh5htimuhpvz.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="key-derivation-function秘钥导出函数---kdf">Key Derivation Function(秘钥导出函数) - KDF<a class="anchor ms-1" href="#key-derivation-function秘钥导出函数---kdf"><i class="fas fa-link"></i></a></h3>
+<p>每种加密算法可能需要不同长度的密钥。因此，为了创建密钥，Alice 和 Bob 必须将 s 放到相同的密钥导出函数，并且输出将是一个所需长度的共享密钥。</p>
+<p>在 TLS 1.3中，我们使用了一个基于 hmac 的密钥导出函数，这就是为什么 HKDF 这个名字的原因</p>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/edabm5a7ke8xm7096wx5.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>一般而言，KDF采用以下输入:</p>
+<ol>
+<li>输入键材料(或 IKM)。在我们的例子中，IKM 是数字 s。</li>
+<li>我们希望输出键有多长，比如128位。</li>
+<li>一个密码杂凑函数，例如 HMAC-SHA256。</li>
+<li>可以选择一些特定于上下文或应用程序的信息</li>
+<li>一种可选的盐。</li>
+</ol>
+<p>有了所有这些输入，KDF 将生成一个所需长度的密钥。</p>
+<h3 id="trapdoor-function陷门函数">Trapdoor function（陷门函数）<a class="anchor ms-1" href="#trapdoor-function陷门函数"><i class="fas fa-link"></i></a></h3>
+<p>现在让我们回到Diffie-Hellman密钥交换。</p>
+<p>我们知道公众知道 p，g，A，B，这意味着黑客 Harry 也可以访问这些数字。</p>
+<p>我们可能会想: 这个密钥交换机制安全吗？或者给定 p，g，A，B，Harry 能算出秘密数字: a，b，s 吗？</p>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/bvizk41w4j43ofw9uyld.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>幸运的是，如果我们为 p，g，a，b 选择好的值，这些函数就会成为陷门。</p>
+<p>例如:</p>
+<ul>
+<li>选择 p 作为2048位素数,</li>
+<li>选择 g 作为模 p 的基本根,</li>
+<li>然后选择 a，b 作为256位随机整数。</li>
+</ul>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/xs2x9vltcf7dem4btmo2.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>一个陷门函数基本上意味着一种方法很容易计算，而另一种方法很难计算:</p>
+<ul>
+<li>给定 p，g，a，很容易计算A 。</li>
+<li>但是给定 p，g，A，很难计算a。</li>
+</ul>
+<p>显而易见，使用 o (log (a))时间复杂度可以非常快地计算 A。这是一个众所周知的模幂运算问题。</p>
+<p>计算一个a要困难得多。这是一个离散对数的问题，需要我们现在这一代的计算机花费很长的时间来解决。</p>
+<p>所以我们至少现在是安全的，或者直到下一代强大的量子计算机投入使用。</p>
+<p>然而，就目前而言，“需要很长时间才能解决”并不意味着无法解决，对吗？</p>
+<h3 id="static-or-ephemeral临时-key">Static or Ephemeral（临时） key?<a class="anchor ms-1" href="#static-or-ephemeral临时-key"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/yrjca18zd7te7z626rrj.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>如果 Alice 和 Bob 对他们通信的每个会话使用相同的私钥 a 和 b，那么会发生的是，Harry 可以记录所有这些会话，并从会话1开始求解 a。</p>
+<p>尽管他需要很长时间来解决这个问题，但是我们假设在第 n 个会话之后，他得到了正确的 a。现在他可以用它来计算秘密数字 s，这样，他就能够解密所有的对话录音。</p>
+<p>这听起来可怕吗? 我们如何预防它？</p>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/zgaezee4pjc2s6ejiawu.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>答案是临时的钥匙。顾名思义，我们使用不同的私钥或每个会话。因此，即使 Harry 能够在一个会话中解决这个密钥，他也不能在其他会话中使用它。</p>
+<p>这在 TLS 中被称为<strong>完备的前向安全性</strong>。</p>
+<p>所以现在你明白了 Diffie-Hellman Ephemeral 的意思，它只是 Diffie-Hellman 的短命音调。</p>
+<p>Elliptic-Curve Diffie-Hellman Ephemeral如何？</p>
+<h1 id="elliptic-curve椭圆曲线-cryptography">Elliptic-Curve(椭圆曲线) Cryptography<a class="anchor ms-1" href="#elliptic-curve椭圆曲线-cryptography"><i class="fas fa-link"></i></a></h1>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/ax54m5xjp0quwyvg898f.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>椭圆曲线密码体制(ECC)是一种非对称密码体制，其算法相似，但使用了不同的陷门函数。</p>
+<p>这个陷门函数是基于椭圆曲线的代数结构，这就是为什么这个名字。</p>
+<p>椭圆曲线密码学的一个惊人的价值是: 它需要更小的密钥来提供同等的安全级别。你可以在这个与 RSA 的比较中看到它。</p>
+<p>美国国家安全局(NSA)过去用 ECC 384位密钥来保护他们的最高机密，这种密钥用 rsa-7680位密钥提供同样的安全级别。</p>
+<p>听起来很棒，对吧？</p>
+<p>然而，量子计算攻击的目标更容易对付椭圆曲线密码学。<a href="https://en.wikipedia.org/wiki/Shor%27s_algorithm" target="_blank" rel="noopener noreferrer">肖尔的算法</a>可以用比破解 RSA 更少的量子资源在假想的量子计算机上破解 ECC。</p>
+<p>这种强大的量子计算机可能需要几十年的时间才能真正建成并投入使用。但是我们为此准备好了什么吗？有没有什么量子抵抗算法？</p>
+<p>是的，有<a href="https://en.wikipedia.org/wiki/Supersingular_isogeny_key_exchange" target="_blank" rel="noopener noreferrer">超分子同源迪菲－赫尔曼</a>密钥交换算法，这也是基于椭圆曲线密码学的。</p>
+<p>但那是另一回事了。</p>
+<h1 id="非对称加密">非对称加密<a class="anchor ms-1" href="#非对称加密"><i class="fas fa-link"></i></a></h1>
+<p>现在让我们回到非对称密码学上来! 这是一项了不起的技术，有着广泛的应用。</p>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/i8panmd180g4w5z3fv1q.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>我们已经研究了它的一个应用，即用于对称密钥交换的 Diffie-Hellman ephemal 和椭圆曲线 Diffie-Hellman ephemal。</p>
+<p>实际上，RSA 算法过去也用于密钥交换，但在 TLS 1.3中由于各种攻击和没有前向保密能力而被删除。</p>
+<p>非对称加密法也用于加密系统。以下是非对称加密算法:</p>
+<ul>
+<li>
+<p>具有最佳非对称加密填充(RSA-oaep)的 RSA。</p>
+</li>
+<li>
+<p>RSA 与公钥加密标准1(RSA-pkcs1)的最新版本2.2</p>
+</li>
+<li>
+<p>Elgamal 加密算法。</p>
+</li>
+</ul>
+<p>最后，非对称密码学的另一个重要特征是用于<strong>数字签名</strong>，TLS 广泛用于身份验证。</p>
+<p>TLS 中使用的一些流行的数字签名算法如下:</p>
+<ul>
+<li>
+<p>基于概率签名的 RSA 方案。</p>
+</li>
+<li>
+<p>椭圆曲线数字签名算法。</p>
+</li>
+<li>
+<p>Edwards 曲线数字签名算法。</p>
+</li>
+</ul>
+<p>我们将很快学习数字签名，但在此之前，让我们学习非对称加密系统是如何工作的。</p>
+<h2 id="asymmetric-encryption">Asymmetric Encryption<a class="anchor ms-1" href="#asymmetric-encryption"><i class="fas fa-link"></i></a></h2>
+<p>如果使用公钥进行加密，就只能用私钥解密。如果用私钥加密，就只能用公钥解密。</p>
+<p><picture><img class="img-fluid" alt="Asymmetric Encryption" src="/posts/7955ce21/index/qq8946qj1405vkq8j5ut.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>与对称加密类似，Alice 有一条明文消息要发送给 Bob。</p>
+<p>但是这一次，没有共享的密钥。相反，Alice 使用 Bob 的公钥对消息进行加密，并将加密的消息发送给 Bob。</p>
+<p>当 Bob 收到消息时，他使用自己的私钥对其进行解密。</p>
+<p>虽然公钥和私钥是不同的，但它们仍然通过一些活门函数连接，就像我们在 Diffie-Hellman 算法中看到的那样。</p>
+<p>其思想是: 密钥成对存在，只有同一对的私钥才能解密使用其公钥加密的消息。</p>
+<p>因此，即使黑客 Harry 可以访问 Alice 的加密消息和 Bob 的公钥，他也不能使用该公钥解密消息。</p>
+<h2 id="public-key-sharing">Public key sharing<a class="anchor ms-1" href="#public-key-sharing"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="Public key sharing" src="/posts/7955ce21/index/d0rhcuwf85uuvie5r7ne.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>公开密钥共享非常简单。鲍勃只需通过公共互联网直接将密钥发送给爱丽丝，而不用担心密钥可以用来解密任何消息。</p>
+<p>密钥是公开的，因此任何人都可以使用它来加密只有 Bob 能够读取的消息，即使他们之前从未交谈过。这真是令人兴奋，不是吗？</p>
+<p>然而，生活并不是那么简单！</p>
+<h2 id="中间人交换key">中间人交换key<a class="anchor ms-1" href="#中间人交换key"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="Key swap" src="/posts/7955ce21/index/4dgg5bm4ughvmthfsy5o.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>尽管我们知道 Harry 不能用 Bob 的公钥解密消息，但他仍然可以干扰公钥共享，并用自己的公钥替换 Bob 的公钥。</p>
+<p>现在，当 Alice 收到密钥时，她仍然认为那是 Bob 的公钥，但实际上那是 Harry 的。所以如果 Alice 用这个密钥加密她的消息，Harry 就能用他的私钥解密它。</p>
+<p>之所以会发生这种情况，是因为钥匙只是一个数字，没有身份信息告诉我们钥匙的主人是谁。</p>
+<p>那么我们能做些什么呢？显然，我们应该把密钥和一些身份信息放在一起。这只不过是一个数字证书。</p>
+<h2 id="数字证书">数字证书<a class="anchor ms-1" href="#数字证书"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="Digital certificate" src="/posts/7955ce21/index/6x1y71uy3ipqu1l0y05i.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>所以 Bob 将他的钥匙放在证书中，证书上有他的名字和其他身份信息。这张证书在现实世界中起到了护照的作用。</p>
+<p>但是我们怎么知道真的是 Bob 拥有那张证书呢？是什么阻止了哈里用鲍勃的名字但是用哈里的公共钥匙制作一个假证书？</p>
+<p>嗯，就像在现实世界中一样，护照必须经过身份验证后由护照当局签发。在数字世界中，证书必须由证书颁发机构进行验证和签名。</p>
+<p>该证书颁发机构和护照颁发机构是值得信赖的第三方，帮助我们防止伪造护照和数字证书。</p>
+<h3 id="证书签发">证书签发<a class="anchor ms-1" href="#证书签发"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/qa3ed04i785g6sunvwmg.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>证书签名过程如下:</p>
+<ul>
+<li>Bob 有一对公钥和私钥。</li>
+<li>在第一步中，他创建一个证书签名请求，或 CSR。这个 CSR 包含他的公钥和一些身份信息，例如他的名字、组织和电子邮件。</li>
+<li>然后，第二步，他用自己的私钥签署 CSR，并将其发送给证书颁发机构。</li>
+<li>证书颁发机构将在证书中验证 Bob 的身份。如果有必要，他们可以联系他要求更多的证据。</li>
+<li>然后，他们使用证书中 Bob 的公钥来验证他的签名。这是为了确保 Bob 真正拥有与证书中的公钥配对的私钥。</li>
+<li>如果所有内容都有效，CA 将使用自己的私钥对证书进行签名，并将其发送回 Bob。</li>
+</ul>
+<h3 id="证书共享">证书共享<a class="anchor ms-1" href="#证书共享"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="Certificate sharing" src="/posts/7955ce21/index/dfha869i7tb2rhbwovxd.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>现在，Bob 将与 Alice 共享这个包含他的公钥的证书，而不是像以前那样只发送公钥。</p>
+<p>在接收到证书后，Alice 可以使用证书颁发机构的公钥轻松地验证其真实性。</p>
+<p>因此，Harry 再也不能用他的密钥替换 Bob 的公钥，因为他没有 CA 的私钥来签署假证书。</p>
+<p><strong>请注意，这仅仅是因为我们都信任证书颁发机构。如果 CA 不值得信任，例如，如果他们给了 Harry 他们的私钥，那么我们就有大麻烦了！</strong></p>
+<h2 id="证书颁发机构-信任链">证书颁发机构-信任链<a class="anchor ms-1" href="#证书颁发机构-信任链"><i class="fas fa-link"></i></a></h2>
+<p>在现实中,有一个证书authori链</p>
+<p><picture><img class="img-fluid" alt="Alt Text" src="/posts/7955ce21/index/q8oytic2nbywqj15n2d3.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>在最高层是一个根证书认证机构，他们签署自己的认证证书，也签署他们的下属的认证证书，</p>
+<p>这是一个中级认证机构。该机构可以签署其他中间机构的证书，也可以签署最终实体证书(或叶证书)。</p>
+<p>每个证书将引用回到其更高级别的权威的证书，直到根目录。</p>
+<p>你的操作系统和浏览器会存储一系列受信任的根证书证书。这样他们就可以很容易地验证所有证书的真实性。</p>
+<h2 id="数字签名">数字签名<a class="anchor ms-1" href="#数字签名"><i class="fas fa-link"></i></a></h2>
+<p>我们已经讨论了很多关于签署数字签名的问题，所以让我们来看看它是如何工作的！</p>
+<p><picture><img class="img-fluid" alt="Sign a digital signature" src="/posts/7955ce21/index/ctr1kbvxifx1lwcf6e4l.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>签署文件:</p>
+<ul>
+<li>签名者首先需要对其进行hash处理。</li>
+<li>然后使用签名者的私钥对散列值进行加密。</li>
+<li>结果就是数字签名。</li>
+<li>然后这个签名将附在原始文件上。</li>
+</ul>
+<p>这就是签名过程。现在我们如何验证签名是否有效？</p>
+<p><picture><img class="img-fluid" alt="Verify a digital signature" src="/posts/7955ce21/index/nailgasrcrzaajb12d53.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>好吧，我们只是做一个相反的过程:</p>
+<ul>
+<li>
+<p>首先我们将签名从文档中分离出来</p>
+</li>
+<li>
+<p>使用签名者的公钥对其进行解密，以获得哈希值。</p>
+</li>
+<li>
+<p>然后，我们使用签名过程中使用的相同散列算法对文档进行散列。</p>
+</li>
+<li>
+<p>结果是另一个散列值。</p>
+</li>
+<li>
+<p>然后我们只需要比较两个散列值。</p>
+</li>
+<li>
+<p>如果它们是相同的，那么签名就是有效的。</p>
+</li>
+</ul>
+<h1 id="tls-13-handshake-protocol">TLS 1.3 handshake protocol<a class="anchor ms-1" href="#tls-13-handshake-protocol"><i class="fas fa-link"></i></a></h1>
+<p>好了，现在我们已经掌握了所有的知识，让我们仔细看看它们在 TLS 握手协议中是如何使用的。</p>
+<h2 id="full-handshake">Full handshake<a class="anchor ms-1" href="#full-handshake"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="TLS full handshake - client hello" src="/posts/7955ce21/index/2i12vggsnis0naqxhv34.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>TLS 1.3完整的握手以客户端发送给服务器的 hello 消息开始。实际上，这条信息包含了很多东西，但在这里我只列出一些重要的信息:</p>
+<ul>
+<li>
+<p>首先，客户端支持的协议版本列表。</p>
+</li>
+<li>
+<p>然后一个支持 AEAD 的对称密码套件列表。在这种情况下，有两个选项: AES-256-GCM 或 cha20-poly1305</p>
+</li>
+<li>
+<p>在此之后，还有一个受支持的关键交换组列表。例如，此客户端同时支持有限域 Diffie-Hellman 和椭圆曲线 Diffie-Hellman 。</p>
+</li>
+<li>
+<p>这就是为什么 client 也分享它的2个公钥，1个是 Diffie-Hellman 的，另一个是椭圆曲线 Diffie-Hellman 的。这样，无论选择什么算法，服务器都能够计算共享密钥。</p>
+</li>
+<li>
+<p>此消息中的最后一个字段客户端发送的是它支持的签名算法的列表。这是让服务器选择它应该使用哪个算法来签署整个握手。稍后我们将看到它是如何工作的。</p>
+</li>
+</ul>
+<p><picture><img class="img-fluid" alt="TLS handshake - server hello" src="/posts/7955ce21/index/mowf2zm6q21gyqsdl1th.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>在收到客户端 hello 消息后，服务器还会发回 hello 消息，其中包含:</p>
+<ul>
+<li>
+<p>选定的协议版本 TLS 1.3</p>
+</li>
+<li>
+<p>选定的密码套件: AES-256-GCM</p>
+</li>
+<li>
+<p>选定的密钥交换方法: Diffie-Hellman Ephemeral</p>
+</li>
+<li>
+<p>以及所选方法的服务器公钥。</p>
+</li>
+<li>
+<p>下一个字段是对客户端证书的请求，这是可选的，只有当服务器希望通过其证书对客户端进行身份验证时才会发送这个请求。</p>
+</li>
+<li>
+<p>通常在一个 HTTPS 网站上，只有服务器端需要将其证书发送到客户端。这是在这个信息的下一个字段中发送的。</p>
+</li>
+</ul>
+<p><picture><img class="img-fluid" alt="TLS handshake - authentication messages" src="/posts/7955ce21/index/7bmi3ncwju9ezjz2t6xa.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ul>
+<li>
+<p>下一个字段是 certificate verify，它实际上是到目前为止整个握手的签名。以下是如何生成它的: 从握手开始到证书请求的整个数据称为握手上下文。我们将此上下文与服务器的证书连接起来，对其进行哈希处理，并使用客户机支持的签名算法中的1个用服务器的私钥对哈希值进行签名。</p>
+</li>
+<li>
+<p>以类似的方式，服务器完成是通过连接握手上下文、证书和证书验证、散列，并将散列值通过所选密码组的 MAC 算法来生成的。结果就是整个握手过程的 MAC。</p>
+</li>
+</ul>
+<p>在这里，服务器证书、证书验证和服务器完成被称为身份验证消息，因为它们用于对服务器进行身份验证。有了整个握手的签名和 MAC，TLS 1.3可以安全地抵御几种类型的中间人降级攻击。</p>
+<p><picture><img class="img-fluid" alt="TLS handshake - client finish" src="/posts/7955ce21/index/ymvzwxg30cbdob621fze.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>现在，当客户端收到来自服务器的 hello 消息后，它将使用root权限验证服务器的证书，并检查整个握手过程的签名和 MAC，以确保它没有被篡改。</p>
+<p>如果一切正常，那么客户端就会在整个握手过程中用 MAC 发送完成消息，并且在服务器请求的情况下，还可以选择客户端的证书和证书进行验证。</p>
+<p>这就是整个 TLS 握手的流程。</p>
+<h2 id="简短的握手和psk恢复">简短的握手和PSK恢复<a class="anchor ms-1" href="#简短的握手和psk恢复"><i class="fas fa-link"></i></a></h2>
+<p>为了提高性能，客户机和服务器并不总是进行这种完整的握手。有时，他们使用预先按下的按键恢复来进行简短的握手。</p>
+<p>其思想是: 在上一次握手之后，客户机和服务器已经互相认识，因此它们不需要再次验证。</p>
+<p>因此，服务器可以向客户端发送一个或多个会话票据，这些票据可以在下一次握手中用作预共享密钥(PSK)标识。它伴随着一张票的生命周期以及其他一些信息。</p>
+<p><picture><img class="img-fluid" alt="TLS abbreviated handshake - PSK resumption" src="/posts/7955ce21/index/jn5mt50d8nsqyrd1vo1i.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>现在，在下一次握手中，客户端将发送一个简单的 hello 消息，其中包含:</p>
+<ul>
+<li>
+<p>从前一次握手中获得的 PSK 身份(或门票)列表</p>
+</li>
+<li>
+<p>一种 PSK 密钥交换模式，可以是只 PSK，也可以是与 Diffie-Hellman 的 PSK。</p>
+</li>
+<li>
+<p>如果使用 Diffie-Hellman 模式的 PSK，那么客户端还需要共享 Diffie-Hellman 公钥。这将提供完备的前向安全性服务，并允许服务器在需要时回到完整的握手。</p>
+</li>
+</ul>
+<p>当服务器收到这个客户端 hello 消息时，它会发回 hello:</p>
+<ul>
+<li>
+<p>选定的预共享密钥标识</p>
+</li>
+<li>
+<p>服务器的可选 Diffie-Hellman 公钥</p>
+</li>
+<li>
+<p>和服务器完成就像在完整的握手。</p>
+</li>
+</ul>
+<p>最后，客户端返回其 Finish，这就是 PSK 恢复的结束。</p>
+<p>正如您所看到的，在这种简短的握手中，客户机和服务器之间没有证书身份验证。</p>
+<p>这也为零往返时间(0-RTT)数据打开了一个机会，这意味着客户机不需要等到握手完成后才将其第一个应用程序数据发送到服务器。</p>
+<h2 id="0-rtt-handshake">0-RTT handshake<a class="anchor ms-1" href="#0-rtt-handshake"><i class="fas fa-link"></i></a></h2>
+<p><picture><img class="img-fluid" alt="0-RTT handshake" src="/posts/7955ce21/index/ra5s19bgffxu212qyhz7.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>在0-rtt 中，客户机将应用程序数据与客户机 hello 消息一起发送。此数据使用从票据列表中的第一个 PSK 中派生的密钥进行加密。</p>
+<p>它还增加了另外一个字段: 早期数据指示，告诉服务器有早期应用程序数据被发送。</p>
+<p>如果服务器接受这个0-rtt 请求，它将像正常的 PSK 恢复一样发送回服务器 hello，还可以选择发送一些应用程序数据。</p>
+<p>客户端将以一个包含 MAC 的消息和一个早期数据结束指示器结束。这就是 TLS 1.3中0往返时间的工作原理。</p>
+<p>它的优点是减少了1个往返时间的延迟。但是反对派正在挑起重放攻击的潜在威胁。这意味着，黑客可以将相同的加密的0-rtt 请求多次复制并发送到服务器。为了避免这种情况，服务器应用程序的实现方式必须能够弹性地抵御重复请求。</p>
+<h1 id="compare-tls-13-vs-tls-12">Compare TLS 1.3 vs TLS 1.2<a class="anchor ms-1" href="#compare-tls-13-vs-tls-12"><i class="fas fa-link"></i></a></h1>
+<p>在我们结束之前，让我们对 TLS 1.3和 TLS 1.2做一个快速比较，看看有什么新的东西！</p>
+<p><picture><img class="img-fluid" alt="TLS 1.3 vs TLS 1.2" src="/posts/7955ce21/index/36u728t4pild17fldy1e.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ul>
+<li>
+<p>1.3具有更安全的密钥交换机制，去除了易受攻击的 RSA 和其他静态密钥交换方法，只保留了 Diffie-Hellman 或者椭圆曲线 Diffie-Hellman 的临时密钥交换方法，从而实现了完备的前向安全性密钥交换。</p>
+</li>
+<li>
+<p>TLS 1.3握手至少比 TLS 1.2握手快1个来回。</p>
+</li>
+<li>
+<p>TLS 1.3中的对称加密更加安全，因为 AEAD 密码套件是强制的，而且它还从列表中删除了一些弱算法，如块密码模式(CBC)、 rc4或三重 DES。</p>
+</li>
+<li>
+<p>TLS 1.3中的密码套件也更简单，因为它只包含 AEAD 算法和哈希算法。密钥交换和签名算法被移动到不同的字段。在 TLS 1.2中，它们被合并到密码套件中。这使得推荐的密码组合数量变得太大，如果我没有记错的话，TLS 1.2中有37个选项。而在 TLS 1.3中，只有5个。</p>
+</li>
+<li>
+<p>接下来，TLS 1.3也给了我们更强有力的信号，因为它标志着整个握手过程，而不是像 TLS 1.2那样仅仅覆盖其中的某些部分。</p>
+</li>
+<li>
+<p>最后，椭圆曲线密码体制在 TLS 1.3中得到了广泛的关注，增加了一些更好的曲线算法，如 edward 曲线数字签名算法，该算法在不牺牲安全性的前提下速度更快。</p>
+</li>
+</ul>
+<h1 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h1>
+<p><a href="https://www.youtube.com/watch?v=-f4Gbk-U758&amp;list=PLy_6D98if3UINAba67DnhO4055OA6viSb" target="_blank" rel="noopener noreferrer">A complete overview of SSL/TLS and its cryptographic system - YouTube</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/85d3feae/">Newcoder Top 101 二分查找排序
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/e62967f0/">Newcoder Top 101 二叉树
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/85d3feae/">Newcoder Top 101 二分查找排序
+</a>
+          <span class="float-end post-date">2022-04-30
+</span>
+        </li><li>
+          <a href="/posts/34618820/">减少下层服务的压力 SingleFlight
+</a>
+          <span class="float-end post-date">2022-04-27
+</span>
+        </li><li>
+          <a href="/posts/33cd41f9/">Go泛型的限制和对中间件的影响
+</a>
+          <span class="float-end post-date">2022-04-26
+</span>
+        </li><li>
+          <a href="/posts/b983a6c5/">Git删除不小心上传的大文件
+</a>
+          <span class="float-end post-date">2022-04-25
+</span>
+        </li><li>
+          <a href="/posts/77d147b1/">大数据技术及应用-复习资料
+</a>
+          <span class="float-end post-date">2022-04-24
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#ssl-和-tls-的一些历史">SSL 和 TLS 的一些历史</a></li>
+    <li><a href="#目前哪个-ssltls-版本仍然存在">目前哪个 SSL/TLS 版本仍然存在</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#认证">认证</a></li>
+    <li><a href="#加密">加密</a></li>
+    <li><a href="#完整性">完整性</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#握手协议">握手协议</a></li>
+    <li><a href="#记录协议">记录协议</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#bit-flipping攻击">Bit-flipping攻击</a></li>
+    <li><a href="#认证加密authenticated-encryption-ae">认证加密Authenticated Encryption (AE)</a>
+      <ul>
+        <li><a href="#the-first-step-is-to-encrypt">The first step is to encrypt</a></li>
+        <li><a href="#the-second-step-is-to-authenticate">The second step is to authenticate</a></li>
+        <li><a href="#add-some-associated-data-ad">Add some Associated Data (AD)</a></li>
+        <li><a href="#decryption-and-mac-verification">Decryption and MAC verification</a></li>
+      </ul>
+    </li>
+    <li><a href="#secret-key-exchange">Secret key exchange</a>
+      <ul>
+        <li><a href="#diffie-hellman-key-exchange">Diffie-Hellman key exchange</a></li>
+        <li><a href="#key-derivation-function秘钥导出函数---kdf">Key Derivation Function(秘钥导出函数) - KDF</a></li>
+        <li><a href="#trapdoor-function陷门函数">Trapdoor function（陷门函数）</a></li>
+        <li><a href="#static-or-ephemeral临时-key">Static or Ephemeral（临时） key?</a></li>
+      </ul>
+    </li>
+  </ul>
+
+  <ul>
+    <li><a href="#asymmetric-encryption">Asymmetric Encryption</a></li>
+    <li><a href="#public-key-sharing">Public key sharing</a></li>
+    <li><a href="#中间人交换key">中间人交换key</a></li>
+    <li><a href="#数字证书">数字证书</a>
+      <ul>
+        <li><a href="#证书签发">证书签发</a></li>
+        <li><a href="#证书共享">证书共享</a></li>
+      </ul>
+    </li>
+    <li><a href="#证书颁发机构-信任链">证书颁发机构-信任链</a></li>
+    <li><a href="#数字签名">数字签名</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#full-handshake">Full handshake</a></li>
+    <li><a href="#简短的握手和psk恢复">简短的握手和PSK恢复</a></li>
+    <li><a href="#0-rtt-handshake">0-RTT handshake</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script><script defer src="/assets/mermaid/bundle.min.e0678d67a61d9ab297dc3f1de9ca8e43614ce49e9e0d310b80787e532fca37a1.js" integrity="sha256-4GeNZ6YdmrKX3D8d6cqOQ2FM5J6eDTELgHh&#43;Uy/KN6E=" crossorigin="anonymous"></script>
+
+</body>
+</html>

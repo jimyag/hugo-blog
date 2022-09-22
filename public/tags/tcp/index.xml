@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>TCP on 编程日记</title>
+    <link>/tags/tcp/</link>
+    <description>Recent content in TCP on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Thu, 10 Feb 2022 13:24:59 +0000</lastBuildDate><atom:link href="/tags/tcp/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>TCP/IP协议三次握手、四次挥手</title>
+      <link>/posts/c4697fb2/</link>
+      <pubDate>Thu, 10 Feb 2022 13:24:59 +0000</pubDate>
+      
+      <guid>/posts/c4697fb2/</guid>
+      <description>&lt;p&gt;为了实现可靠传输，TCP采用了面向字节流的方式发送数据。TCP在发送数据时，是从发送缓冲区取出一部分或全部字节并给其添加一个首部使之成为TCP报文段后进行发送。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

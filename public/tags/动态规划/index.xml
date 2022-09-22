@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>动态规划 on 编程日记</title>
+    <link>/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/</link>
+    <description>Recent content in 动态规划 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Wed, 29 Dec 2021 10:51:23 +0000</lastBuildDate><atom:link href="/tags/%E5%8A%A8%E6%80%81%E8%A7%84%E5%88%92/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LeetCode-1995-统计特殊四元组</title>
+      <link>/posts/ace15a6d/</link>
+      <pubDate>Wed, 29 Dec 2021 10:51:23 +0000</pubDate>
+      
+      <guid>/posts/ace15a6d/</guid>
+      <description>&lt;h3 id=&#34;题目&#34;&gt;题目&lt;a class=&#34;anchor ms-1&#34; href=&#34;#题目&#34;&gt;&lt;i class=&#34;fas fa-link&#34;&gt;&lt;/i&gt;&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;给你一个 下标从 0 开始 的整数数组 nums ，返回满足下述条件的 不同 四元组 (a, b, c, d) 的 数目 ：&lt;/p&gt;
+&lt;p&gt;nums[a] + nums[b] + nums[c] == nums[d] ，且
+a &amp;lt; b &amp;lt; c &amp;lt; d&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>前缀和 on 编程日记</title>
+    <link>/tags/%E5%89%8D%E7%BC%80%E5%92%8C/</link>
+    <description>Recent content in 前缀和 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sat, 29 Jan 2022 01:02:43 +0000</lastBuildDate><atom:link href="/tags/%E5%89%8D%E7%BC%80%E5%92%8C/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>前缀和学习记录</title>
+      <link>/posts/b19a7723/</link>
+      <pubDate>Sat, 29 Jan 2022 01:02:43 +0000</pubDate>
+      
+      <guid>/posts/b19a7723/</guid>
+      <description>&lt;p&gt;假设我们有一个字符串ABCDE，什么是这个单词的前缀，A、AB、ABC、ABCD、ABCDE就是这个单词的前缀，就是从第一个字母开始，依次往后拼接。E、ED、EDC、EDCB、EDCBA被称为这个单词的后缀。&lt;/p&gt;
+&lt;p&gt;那么对于一个数组的前缀，例如数组a = [a1,a2,a3,a4,a5]，我们维护一个由前缀的和组成的数组sum，sum[i]表示数组中前i个数的和。&lt;/p&gt;
+&lt;p&gt;sum[i] = a1+a2+&amp;hellip;+ai&lt;/p&gt;
+&lt;p&gt;sum数组就被称为前缀和数组。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

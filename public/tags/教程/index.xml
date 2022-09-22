@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>教程 on 编程日记</title>
+    <link>/tags/%E6%95%99%E7%A8%8B/</link>
+    <description>Recent content in 教程 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sat, 09 Jul 2022 23:22:17 +0800</lastBuildDate><atom:link href="/tags/%E6%95%99%E7%A8%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vimtutor翻译</title>
+      <link>/posts/e84c3531/</link>
+      <pubDate>Sat, 09 Jul 2022 23:22:17 +0800</pubDate>
+      
+      <guid>/posts/e84c3531/</guid>
+      <description>&lt;p&gt;Vimtutor 的中文翻译&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>将博客迁移到七牛云</title>
+      <link>/posts/3aafaaaf/</link>
+      <pubDate>Tue, 28 Jun 2022 21:16:21 +0800</pubDate>
+      
+      <guid>/posts/3aafaaaf/</guid>
+      <description>&lt;p&gt;七牛云对注册的用户提供永久免费存储和CDN额度&lt;a href=&#34;https://marketing.qiniu.com/activity/2021618-act-cdn&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;CDN 优惠专场 (qiniu.com)&lt;/a&gt;，所以打算将自己博客迁移过来。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>解决win端口没被占用提示access Permissions</title>
+      <link>/posts/bf108eb3/</link>
+      <pubDate>Tue, 12 Apr 2022 22:32:00 +0800</pubDate>
+      
+      <guid>/posts/bf108eb3/</guid>
+      <description>&lt;p&gt;Win10端口没被却占用提示&lt;code&gt;An attempt was made to access a socket in a way forbidden by its access permissions&lt;/code&gt;,我不理解&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>服务器环境的配置</title>
+      <link>/posts/173a3c06/</link>
+      <pubDate>Mon, 11 Apr 2022 17:06:27 +0800</pubDate>
+      
+      <guid>/posts/173a3c06/</guid>
+      <description>&lt;p&gt;新购买的服务器的环境配置&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从hexo迁移到Hugo</title>
+      <link>/posts/642ecc47/</link>
+      <pubDate>Mon, 11 Apr 2022 11:47:04 +0800</pubDate>
+      
+      <guid>/posts/642ecc47/</guid>
+      <description>&lt;p&gt;由于之前Hexo的NexT主题加载实在太慢，关闭加载动画之后还是很慢。索性换一个新的博客框架。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Go中rpc包的使用</title>
+      <link>/posts/11a90fe7/</link>
+      <pubDate>Fri, 25 Mar 2022 14:15:03 +0000</pubDate>
+      
+      <guid>/posts/11a90fe7/</guid>
+      <description>&lt;p&gt;Go语言的RPC包的路径为&lt;code&gt;net/rpc&lt;/code&gt;，也就是放在了net包目录下面。因此我们可以猜测该RPC包是建立在net包基础之上的。我们基于http实现了一个打印例子。下面我们尝试基于rpc实现一个类似的例子。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>RPC基础介绍</title>
+      <link>/posts/8d24f484/</link>
+      <pubDate>Fri, 25 Mar 2022 10:44:35 +0000</pubDate>
+      
+      <guid>/posts/8d24f484/</guid>
+      <description>&lt;p&gt;RPC（Remote Procedure Call）远程过程调用协议，一种通过网络从远程计算机上请求服务，而不需要了解底层网络技术的协议。RPC它假定某些协议的存在，例如TPC/UDP等，为通信程序之间携带信息数据。在OSI网络七层模型中，RPC跨越了传输层和应用层，RPC使得开发，包括网络分布式多程序在内的应用程序更加容易。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从SQL生成可直接调用的go接口-sqlc</title>
+      <link>/posts/900c3133/</link>
+      <pubDate>Thu, 24 Mar 2022 21:34:45 +0000</pubDate>
+      
+      <guid>/posts/900c3133/</guid>
+      <description>&lt;p&gt;在 Go 语言中编写数据库操作代码真的非常痛苦！&lt;code&gt;database/sql&lt;/code&gt;标准库提供的都是比较底层的接口。我们需要编写大量重复的代码。大量的模板代码不仅写起来烦，而且还容易出错。有时候字段类型修改了一下，可能就需要改动很多地方；添加了一个新字段，之前使用&lt;code&gt;select *&lt;/code&gt;查询语句的地方都要修改。如果有些地方有遗漏，可能就会造成运行时&lt;code&gt;panic&lt;/code&gt;。即使使用 ORM 库，这些问题也不能完全解决！这时候，&lt;code&gt;sqlc&lt;/code&gt;来了！&lt;code&gt;sqlc&lt;/code&gt;可以根据我们编写的 SQL 语句生成类型安全的、地道的 Go 接口代码，我们要做的只是调用这些方法。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>数据库迁移工具-migrate</title>
+      <link>/posts/e7121931/</link>
+      <pubDate>Thu, 24 Mar 2022 19:44:28 +0000</pubDate>
+      
+      <guid>/posts/e7121931/</guid>
+      <description>&lt;p&gt;在项目中，因需求的变更常常影响到数据库表结构的设计及数据的更新，导致大量的 sql 脚本难以维护。正因为如此，数据库迁移工具的设计之前，就旨在帮助开发者更合理、有效地管理数据库。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从单体应用到微服务</title>
+      <link>/posts/acba46c5/</link>
+      <pubDate>Thu, 24 Mar 2022 16:04:13 +0000</pubDate>
+      
+      <guid>/posts/acba46c5/</guid>
+      <description>&lt;p&gt;从单体应用的痛点到微服务之间的过渡的说明。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>安装Go1.18环境</title>
+      <link>/posts/1dc739af/</link>
+      <pubDate>Wed, 16 Mar 2022 07:33:51 +0000</pubDate>
+      
+      <guid>/posts/1dc739af/</guid>
+      <description>&lt;p&gt;Go1.18在今天（3-16）已经发布，Go 1.18 是一个包含大量新功能的版本，同时不仅改善了性能，也对语言本身做了有史以来最大的改变。毫不夸张地说，Go 1.18 的部分设计十多年前，在第一次发布 Go 时就开始了构思(例如泛型，最早的时候在2009年Russ Cox 在博客里面讨论过泛型如何设计https://research.swtch.com/generic)。&lt;/p&gt;
+&lt;p&gt;如果你想探索使用泛型优化和简化代码的最佳方法。查看最新版本的发行说明(&lt;a href=&#34;https://go.dev/doc/go1.18&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;https://go.dev/doc/go1.18&lt;/a&gt;) 有更多关于在 Go 1.18 中使用泛型的详细信息。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>为什么paseto比jwt好？</title>
+      <link>/posts/d5376d72/</link>
+      <pubDate>Wed, 09 Mar 2022 11:31:02 +0000</pubDate>
+      
+      <guid>/posts/d5376d72/</guid>
+      <description>&lt;p&gt;在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。&lt;/p&gt;
+&lt;p&gt;本文主要介绍JWT的弊端，以及一种新的token验证PASETO&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>gRPC-四种模式实践</title>
+      <link>/posts/3259ac99/</link>
+      <pubDate>Wed, 09 Mar 2022 09:41:28 +0000</pubDate>
+      
+      <guid>/posts/3259ac99/</guid>
+      <description>&lt;p&gt;本文介绍如何使用gRPC的四种模式&lt;/p&gt;
+&lt;p&gt;gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>在同一机器上安装Go的不同版本</title>
+      <link>/posts/17eab2e7/</link>
+      <pubDate>Thu, 17 Feb 2022 23:28:32 +0000</pubDate>
+      
+      <guid>/posts/17eab2e7/</guid>
+      <description>&lt;p&gt;go1.18已经支持泛型，但是目前工作使用的是1.17。如何在不卸载原有版本情况下下载1.18beta版本？&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>TCP/IP协议三次握手、四次挥手</title>
+      <link>/posts/c4697fb2/</link>
+      <pubDate>Thu, 10 Feb 2022 13:24:59 +0000</pubDate>
+      
+      <guid>/posts/c4697fb2/</guid>
+      <description>&lt;p&gt;为了实现可靠传输，TCP采用了面向字节流的方式发送数据。TCP在发送数据时，是从发送缓冲区取出一部分或全部字节并给其添加一个首部使之成为TCP报文段后进行发送。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Kubernetes学习记录</title>
+      <link>/posts/387f5f40/</link>
+      <pubDate>Thu, 27 Jan 2022 20:46:02 +0000</pubDate>
+      
+      <guid>/posts/387f5f40/</guid>
+      <description>&lt;p&gt;学习k8s的记录&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Golang中的make和new</title>
+      <link>/posts/b7d0417a/</link>
+      <pubDate>Tue, 18 Jan 2022 15:58:15 +0000</pubDate>
+      
+      <guid>/posts/b7d0417a/</guid>
+      <description>&lt;p&gt;本文主要给大家介绍了Go语言中函数&lt;code&gt;new&lt;/code&gt;与&lt;code&gt;make&lt;/code&gt;的使用和区别，关于Go语言中&lt;code&gt;new&lt;/code&gt;和&lt;code&gt;make&lt;/code&gt;是内建的两个函数，主要用来创建分配类型内存。在我们定义生成变量的时候，可能会觉得有点迷惑，其实他们的规则很简单，下面我们就通过一些示例说明他们的区别和使用。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Golang逃逸现象</title>
+      <link>/posts/427ffcfc/</link>
+      <pubDate>Tue, 18 Jan 2022 14:34:24 +0000</pubDate>
+      
+      <guid>/posts/427ffcfc/</guid>
+      <description>&lt;p&gt;go语言编译器会自动决定把一个变量放在栈还是放在堆，编译器会做&lt;strong&gt;逃逸分析(escape analysis)&lt;/strong&gt;，&lt;strong&gt;当发现变量的作用域没有跑出函数范围，就可以在栈上，反之则必须分配在堆&lt;/strong&gt;。
+go语言声称这样可以释放程序员关于内存的使用限制，更多的让程序员关注于程序功能逻辑本身。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Golang中GC回收机制三色标记与混合写屏障</title>
+      <link>/posts/c21b4284/</link>
+      <pubDate>Mon, 17 Jan 2022 20:46:07 +0000</pubDate>
+      
+      <guid>/posts/c21b4284/</guid>
+      <description>&lt;p&gt;垃圾回收(Garbage Collection，简称GC)是编程语言中提供的自动的内存管理机制，自动释放不需要的内存对象，让出存储器资源。GC过程中无需程序员手动执行。GC机制在现代很多编程语言都支持，GC能力的性能与优劣也是不同语言之间对比度指标之一。&lt;/p&gt;
+&lt;p&gt;Golang在GC的演进过程中也经历了很多次变革，Go V1.3之前的标记-清除(mark and sweep)算法，Go V1.3之前的标记-清扫(mark and sweep)的缺点&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Go调度器GMP调度场景</title>
+      <link>/posts/cb818503/</link>
+      <pubDate>Mon, 17 Jan 2022 16:08:16 +0000</pubDate>
+      
+      <guid>/posts/cb818503/</guid>
+      <description>&lt;p&gt;Go调度器调度11种场景过程全解析&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>在Linux安装Go环境</title>
+      <link>/posts/c56e43df/</link>
+      <pubDate>Mon, 17 Jan 2022 15:16:35 +0000</pubDate>
+      
+      <guid>/posts/c56e43df/</guid>
+      <description>&lt;p&gt;本文介绍如何在Linux中配置Go语言的环境&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Goroutine调度器的GMP模型的设计思想</title>
+      <link>/posts/61098f97/</link>
+      <pubDate>Mon, 17 Jan 2022 12:12:56 +0000</pubDate>
+      
+      <guid>/posts/61098f97/</guid>
+      <description>&lt;p&gt;Goroutine调度器的GMP模型的设计思想&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Golang调度器的由来</title>
+      <link>/posts/46db0928/</link>
+      <pubDate>Sun, 16 Jan 2022 23:52:10 +0000</pubDate>
+      
+      <guid>/posts/46db0928/</guid>
+      <description>&lt;p&gt;Golang调度器的由来&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker部署Go项目</title>
+      <link>/posts/e6a3ea27/</link>
+      <pubDate>Mon, 10 Jan 2022 23:20:18 +0000</pubDate>
+      
+      <guid>/posts/e6a3ea27/</guid>
+      <description>&lt;p&gt;记录自己用dockers部署Go项目&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker-配置文档-图片</title>
+      <link>/posts/26f6376f/</link>
+      <pubDate>Thu, 06 Jan 2022 21:47:56 +0000</pubDate>
+      
+      <guid>/posts/26f6376f/</guid>
+      <description>&lt;p&gt;Docker-配置文档的图片&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker-配置文档</title>
+      <link>/posts/ddeb9b11/</link>
+      <pubDate>Thu, 06 Jan 2022 21:34:27 +0000</pubDate>
+      
+      <guid>/posts/ddeb9b11/</guid>
+      <description>&lt;p&gt;哔哩哔哩&lt;a href=&#34;https://www.bilibili.com/video/BV1wQ4y1Y7SE?spm_id_from=333.999.0.0&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;【编程不良人】Docker&amp;amp;Docker-Compose 实战!_哔哩哔哩_bilibili&lt;/a&gt;的教程的文档总结&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Docker基础入门</title>
+      <link>/posts/8b63f587/</link>
+      <pubDate>Mon, 03 Jan 2022 19:10:41 +0000</pubDate>
+      
+      <guid>/posts/8b63f587/</guid>
+      <description>&lt;p&gt;Docker 是一个应用打包、分发、部署的工具
+你也可以把它理解为一个轻量的虚拟机，它只虚拟你软件需要的运行环境，多余的一点都不要，
+而普通虚拟机则是一个完整而庞大的系统，包含各种不管你要不要的软件。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Hexo-NexT使用LaTeX公式</title>
+      <link>/posts/37cab689/</link>
+      <pubDate>Tue, 03 Aug 2021 12:55:25 +0000</pubDate>
+      
+      <guid>/posts/37cab689/</guid>
+      <description>&lt;p&gt;在使用next主题的过程中，碰到写的markdown中有LaTeX公式不显示的问题，遂查找资料解决。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>首次部署网站-Hexo-Nginx</title>
+      <link>/posts/19323af8/</link>
+      <pubDate>Sat, 31 Jul 2021 15:20:40 +0000</pubDate>
+      
+      <guid>/posts/19323af8/</guid>
+      <description>&lt;p&gt;去年在好友 &lt;a href=&#34;https://wanfengcxz.cn/&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;晚风吹行舟&lt;/a&gt; 的帮助下购买了腾讯云的主机以及域名，但这些在很长时间内都是闲置状态。 暑期这段时间收到了腾讯云服务电话，域名备案需要更新，顺便将自己网站进行完善。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

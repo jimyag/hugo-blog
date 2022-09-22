@@ -1,0 +1,963 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Go如何优雅进行错误处理 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="介绍Go语言如何优雅的处理错误。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="Go如何优雅进行错误处理">
+<meta itemprop="description" content="介绍Go语言如何优雅的处理错误。"><meta itemprop="datePublished" content="2022-05-08T10:15:35+08:00" />
+<meta itemprop="dateModified" content="2022-05-08T10:15:35+08:00" />
+<meta itemprop="wordCount" content="4940">
+<meta itemprop="keywords" content="错误处理," /><meta property="og:title" content="Go如何优雅进行错误处理" />
+<meta property="og:description" content="介绍Go语言如何优雅的处理错误。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/608465d8/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-05-08T10:15:35+08:00" />
+<meta property="article:modified_time" content="2022-05-08T10:15:35+08:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Go如何优雅进行错误处理"/>
+<meta name="twitter:description" content="介绍Go语言如何优雅的处理错误。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=Go%e5%a6%82%e4%bd%95%e4%bc%98%e9%9b%85%e8%bf%9b%e8%a1%8c%e9%94%99%e8%af%af%e5%a4%84%e7%90%86&url=%2fposts%2f608465d8%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f608465d8%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">Go如何优雅进行错误处理</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">Go如何优雅进行错误处理
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-05-08 10:15:35 &#43;0800 CST。">
+    2022-05-08
+  </span><span class="post-reading-time">
+    10 分钟阅读
+  </span><span class="post-taxonomies"><a href="/categories/go/" class="badge post-taxonomy">Go</a><a href="/tags/%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86/" class="badge post-taxonomy">错误处理</a></span>
+</div>
+<div class="post-content mb-3"><p>介绍Go语言如何优雅的处理错误。</p>
+<h1 id="error-vs-exception">Error vs Exception<a class="anchor ms-1" href="#error-vs-exception"><i class="fas fa-link"></i></a></h1>
+<p>Go 的处理异常逻辑是不引入 <code>exception</code>，支持多参数返回，所以你很容易的在函数签名中带上实现了 <code>error interface</code> 的对象，交由调用者来判定。</p>
+<p>如果一个函数返回了<code> (value, error)</code>，你不能对这个 value 做任何假设，必须先判定 error。唯一可以忽略 <code>error </code>的情况就是，如果你连 <code>value </code>也不关心。</p>
+<p>Go 中有 <code>panic </code>的机制，如果你认为和其他语言的 <code>exception </code>一样，那你就错了。</p>
+<p>当我们抛出异常的时候，相当于你把 exception 扔给了调用者来处理。比如，你在 C++ 中，把 string 转为 int，如果转换失败，会抛出异常。或者在 Java 中转换 String 为 Date 失败时，会抛出异常。</p>
+<p>Go panic 意味着 fatal error（就是挂了）。不能假设调用者来解决 panic，意味着代码不能继续运行。使用多个返回值和一个简单的约定，Go 解决了让程序员知道什么时候出了问题，并为真正的异常情况保留了 panic。panic和recover不要一起使用，<strong>自己panic了就不要recover了</strong>，<strong>但是第三方库的panic有时候需要recover</strong>。</p>
+<p>对于真正意外的情况，那些表示不可恢复的程序错误，例如索引越界、不可恢复的环境问题、栈溢出，我们才使用 panic。对于其他的错误情况，我们应该是期望使用 error 来进行判定。</p>
+<p>You only need to check the error value if you care about the result.  &ndash; Dave</p>
+<p>This <a href="https://devblogs.microsoft.com/oldnewthing/?p=36693" target="_blank" rel="noopener noreferrer">blog</a> post from Microsoft’s engineering blog in 2005 still holds true today, namely:</p>
+<p>My point isn’t that exceptions are bad. My point is that exceptions are too hard and I’m not smart enough to handle them.</p>
+<ul>
+<li>简单</li>
+<li>考虑失败，而不是成功（plan for failure, not success）</li>
+<li>没有隐藏的控制流</li>
+<li>完全交给你来控制 error</li>
+<li>Error are values</li>
+</ul>
+<h1 id="sentinel-error">Sentinel Error<a class="anchor ms-1" href="#sentinel-error"><i class="fas fa-link"></i></a></h1>
+<p>预定义的特定错误，我们叫为 <code>sentinel error</code>，这个名字来源于计算机编程中使用一个特定值来表示不可能进行进一步处理的做法。所以对于 Go，我们使用特定的值来表示错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">ErrSomething</span> <span class="p">{</span> <span class="err">…</span> <span class="p">}</span>
+</span></span></code></pre></div><p>类似的 <code>io.EOF</code>，或者更底层的 <code>syscall.ENOENT</code>。</p>
+<p>使用 sentinel 值是最不灵活的错误处理策略，因为调用方必须使用 <code>==</code> 将结果与预先声明的值进行比较。当您想要提供更多的上下文时，这就出现了一个问题，<strong>因为返回一个不同的错误将破坏相等性检查</strong>。</p>
+<p>甚至是一些有意义的 fmt.Errorf 携带一些上下文，也会破坏调用者的 <code>==</code> ，调用者将被迫查看 <code>error.Error()</code> 方法的输出，以查看它是否与特定的字符串匹配。
+<strong>所以要不依赖于检查 error.Error 的输出。</strong></p>
+<ul>
+<li>
+<p>不应该依赖检测 error.Error 的输出，<strong>Error 方法存在于 error 接口主要用于方便程序员使用</strong>，但不是程序（编写测试可能会依赖这个返回）。这个输出的字符串用于记录日志、输出到 stdout 等。</p>
+</li>
+<li>
+<p>Sentinel errors 成为你 API 公共部分。</p>
+<ul>
+<li>如果您的公共函数或方法返回一个特定值的错误，那么该值必须是公共的，当然要有文档记录，<strong>这会增加 API 的表面积</strong>。</li>
+<li>如果 API 定义了一个返回特定错误的 interface，则该接口的所有实现都将被限制为仅返回该错误，即使它们可以提供更具描述性的错误。比如 <code>io.Reader</code>。像 <code>io.Copy</code> 这类函数需要 <code>reader </code>的实现者返回 io.EOF 来告诉调用者没有更多数据了，但这又不是错误。</li>
+</ul>
+</li>
+<li>
+<p>Sentinel errors 在两个包之间<strong>创建了依赖</strong>。</p>
+</li>
+<li>
+<p>sentinel errors 最糟糕的问题是它们在两个包之间创建了源代码依赖关系。**例如，检查错误是否等于 io.EOF，您的代码必须导入 io 包。**这个特定的例子听起来并不那么糟糕，因为它非常常见，但是想象一下，当项目中的许多包导出错误值时，存在耦合，项目中的其他包必须导入这些错误值才能检查特定的错误条件（<strong>in the form of an import loop）</strong>。</p>
+</li>
+<li>
+<p>结论: 尽可能避免 sentinel errors。
+我的建议是避免在编写的代码中使用 sentinel errors。在标准库中有一些使用它们的情况，但这不是一个您应该模仿的模式。</p>
+</li>
+</ul>
+<h1 id="error-types">Error types<a class="anchor ms-1" href="#error-types"><i class="fas fa-link"></i></a></h1>
+<p>Error type 是实现了 error 接口的自定义类型。例如 MyError 类型记录了文件和行号以展示发生了什么。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">type</span> <span class="nx">MyError</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">Msg</span>  <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="nx">File</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="nx">Line</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">MyError</span><span class="p">)</span> <span class="nf">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Sprintf</span><span class="p">(</span><span class="s">&#34;%s:%d: %s&#34;</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">File</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Line</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kd">func</span> <span class="nf">test</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">MyError</span><span class="p">{</span><span class="s">&#34;test&#34;</span><span class="p">,</span> <span class="s">&#34;main.go&#34;</span><span class="p">,</span> <span class="mi">10</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>因为 MyError 是一个 type，调用者可以使用断言转换成这个类型，来获取更多的上下文信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">err</span> <span class="o">:=</span> <span class="nf">test</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="k">switch</span> <span class="nx">err</span><span class="p">.(</span><span class="kd">type</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="k">case</span> <span class="kc">nil</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="c1">// do nothing
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span>	<span class="k">case</span> <span class="o">*</span><span class="nx">MyError</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">.(</span><span class="o">*</span><span class="nx">MyError</span><span class="p">).</span><span class="nx">Msg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="k">default</span><span class="p">:</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>与错误值相比，错误类型的一大改进是它们能够包装底层错误以提供更多上下文。
+一个不错的例子就是 <code>os.PathError</code>  它提供了底层执行了什么操作、那个路径出了什么问题。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// go1.18/src/io/fs/fs.go:242
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1">// PathError records an error and the operation and file path that caused it.
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">PathError</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="nx">Op</span>   <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="nx">Path</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="nx">Err</span>  <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">PathError</span><span class="p">)</span> <span class="nf">Error</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Op</span> <span class="o">+</span> <span class="s">&#34; &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Path</span> <span class="o">+</span> <span class="s">&#34;: &#34;</span> <span class="o">+</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Err</span><span class="p">.</span><span class="nf">Error</span><span class="p">()</span> <span class="p">}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">PathError</span><span class="p">)</span> <span class="nf">Unwrap</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Err</span> <span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1">// Timeout reports whether this error represents a timeout.
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">PathError</span><span class="p">)</span> <span class="nf">Timeout</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">t</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Err</span><span class="p">.(</span><span class="kd">interface</span><span class="p">{</span> <span class="nf">Timeout</span><span class="p">()</span> <span class="kt">bool</span> <span class="p">})</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="k">return</span> <span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">t</span><span class="p">.</span><span class="nf">Timeout</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>调用者要使用类型断言和类型 switch，就要让自定义的 error 变为 public。<strong>这种模型会导致和调用者产生强耦合，从而导致 API 变得脆弱。</strong></p>
+<p>结论是尽量避免使用 error types，虽然错误类型比 sentinel errors 更好，因为它们可以捕获关于出错的更多上下文，但是 error types 共享 error values 许多相同的问题。因此，我(啊别人的)的建议是避免错误类型，或者至少避免将它们作为公共 API 的一部分。</p>
+<h1 id="opaque-errors">Opaque errors<a class="anchor ms-1" href="#opaque-errors"><i class="fas fa-link"></i></a></h1>
+<p>在我看来，这是最灵活的错误处理策略，因为它要求代码和调用者之间的耦合最少。因为虽然您知道发生了错误，但您没有能力看到错误的内部。作为调用者，关于操作的结果，您所知道的就是它起作用了，或者没有起作用（成功还是失败）。这就是不透明错误处理的全部功能–只需返回错误而不假设其内容。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="s">&#34;github.com/quux/bar&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="kd">func</span> <span class="nf">fn</span><span class="p">()</span><span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="nx">x</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">bar</span><span class="p">.</span><span class="nf">Foo</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="nf">fn</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Assert errors for behaviour, not type</p>
+<p>在少数情况下，这种二分错误处理方法是不够的。例如，与进程外的世界进行交互（如网络活动），需要调用方调查错误的性质，以确定重试该操作是否合理。在这种情况下，我们可以断言错误实现了特定的行为，而不是断言错误是特定的类型或值。考虑这个例子：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">type</span> <span class="nx">temporary</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nf">Temporary</span><span class="p">()</span> <span class="kt">bool</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="kd">func</span> <span class="nf">IsTemporary</span><span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="kt">bool</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="k">if</span> <span class="nx">temp</span><span class="p">,</span> <span class="nx">ok</span> <span class="o">:=</span> <span class="nx">err</span><span class="p">.(</span><span class="nx">temporary</span><span class="p">);</span> <span class="nx">ok</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">		<span class="k">return</span> <span class="nx">ok</span> <span class="o">&amp;&amp;</span> <span class="nx">temp</span><span class="p">.</span><span class="nf">Temporary</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="k">return</span> <span class="kc">false</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>这里的关键是，这个逻辑可以在不导入定义错误的包或者实际上不了解 err 的底层类型的情况下实现——我们只对它的行为感兴趣。</p>
+<h1 id="handling-error">Handling Error<a class="anchor ms-1" href="#handling-error"><i class="fas fa-link"></i></a></h1>
+<h2 id="indented-flow-is-for-errors">Indented flow is for errors<a class="anchor ms-1" href="#indented-flow-is-for-errors"><i class="fas fa-link"></i></a></h2>
+<p>无错误的正常流程代码，将成为一条直线，而不是缩进的代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">f</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="c1">// 处理错误
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1">// 逻辑
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="nx">f</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="k">if</span> <span class="nx">err</span><span class="o">==</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="c1">// 逻辑    
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1">// 处理错误
+</span></span></span></code></pre></div><h2 id="eliminate-error-handling-by-eliminating-errors">Eliminate error handling by eliminating errors<a class="anchor ms-1" href="#eliminate-error-handling-by-eliminating-errors"><i class="fas fa-link"></i></a></h2>
+<p>下面的代码有啥问题？</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">AuthRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span><span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="nx">err</span><span class="o">:=</span><span class="nf">auth</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">        <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="kd">func</span> <span class="nf">AuthRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span><span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">    <span class="k">return</span> <span class="nf">auth</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>统计 <code>io.Reader</code> 读取内容的行数,处理了两次错误</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">CountLines</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="p">(</span><span class="kt">int</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="kd">var</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">		<span class="nx">br</span>    <span class="p">=</span> <span class="nx">bufio</span><span class="p">.</span><span class="nf">NewReader</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">		<span class="nx">lines</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="nx">err</span>   <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">br</span><span class="p">.</span><span class="nf">ReadString</span><span class="p">(</span><span class="sc">&#39;\n&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="nx">lines</span><span class="o">++</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="k">return</span> <span class="nx">lines</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>改进版，只需要接受最终有无错误就行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="nf">CountLines</span><span class="p">(</span><span class="nx">r</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)(</span><span class="kt">int</span><span class="p">,</span><span class="kt">error</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">sc</span><span class="o">:=</span><span class="nx">bufio</span><span class="p">.</span><span class="nf">NewScanner</span><span class="p">(</span><span class="nx">r</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nx">lines</span><span class="o">:=</span><span class="mi">0</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="k">for</span> <span class="nx">sc</span><span class="p">.</span><span class="nf">Scan</span><span class="p">(){</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">        <span class="nx">lines</span><span class="o">++</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">    <span class="k">return</span> <span class="nx">lines</span><span class="p">,</span><span class="nx">sc</span><span class="p">.</span><span class="nf">Err</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>例如下面的例子，总共要处理<code>4</code>次错误</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">type</span> <span class="nx">Header</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">Key</span><span class="p">,</span> <span class="nx">Value</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="kd">type</span> <span class="nx">Status</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="nx">Code</span>   <span class="kt">int</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="nx">Reason</span> <span class="kt">string</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kd">func</span> <span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">status</span> <span class="nx">Status</span><span class="p">,</span> <span class="nx">headers</span> <span class="p">[]</span><span class="nx">Header</span><span class="p">,</span> <span class="nx">body</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="o">*</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;HTTP/1.1&#34;</span><span class="p">,</span> <span class="nx">status</span><span class="p">.</span><span class="nx">Code</span><span class="p">,</span> <span class="nx">status</span><span class="p">.</span><span class="nx">Reason</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">headers</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">		<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="o">*</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;\n&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Key</span><span class="p">,</span> <span class="s">&#34;:&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">			<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="o">*</span><span class="nx">w</span><span class="p">,</span> <span class="s">&#34;\n\n&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">io</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="o">*</span><span class="nx">w</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>经过改进，将错误处理统一集中到<code>Write</code>中。并最终返回，看起来好像没有处理错误一样。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">type</span> <span class="nx">errWrite</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">errWrite</span><span class="p">)</span> <span class="nf">Write</span><span class="p">(</span><span class="nx">p</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">n</span> <span class="kt">int</span><span class="p">,</span> <span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">if</span> <span class="nx">e</span><span class="p">.</span><span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="nx">n</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">err</span> <span class="p">=</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Writer</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">p</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="k">return</span> <span class="nx">n</span><span class="p">,</span> <span class="nx">e</span><span class="p">.</span><span class="nx">err</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="kd">func</span> <span class="nf">WriteResponse</span><span class="p">(</span><span class="nx">w</span> <span class="o">*</span><span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">status</span> <span class="nx">Status</span><span class="p">,</span> <span class="nx">headers</span> <span class="p">[]</span><span class="nx">Header</span><span class="p">,</span> <span class="nx">body</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Reader</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">ew</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">errWrite</span><span class="p">{</span><span class="nx">Writer</span><span class="p">:</span> <span class="o">*</span><span class="nx">w</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">ew</span><span class="p">,</span> <span class="s">&#34;HTTP/1.1&#34;</span><span class="p">,</span> <span class="nx">status</span><span class="p">.</span><span class="nx">Code</span><span class="p">,</span> <span class="nx">status</span><span class="p">.</span><span class="nx">Reason</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">h</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">headers</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">ew</span><span class="p">,</span> <span class="s">&#34;\r\n&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Key</span><span class="p">,</span> <span class="s">&#34;:&#34;</span><span class="p">,</span> <span class="nx">h</span><span class="p">.</span><span class="nx">Value</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Fprint</span><span class="p">(</span><span class="nx">ew</span><span class="p">,</span> <span class="s">&#34;\r\n\r\n&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="nx">io</span><span class="p">.</span><span class="nf">Copy</span><span class="p">(</span><span class="nx">ew</span><span class="p">,</span> <span class="nx">body</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	<span class="k">return</span> <span class="nx">ew</span><span class="p">.</span><span class="nx">err</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h1 id="wrap-erros">Wrap erros<a class="anchor ms-1" href="#wrap-erros"><i class="fas fa-link"></i></a></h1>
+<p>如果 authenticate 返回错误，则 AuthenticateRequest 会将错误返回给调用方，调用者可能也会这样做，依此类推。在程序的顶部，程序的主体将把错误打印到屏幕或日志文件中，打印出来的只是：没有这样的文件或目录？？？？？到底是那个文件或者目录没有。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="nf">AuthRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span><span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="k">return</span> <span class="nf">auth</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>没有生成错误的 file:line 信息。没有导致错误的调用堆栈的堆栈跟踪。这段代码的作者将被迫进行长时间的代码分割，以发现是哪个代码路径触发了文件未找到错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="nf">AuthRequest</span><span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Request</span><span class="p">)</span><span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">err</span><span class="o">:=</span><span class="nf">auth</span><span class="p">(</span><span class="nx">r</span><span class="p">.</span><span class="nx">User</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">        <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;auth failed: %v&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>但是正如我们前面看到的，这种模式与 sentinel errors 或 type assertions 的使用不兼容，因为将错误值转换为字符串，将其与另一个字符串合并，然后将其转换回 fmt.Errorf  破坏了原始错误，导致等值判定失败。</p>
+<p>You should only handle errors once. Handling an error means inspecting the error value, and making a single decision.</p>
+<p>我们经常发现类似的代码，在错误处理中，带了两个任务: 记录日志并且再次返回错误。这个还是看要求，打印之后返回也可以。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="nf">WriteAll</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">b</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">w</span><span class="p">.</span><span class="nf">Write</span><span class="p">(</span><span class="nx">b</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unable WriteAll:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在这个例子中，如果在 w.Write 过程中发生了一个错误，那么一行代码将被写入日志文件中，记录错误发生的文件和行，并且错误也会返回给调用者，调用者可能会记录并返回它，一直返回到程序的顶部。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">WriteConfig</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">config</span> <span class="o">*</span><span class="nx">Config</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">buf</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unable Marshal:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">WriteAll</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">buf</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unable WriteAll:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">err</span> <span class="o">:=</span> <span class="nf">WriteConfig</span><span class="p">(</span><span class="nx">os</span><span class="p">.</span><span class="nx">Stdout</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">config</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="c1">// io.EOF
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>Go 中的错误处理契约规定，在出现错误的情况下，不能对其他返回值的内容做出任何假设。由于 JSON 序列化失败，buf  的内容是未知的，可能它不包含任何内容，但更糟糕的是，它可能包含一个半写的 JSON 片段。
+由于程序员在检查并记录错误后忘记 return，损坏的缓冲区将被传递给 WriteAll，这可能会成功，因此配置文件将被错误地写入。但是，该函数返回的结果是正确的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">WriteConfig</span><span class="p">(</span><span class="nx">w</span> <span class="nx">io</span><span class="p">.</span><span class="nx">Writer</span><span class="p">,</span> <span class="nx">config</span> <span class="o">*</span><span class="nx">Config</span><span class="p">)</span> <span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">buf</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nf">Marshal</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unable Marshal:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="c1">// oops, forgot to return err
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span>	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">WriteAll</span><span class="p">(</span><span class="nx">w</span><span class="p">,</span> <span class="nx">buf</span><span class="p">);</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;unable WriteAll:&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>日志记录与错误无关且对调试没有帮助的信息应被视为噪音，应予以质疑。记录的原因是因为某些东西失败了，而日志包含了答案。</p>
+<ul>
+<li>The error has been logged.</li>
+<li>The application is back to 100% integrity.</li>
+<li>The current error is not reported any longer.</li>
+<li>错误要被日志记录。</li>
+<li>应用程序处理错误，保证100%完整性。</li>
+<li>之后不再报告当前错误。</li>
+</ul>
+<h2 id="pkgerrors">pkg/errors<a class="anchor ms-1" href="#pkgerrors"><i class="fas fa-link"></i></a></h2>
+<p>使用第三方的包处理错误</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;github.com/pkg/errors&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kd">func</span> <span class="nf">ReadFile</span><span class="p">(</span><span class="nx">path</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Wrap</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;open file failed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ReadFile</span><span class="p">(</span><span class="s">&#34;/tmp/file&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;original error: %T %v\n\n&#34;</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Cause</span><span class="p">(</span><span class="nx">err</span><span class="p">),</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Cause</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;stack trace: \n%+v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>打印有堆栈信息，以及其他的详细的信息</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">original</span> <span class="n">error</span><span class="err">:</span> <span class="p">*</span><span class="n">fs</span><span class="p">.</span><span class="n">PathError</span> <span class="n">open</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">file</span><span class="err">:</span> <span class="n">The</span> <span class="n">system</span> <span class="n">cannot</span> <span class="n">find</span> <span class="n">the</span> <span class="n">path</span> <span class="n">specified</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">stack</span> <span class="n">trace</span><span class="err">:</span> 
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">open</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">file</span><span class="err">:</span> <span class="n">The</span> <span class="n">system</span> <span class="n">cannot</span> <span class="n">find</span> <span class="n">the</span> <span class="n">path</span> <span class="n">specified</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">open</span> <span class="n">file</span> <span class="n">failed</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="n">main</span><span class="p">.</span><span class="n">ReadFile</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">        <span class="n">D:</span><span class="p">/</span><span class="n">code</span><span class="p">/</span><span class="n">go</span><span class="p">/</span><span class="n">test</span><span class="p">/</span><span class="n">cto</span><span class="p">/</span><span class="n">001-error</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">13</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="n">main</span><span class="p">.</span><span class="n">main</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">        <span class="n">D:</span><span class="p">/</span><span class="n">code</span><span class="p">/</span><span class="n">go</span><span class="p">/</span><span class="n">test</span><span class="p">/</span><span class="n">cto</span><span class="p">/</span><span class="n">001-error</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">21</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="n">runtime</span><span class="p">.</span><span class="n">main</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">        <span class="n">C:</span><span class="p">/</span><span class="n">Users</span><span class="p">/</span><span class="n">jimyag</span><span class="p">/</span><span class="n">sdk</span><span class="p">/</span><span class="n">go1</span><span class="p">.</span><span class="n">18</span><span class="p">/</span><span class="n">src</span><span class="p">/</span><span class="n">runtime</span><span class="p">/</span><span class="n">proc</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">250</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="n">runtime</span><span class="p">.</span><span class="n">goexit</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">        <span class="n">C:</span><span class="p">/</span><span class="n">Users</span><span class="p">/</span><span class="n">jimyag</span><span class="p">/</span><span class="n">sdk</span><span class="p">/</span><span class="n">go1</span><span class="p">.</span><span class="n">18</span><span class="p">/</span><span class="n">src</span><span class="p">/</span><span class="n">runtime</span><span class="p">/</span><span class="n">asm_amd64</span><span class="p">.</span><span class="n">s:1571</span>
+</span></span></code></pre></div><p>区别<code>WithMessage</code>和<code>Warp</code>。前者是在原有的错误基础上添加一条错误消息，后者是通过当前的错误信息和堆栈信息组成一个新的错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;os&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;github.com/pkg/errors&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="kd">func</span> <span class="nf">ReadFile</span><span class="p">(</span><span class="nx">path</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nx">f</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Wrap</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;open file failed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="k">defer</span> <span class="nx">f</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="c1">// ...
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>	<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="kd">func</span> <span class="nf">ReadConfig</span><span class="p">(</span><span class="nx">path</span> <span class="kt">string</span><span class="p">)</span> <span class="p">([]</span><span class="kt">byte</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="nx">data</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ReadFile</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">		<span class="k">return</span> <span class="kc">nil</span><span class="p">,</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">WithMessage</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span> <span class="s">&#34;read file failed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">	<span class="k">return</span> <span class="nx">data</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nf">ReadConfig</span><span class="p">(</span><span class="s">&#34;/tmp/file&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;%+v\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">		<span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>结果</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span><span class="n">jimyag</span><span class="p">\</span><span class="n">AppData</span><span class="p">\</span><span class="n">Local</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">GoLand</span><span class="p">\</span><span class="n">___go_build_test_cto_001_error</span><span class="p">.</span><span class="n">exe</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="n">open</span> <span class="p">/</span><span class="n">tmp</span><span class="p">/</span><span class="n">file</span><span class="err">:</span> <span class="n">The</span> <span class="n">system</span> <span class="n">cannot</span> <span class="n">find</span> <span class="n">the</span> <span class="n">path</span> <span class="n">specified</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="n">open</span> <span class="n">file</span> <span class="n">failed</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">main</span><span class="p">.</span><span class="n">ReadFile</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">        <span class="n">D:</span><span class="p">/</span><span class="n">code</span><span class="p">/</span><span class="n">go</span><span class="p">/</span><span class="n">test</span><span class="p">/</span><span class="n">cto</span><span class="p">/</span><span class="n">001-error</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">13</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">main</span><span class="p">.</span><span class="n">ReadConfig</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">        <span class="n">D:</span><span class="p">/</span><span class="n">code</span><span class="p">/</span><span class="n">go</span><span class="p">/</span><span class="n">test</span><span class="p">/</span><span class="n">cto</span><span class="p">/</span><span class="n">001-error</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">21</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">main</span><span class="p">.</span><span class="n">main</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">        <span class="n">D:</span><span class="p">/</span><span class="n">code</span><span class="p">/</span><span class="n">go</span><span class="p">/</span><span class="n">test</span><span class="p">/</span><span class="n">cto</span><span class="p">/</span><span class="n">001-error</span><span class="p">/</span><span class="n">main</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">29</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">runtime</span><span class="p">.</span><span class="n">main</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="n">C:</span><span class="p">/</span><span class="n">Users</span><span class="p">/</span><span class="n">jimyag</span><span class="p">/</span><span class="n">sdk</span><span class="p">/</span><span class="n">go1</span><span class="p">.</span><span class="n">18</span><span class="p">/</span><span class="n">src</span><span class="p">/</span><span class="n">runtime</span><span class="p">/</span><span class="n">proc</span><span class="p">.</span><span class="n">go</span><span class="err">:</span><span class="n">250</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="n">runtime</span><span class="p">.</span><span class="n">goexit</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">        <span class="n">C:</span><span class="p">/</span><span class="n">Users</span><span class="p">/</span><span class="n">jimyag</span><span class="p">/</span><span class="n">sdk</span><span class="p">/</span><span class="n">go1</span><span class="p">.</span><span class="n">18</span><span class="p">/</span><span class="n">src</span><span class="p">/</span><span class="n">runtime</span><span class="p">/</span><span class="n">asm_amd64</span><span class="p">.</span><span class="n">s:1571</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="n">read</span> <span class="n">file</span> <span class="n">failed</span>
+</span></span></code></pre></div><p>在你的应用代码中，使用 errors.New 或者  errros.Errorf 返回错误。</p>
+<p>如果调用其他包内的函数，通常简单的直接返回。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="nf">parseArgs</span><span class="p">(</span><span class="nx">args</span> <span class="p">[]</span><span class="kt">string</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nx">args</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">		<span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;two arguments required&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="kd">func</span> <span class="nf">fo</span><span class="p">()</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="nx">err</span> <span class="o">:=</span> <span class="nf">parseArgs</span><span class="p">([]</span><span class="kt">string</span><span class="p">{</span><span class="s">&#34;one&#34;</span><span class="p">,</span> <span class="s">&#34;two&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>如果和其他库进行协作，考虑使用 errors.Wrap 或者 errors.Wrapf 保存堆栈信息。同样适用于和标准库协作的时候。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">f</span><span class="p">,</span><span class="nx">err</span><span class="o">:=</span><span class="nx">os</span><span class="p">.</span><span class="nf">Open</span><span class="p">(</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="k">return</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Warpf</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="s">&#34;failed to open %q&#34;</span><span class="p">,</span><span class="nx">path</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>直接返回错误，而不是每个错误产生的地方到处打日志。</p>
+<p>在程序的顶部或者是工作的 goroutine 顶部（请求入口），使用 %+v  把堆栈详情记录。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">(){</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">err</span><span class="o">:=</span><span class="nx">app</span><span class="p">.</span><span class="nf">Run</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">        <span class="nx">fmt</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;FATAL:%+v\n&#34;</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">        <span class="nx">os</span><span class="p">.</span><span class="nf">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>使用 <code>errors.Cause</code> 获取 root error，再进行和 sentinel error 判定。</p>
+<p>总结:</p>
+<ul>
+<li>
+<p>Packages that are reusable across many projects only return root error values.</p>
+<p>选择 wrap error 是只有 applications 可以选择应用的策略。具有最高可重用性的包只能返回根错误值。此机制与 Go 标准库中使用的相同（kit 库的 sql.ErrNoRows）。</p>
+</li>
+<li>
+<p>If the error is not going to be handled, wrap and return up the call stack.</p>
+<p>这是关于函数/方法调用返回的每个错误的基本问题。如果函数/方法不打算处理错误，那么用足够的上下文 wrap errors 并将其返回到调用堆栈中。例如，额外的上下文可以是使用的输入参数或失败的查询语句。确定您记录的上下文是足够多还是太多的一个好方法是检查日志并验证它们在开发期间是否为您工作。</p>
+</li>
+<li>
+<p>Once an error is handled, it is not allowed to be passed up the call stack any longer.</p>
+<p>一旦确定函数/方法将处理错误，错误就不再是错误。如果函数/方法仍然需要发出返回，则它不能返回错误值。它应该只返回零（比如降级处理中，你返回了降级数据，然后需要 return nil）。</p>
+</li>
+</ul>
+<h1 id="113新特性">1.13新特性<a class="anchor ms-1" href="#113新特性"><i class="fas fa-link"></i></a></h1>
+<p>go1.13为 errors 和 fmt 标准库包引入了新特性，以简化处理包含其他错误的错误。其中最重要的是: 包含另一个错误的 error 可以实现返回底层错误的 Unwrap 方法。如果 e1.Unwrap() 返回 e2，那么我们说 e1 包装 e2，您可以展开 e1 以获得 e2。
+按照此约定，我们可以为的 QueryError 类型指定一个 Unwrap 方法，该方法返回其包含的错误。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">e</span> <span class="o">*</span><span class="nx">QueryError</span><span class="p">)</span><span class="nf">Unwarp</span><span class="p">()</span><span class="kt">error</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="k">return</span> <span class="nx">e</span><span class="p">.</span><span class="nx">Err</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>go1.13 errors 包包含两个用于检查错误的新函数：Is 和 As。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// if err == ErrNotFound
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">ErrorNotFound</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    <span class="c1">//
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1">// if e,ok:=err.(*QueryError);ok{ ...}
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">e</span> <span class="o">*</span><span class="nx">QueryError</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">As</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="o">&amp;</span><span class="nx">e</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">    <span class="c1">//
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><p>如前所述，使用 fmt.Errorf 向错误添加附加信息</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;decompress %v: %v&#34;</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>在 Go 1.13中 fmt.Errorf 支持新的 %w 谓词。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;decompress %v: %w&#34;</span><span class="p">,</span><span class="nx">name</span><span class="p">,</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>用 %w 包装错误可用于 errors.Is 以及 errors.As:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">err</span><span class="o">:=</span><span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;access denied  %w&#34;</span><span class="p">,</span><span class="nx">ErrPermisson</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="o">...</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="k">if</span> <span class="nx">errors</span><span class="p">.</span><span class="nf">Is</span><span class="p">(</span><span class="nx">err</span><span class="p">,</span><span class="nx">ErrPermisson</span><span class="p">){</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="o">...</span>
+</span></span></code></pre></div><h1 id="总结">总结<a class="anchor ms-1" href="#总结"><i class="fas fa-link"></i></a></h1>
+<p>对于错误处理用<code>pkg/errors</code>好一点，它也兼容了<code>1.13</code>的<code>Is</code>和<code>As</code>。</p>
+<p>对于一个底层库的开发不要使用<code>pkg/errors</code>,要生成对应的根错误来进行排查。</p>
+<h1 id="版权">版权<a class="anchor ms-1" href="#版权"><i class="fas fa-link"></i></a></h1>
+<p>以上内容根据极客时间的0.99元的错误处理课程总结而来。本文仅供学习和交流使用，如有不当之处，请联系我删除。</p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/e62967f0/">Newcoder Top 101 二叉树
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/a0aa4897/">软件测试技术
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/e62967f0/">Newcoder Top 101 二叉树
+</a>
+          <span class="float-end post-date">2022-05-03
+</span>
+        </li><li>
+          <a href="/posts/7955ce21/">SSL TLS的完整概述及其加密方式
+</a>
+          <span class="float-end post-date">2022-05-02
+</span>
+        </li><li>
+          <a href="/posts/85d3feae/">Newcoder Top 101 二分查找排序
+</a>
+          <span class="float-end post-date">2022-04-30
+</span>
+        </li><li>
+          <a href="/posts/34618820/">减少下层服务的压力 SingleFlight
+</a>
+          <span class="float-end post-date">2022-04-27
+</span>
+        </li><li>
+          <a href="/posts/33cd41f9/">Go泛型的限制和对中间件的影响
+</a>
+          <span class="float-end post-date">2022-04-26
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#indented-flow-is-for-errors">Indented flow is for errors</a></li>
+    <li><a href="#eliminate-error-handling-by-eliminating-errors">Eliminate error handling by eliminating errors</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#pkgerrors">pkg/errors</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script><script defer src="/assets/mermaid/bundle.min.e0678d67a61d9ab297dc3f1de9ca8e43614ce49e9e0d310b80787e532fca37a1.js" integrity="sha256-4GeNZ6YdmrKX3D8d6cqOQ2FM5J6eDTELgHh&#43;Uy/KN6E=" crossorigin="anonymous"></script>
+
+</body>
+</html>

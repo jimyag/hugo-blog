@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>DeepSort on 编程日记</title>
+    <link>/tags/deepsort/</link>
+    <description>Recent content in DeepSort on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Wed, 04 Aug 2021 15:30:57 +0000</lastBuildDate><atom:link href="/tags/deepsort/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>基于YOLOv5-DeepSort的目标追踪器的封装</title>
+      <link>/posts/5306f355/</link>
+      <pubDate>Wed, 04 Aug 2021 15:30:57 +0000</pubDate>
+      
+      <guid>/posts/5306f355/</guid>
+      <description>&lt;p&gt;由于项目需要目标追踪，之前打算是用OpenCV提供的算法进行追踪，但实测下来效果不是很理想，了解到使用YOLOv5与DeepSort相结合的方式可以进行多物体追踪，在跑通作者提供的track示例后，将目标检测和目标追踪分别进行封装，方便以后在项目中使用。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

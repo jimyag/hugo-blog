@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>CAP理论 on 编程日记</title>
+    <link>/tags/cap%E7%90%86%E8%AE%BA/</link>
+    <description>Recent content in CAP理论 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sun, 03 Apr 2022 09:49:00 +0000</lastBuildDate><atom:link href="/tags/cap%E7%90%86%E8%AE%BA/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从0到1实现完整的微服务框架-分布式理论基础、分布式事务</title>
+      <link>/posts/252f6a9e/</link>
+      <pubDate>Sun, 03 Apr 2022 09:49:00 +0000</pubDate>
+      
+      <guid>/posts/252f6a9e/</guid>
+      <description>&lt;p&gt;在微服务的开发中，新建订单的接口是需要跨微服务调用，在此过程中由于是处于不同的系统之间，想要保证出错之后全部回滚，这在本地事务中是无法做到的，下面介绍数据不一致产生的原因和分布式事务的相关理论。这个好枯燥。。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

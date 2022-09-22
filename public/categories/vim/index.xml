@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>vim on 编程日记</title>
+    <link>/categories/vim/</link>
+    <description>Recent content in vim on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Sat, 09 Jul 2022 23:22:17 +0800</lastBuildDate><atom:link href="/categories/vim/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Vimtutor翻译</title>
+      <link>/posts/e84c3531/</link>
+      <pubDate>Sat, 09 Jul 2022 23:22:17 +0800</pubDate>
+      
+      <guid>/posts/e84c3531/</guid>
+      <description>&lt;p&gt;Vimtutor 的中文翻译&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

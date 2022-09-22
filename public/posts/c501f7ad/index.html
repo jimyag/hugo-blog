@@ -1,0 +1,1050 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>从0到1实现完整的微服务框架-库存服务 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="从0到1实现完整的微服务框架-库存服务">
+<meta itemprop="description" content="在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。"><meta itemprop="datePublished" content="2022-03-31T16:21:29+00:00" />
+<meta itemprop="dateModified" content="2022-03-31T16:21:29+00:00" />
+<meta itemprop="wordCount" content="5410">
+<meta itemprop="keywords" content="微服务,gRPC," /><meta property="og:title" content="从0到1实现完整的微服务框架-库存服务" />
+<meta property="og:description" content="在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/c501f7ad/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-31T16:21:29+00:00" />
+<meta property="article:modified_time" content="2022-03-31T16:21:29+00:00" /><meta property="og:site_name" content="编程日记" />
+
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="从0到1实现完整的微服务框架-库存服务"/>
+<meta name="twitter:description" content="在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e4%bb%8e0%e5%88%b01%e5%ae%9e%e7%8e%b0%e5%ae%8c%e6%95%b4%e7%9a%84%e5%be%ae%e6%9c%8d%e5%8a%a1%e6%a1%86%e6%9e%b6-%e5%ba%93%e5%ad%98%e6%9c%8d%e5%8a%a1&url=%2fposts%2fc501f7ad%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2fc501f7ad%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">从0到1实现完整的微服务框架-库存服务</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">从0到1实现完整的微服务框架-库存服务
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-04-01 00:21:29 &#43;0800 CST。">
+    2022-03-31
+  </span><span class="post-reading-time">
+    11 分钟阅读
+  </span><span class="post-taxonomies"><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge post-taxonomy">从0到1实现完整的微服务框架</a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge post-taxonomy">微服务</a><a href="/tags/grpc/" class="badge post-taxonomy">gRPC</a></span>
+</div>
+<div class="post-content mb-3"><p>在分布式系统中，数据一致性是非常重要。在此项目中库存的增减也有同样的问题。</p>
+<h2 id="快速启动库存服务">快速启动库存服务<a class="anchor ms-1" href="#快速启动库存服务"><i class="fas fa-link"></i></a></h2>
+<p>复制之前的<code>用户服务</code>的代码，</p>
+<h3 id="生成表结构">生成表结构<a class="anchor ms-1" href="#生成表结构"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl"><span class="nv">$migrate</span> create -ext sql -dir migration -seq init_schema_inventory
+</span></span><span class="line"><span class="ln">2</span><span class="cl">D:<span class="se">\r</span>epository<span class="se">\s</span>hop<span class="se">\s</span>ervice<span class="se">\i</span>nventory_srv<span class="se">\d</span>b<span class="se">\m</span>igration<span class="se">\0</span>00001_init_schema_inventory.up.sql
+</span></span><span class="line"><span class="ln">3</span><span class="cl">D:<span class="se">\r</span>epository<span class="se">\s</span>hop<span class="se">\s</span>ervice<span class="se">\i</span>nventory_srv<span class="se">\d</span>b<span class="se">\m</span>igration<span class="se">\0</span>00001_init_schema_inventory.down.sql
+</span></span></code></pre></div><p>复制生成的表结构到up文件中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w"></span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">    </span><span class="s2">&#34;id&#34;</span><span class="w">         </span><span class="n">bigserial</span><span class="w"> </span><span class="k">PRIMARY</span><span class="w"> </span><span class="k">KEY</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">    </span><span class="s2">&#34;created_at&#34;</span><span class="w"> </span><span class="n">timestamptz</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="p">(</span><span class="n">now</span><span class="p">()),</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">    </span><span class="s2">&#34;updated_at&#34;</span><span class="w"> </span><span class="n">timestamptz</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="p">(</span><span class="n">now</span><span class="p">()),</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span><span class="s2">&#34;deleted_at&#34;</span><span class="w"> </span><span class="n">timestamptz</span><span class="w">          </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">null</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">    </span><span class="s2">&#34;goods&#34;</span><span class="w">      </span><span class="nb">integer</span><span class="w">     </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">    </span><span class="s2">&#34;sticks&#34;</span><span class="w">     </span><span class="nb">integer</span><span class="w">     </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">    </span><span class="s2">&#34;version&#34;</span><span class="w">    </span><span class="nb">integer</span><span class="w">     </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w"></span><span class="k">CREATE</span><span class="w"> </span><span class="k">INDEX</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="w"> </span><span class="p">(</span><span class="s2">&#34;goods&#34;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></div><p><code>down</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">DROP</span><span class="w"> </span><span class="k">TABLE</span><span class="w"> </span><span class="k">IF</span><span class="w"> </span><span class="k">EXISTS</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><h3 id="创建inventory数据库">创建inventory数据库<a class="anchor ms-1" href="#创建inventory数据库"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker run --name shop-inventory -p 35433:5432 -e <span class="nv">POSTGRES_PASSWORD</span><span class="o">=</span>postgres -e <span class="nv">TZ</span><span class="o">=</span>PRC -d postgres:14-alpine
+</span></span><span class="line"><span class="ln">2</span><span class="cl">3536ecfbb483a64fadaa9e3e253c50b1082dbd71b290f7b36ebd2276c8a74dce
+</span></span></code></pre></div><h3 id="创建数据库">创建数据库<a class="anchor ms-1" href="#创建数据库"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker <span class="nb">exec</span> -it shop-inventory createdb --username<span class="o">=</span>postgres --owner<span class="o">=</span>postgres shop
+</span></span></code></pre></div><h3 id="删除数据库">删除数据库<a class="anchor ms-1" href="#删除数据库"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker <span class="nb">exec</span> -it shop-inventory dropdb  --username<span class="o">=</span>postgres shop
+</span></span></code></pre></div><h3 id="数据库迁移">数据库迁移<a class="anchor ms-1" href="#数据库迁移"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path db/migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35433/shop?sslmode=disable&#34;</span> -verbose up
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/30 22:27:06 Start buffering 1/u init_schema_inventory
+</span></span><span class="line"><span class="ln">3</span><span class="cl">2022/03/30 22:27:06 Read and execute 1/u init_schema_inventory
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/30 22:27:06 Finished 1/u init_schema_inventory <span class="o">(</span><span class="nb">read</span> 15.2808ms, ran 22.4171ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/30 22:27:06 Finished after 61.9324ms
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/30 22:27:06 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">migrate -path db/migration -database <span class="s2">&#34;postgresql://postgres:postgres@localhost:35433/shop?sslmode=disable&#34;</span> -verbose down
+</span></span><span class="line"><span class="ln">2</span><span class="cl">2022/03/30 22:26:59 Are you sure you want to apply all down migrations? <span class="o">[</span>y/N<span class="o">]</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">y
+</span></span><span class="line"><span class="ln">4</span><span class="cl">2022/03/30 22:27:01 Applying all down migrations
+</span></span><span class="line"><span class="ln">5</span><span class="cl">2022/03/30 22:27:01 Start buffering 1/d init_schema_inventory
+</span></span><span class="line"><span class="ln">6</span><span class="cl">2022/03/30 22:27:01 Read and execute 1/d init_schema_inventory
+</span></span><span class="line"><span class="ln">7</span><span class="cl">2022/03/30 22:27:01 Finished 1/d init_schema_inventory <span class="o">(</span><span class="nb">read</span> 9.3861ms, ran 15.3116ms<span class="o">)</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">2022/03/30 22:27:01 Finished after 1.9435943s
+</span></span><span class="line"><span class="ln">9</span><span class="cl">2022/03/30 22:27:01 Closing <span class="nb">source</span> and database
+</span></span></code></pre></div><h3 id="生成curd代码">生成curd代码<a class="anchor ms-1" href="#生成curd代码"><i class="fas fa-link"></i></a></h3>
+<p>在wsl中 初始化</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">root@Jimyag:/mnt/c/Users/jimyag# docker run --rm -v /mnt/d/repository/shop/service/inventory_srv:/src -w /src kjconroy/sqlc init
+</span></span></code></pre></div><p>写入如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="w"></span><span class="nt">packages</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">  </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;./model&#34;</span><span class="w"> </span><span class="c"># 生成go 代码的位置</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;model&#34;</span><span class="w">  </span><span class="c"># 生成 go package 的名字</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w">    </span><span class="nt">engine</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;postgresql&#34;</span><span class="w"> </span><span class="c"># 使用的数据库引擎</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w">    </span><span class="nt">schema</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;./db/migration/&#34;</span><span class="w"> </span><span class="c"># 迁移表的sql语句 我们使用migrate中的up文件</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">    </span><span class="nt">queries</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;./db/query&#34;</span><span class="w"> </span><span class="c"># CRUD的sql</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w">    </span><span class="nt">emit_json_tags</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">  </span><span class="c"># 添加json在生成的struct中</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="w">    </span><span class="nt">emit_prepared_queries</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w">    </span><span class="nt">emit_interface</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c"># 生成接口</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w">    </span><span class="nt">emit_exact_table_names</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="w"> </span><span class="c"># 表名是否带s</span><span class="w">
+</span></span></span></code></pre></div><p>在<code>./db/query</code>中写入</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">-- name: CreateInventory :one
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="k">INSERT</span><span class="w"> </span><span class="k">INTO</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="p">(</span><span class="n">goods</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="w">                        </span><span class="n">sticks</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="w">                        </span><span class="k">version</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="w"></span><span class="k">VALUES</span><span class="w"> </span><span class="p">(</span><span class="err">$</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="err">$</span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="err">$</span><span class="mi">3</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="w"></span><span class="n">returning</span><span class="w"> </span><span class="o">*</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="w"></span><span class="c1">-- name: GetInventoryByGoodsID :one
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span><span class="k">SELECT</span><span class="w"> </span><span class="o">*</span><span class="w">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="w"></span><span class="k">FROM</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="w"></span><span class="k">WHERE</span><span class="w"> </span><span class="n">goods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">$</span><span class="mi">1</span><span class="w">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="w"></span><span class="k">LIMIT</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="w"></span><span class="c1">-- name: UpdateInventory :one
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span><span class="k">update</span><span class="w"> </span><span class="s2">&#34;inventory&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="w"></span><span class="k">set</span><span class="w"> </span><span class="n">updated_at</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">$</span><span class="mi">1</span><span class="p">,</span><span class="w">
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="w">    </span><span class="n">sticks</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="n">sticks</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">sqlc</span><span class="p">.</span><span class="n">arg</span><span class="p">(</span><span class="n">counts</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">goods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">$</span><span class="mi">2</span><span class="w">
+</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="w"></span><span class="n">returning</span><span class="w"> </span><span class="o">*</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>生成curd代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">docker run --rm -v /mnt/d/repository/shop/service/inventory_srv:/src -w /src kjconroy/sqlc generate
+</span></span></code></pre></div><h3 id="protoc生成go代码">protoc生成go代码<a class="anchor ms-1" href="#protoc生成go代码"><i class="fas fa-link"></i></a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="err"></span><span class="k">option</span> <span class="n">go_package</span> <span class="o">=</span> <span class="s">&#34;.;proto&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="err"></span><span class="kd">service</span> <span class="n">inventory</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="err"></span>  <span class="k">rpc</span> <span class="n">SetInv</span><span class="p">(</span><span class="n">GoodInvInfo</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">Empty</span><span class="p">);</span><span class="c1">// 设置库存
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">InvDetail</span><span class="p">(</span><span class="n">GoodInvInfo</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">GoodInvInfo</span><span class="p">);</span><span class="c1">// 获取库存信息
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">Sell</span><span class="p">(</span><span class="n">SellInfo</span><span class="p">)</span><span class="k">returns</span><span class="p">(</span><span class="n">Empty</span><span class="p">)</span> <span class="p">;</span> <span class="c1">// 库存扣减
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">Rollback</span><span class="p">(</span><span class="n">SellInfo</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">Empty</span><span class="p">);</span><span class="c1">// 归还库存
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span><span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="err"></span><span class="kd">message</span> <span class="nc">SellInfo</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="err"></span>  <span class="k">repeated</span> <span class="n">GoodInvInfo</span> <span class="n">goodsInfo</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="err"></span><span class="kd">message</span> <span class="nc">GoodInvInfo</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="err"></span>  <span class="kt">int32</span> <span class="n">goodsId</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="err"></span>  <span class="kt">int32</span> <span class="n">num</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="err"></span><span class="kd">message</span> <span class="nc">Empty</span> <span class="p">{}</span><span class="err">
+</span></span></span></code></pre></div><p>cd到.proto文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">protoc -I . inventory.proto --go_out<span class="o">=</span><span class="nv">plugins</span><span class="o">=</span>grpc:.
+</span></span></code></pre></div><h3 id="封装数据库curd">封装数据库curd<a class="anchor ms-1" href="#封装数据库curd"><i class="fas fa-link"></i></a></h3>
+<p><code>shop\service\inventory_srv\model\store.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">  1</span><span class="cl"><span class="kn">package</span> <span class="nx">model</span>
+</span></span><span class="line"><span class="ln">  2</span><span class="cl">
+</span></span><span class="line"><span class="ln">  3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln">  4</span><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="ln">  5</span><span class="cl">	<span class="s">&#34;database/sql&#34;</span>
+</span></span><span class="line"><span class="ln">  6</span><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="ln">  7</span><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="ln">  8</span><span class="cl">
+</span></span><span class="line"><span class="ln">  9</span><span class="cl">	<span class="s">&#34;go.uber.org/zap&#34;</span>
+</span></span><span class="line"><span class="ln"> 10</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc/codes&#34;</span>
+</span></span><span class="line"><span class="ln"> 11</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc/status&#34;</span>
+</span></span><span class="line"><span class="ln"> 12</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 13</span><span class="cl">	<span class="s">&#34;github.com/jimyag/shop/service/inventory/global&#34;</span>
+</span></span><span class="line"><span class="ln"> 14</span><span class="cl">	<span class="s">&#34;github.com/jimyag/shop/service/inventory/proto&#34;</span>
+</span></span><span class="line"><span class="ln"> 15</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 16</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 17</span><span class="cl"><span class="kd">type</span> <span class="nx">Store</span> <span class="kd">interface</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 18</span><span class="cl">	<span class="nf">SetInvTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="nx">CreateInventoryParams</span><span class="p">)</span> <span class="p">(</span><span class="nx">Inventory</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 19</span><span class="cl">	<span class="nf">SellTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 20</span><span class="cl">	<span class="nf">RollBackTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">)</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 21</span><span class="cl">	<span class="nx">Querier</span>
+</span></span><span class="line"><span class="ln"> 22</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 23</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 24</span><span class="cl"><span class="kd">type</span> <span class="nx">SqlStore</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 25</span><span class="cl">	<span class="o">*</span><span class="nx">Queries</span>
+</span></span><span class="line"><span class="ln"> 26</span><span class="cl">	<span class="nx">db</span> <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">DB</span>
+</span></span><span class="line"><span class="ln"> 27</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 28</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 29</span><span class="cl"><span class="kd">func</span> <span class="nf">NewSqlStore</span><span class="p">(</span><span class="nx">db</span> <span class="o">*</span><span class="nx">sql</span><span class="p">.</span><span class="nx">DB</span><span class="p">)</span> <span class="nx">Store</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 30</span><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">SqlStore</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 31</span><span class="cl">		<span class="nx">Queries</span><span class="p">:</span> <span class="nf">New</span><span class="p">(</span><span class="nx">db</span><span class="p">),</span>
+</span></span><span class="line"><span class="ln"> 32</span><span class="cl">		<span class="nx">db</span><span class="p">:</span>      <span class="nx">db</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln"> 33</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 34</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 35</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 36</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">store</span> <span class="o">*</span><span class="nx">SqlStore</span><span class="p">)</span> <span class="nf">execTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">fn</span> <span class="kd">func</span><span class="p">(</span><span class="nx">queries</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="kt">error</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 37</span><span class="cl">	<span class="nx">tx</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">store</span><span class="p">.</span><span class="nx">db</span><span class="p">.</span><span class="nf">BeginTx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="kc">nil</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 38</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 39</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 40</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 41</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 42</span><span class="cl">	<span class="nx">q</span> <span class="o">:=</span> <span class="nf">New</span><span class="p">(</span><span class="nx">tx</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 43</span><span class="cl">	<span class="nx">err</span> <span class="p">=</span> <span class="nf">fn</span><span class="p">(</span><span class="nx">q</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 44</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 45</span><span class="cl">		<span class="k">if</span> <span class="nx">rbErr</span> <span class="o">:=</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Rollback</span><span class="p">();</span> <span class="nx">rbErr</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 46</span><span class="cl">			<span class="k">return</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;tx err: %v, rb err: %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">,</span> <span class="nx">rbErr</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 47</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 48</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 49</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 50</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 51</span><span class="cl">	<span class="k">return</span> <span class="nx">tx</span><span class="p">.</span><span class="nf">Commit</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 52</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 53</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 54</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">store</span> <span class="o">*</span><span class="nx">SqlStore</span><span class="p">)</span> <span class="nf">SetInvTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="nx">CreateInventoryParams</span><span class="p">)</span> <span class="p">(</span><span class="nx">Inventory</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 55</span><span class="cl">	<span class="kd">var</span> <span class="nx">inventory</span> <span class="nx">Inventory</span>
+</span></span><span class="line"><span class="ln"> 56</span><span class="cl">	<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 57</span><span class="cl">	<span class="nx">err</span> <span class="p">=</span> <span class="nx">store</span><span class="p">.</span><span class="nf">execTx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">queries</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 58</span><span class="cl">		<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">GetInventoryByGoodsID</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arg</span><span class="p">.</span><span class="nx">Goods</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 59</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 60</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">sql</span><span class="p">.</span><span class="nx">ErrNoRows</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 61</span><span class="cl">				<span class="c1">// 没有找到
+</span></span></span><span class="line"><span class="ln"> 62</span><span class="cl"><span class="c1"></span>				<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">CreateInventory</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">arg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 63</span><span class="cl">				<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln"> 64</span><span class="cl">			<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 65</span><span class="cl">				<span class="nx">global</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">zap</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">err</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 66</span><span class="cl">				<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Internal</span><span class="p">,</span> <span class="s">&#34;内部错误&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 67</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 68</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 69</span><span class="cl">		<span class="nx">global</span><span class="p">.</span><span class="nx">Logger</span><span class="p">.</span><span class="nf">Info</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">zap</span><span class="p">.</span><span class="nf">Any</span><span class="p">(</span><span class="s">&#34;&#34;</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln"> 70</span><span class="cl">		<span class="c1">// 找到了
+</span></span></span><span class="line"><span class="ln"> 71</span><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="ln"> 72</span><span class="cl">		<span class="nx">updateArg</span> <span class="o">:=</span> <span class="nx">UpdateInventoryParams</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 73</span><span class="cl">			<span class="nx">UpdatedAt</span><span class="p">:</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">(),</span>
+</span></span><span class="line"><span class="ln"> 74</span><span class="cl">			<span class="nx">Goods</span><span class="p">:</span>     <span class="nx">inventory</span><span class="p">.</span><span class="nx">Goods</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln"> 75</span><span class="cl">			<span class="nx">Counts</span><span class="p">:</span>    <span class="nx">arg</span><span class="p">.</span><span class="nx">Sticks</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln"> 76</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 77</span><span class="cl">		<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">UpdateInventory</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">updateArg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 78</span><span class="cl">		<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 79</span><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="ln"> 80</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 81</span><span class="cl">	<span class="k">return</span> <span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln"> 82</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 83</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 84</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">store</span> <span class="o">*</span><span class="nx">SqlStore</span><span class="p">)</span> <span class="nf">SellTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 85</span><span class="cl">	<span class="c1">// 本地事务  要不都卖，要不都不卖
+</span></span></span><span class="line"><span class="ln"> 86</span><span class="cl"><span class="c1"></span>	<span class="c1">// 拿到所有的商品，
+</span></span></span><span class="line"><span class="ln"> 87</span><span class="cl"><span class="c1"></span>	<span class="c1">// 		判断是否有库存
+</span></span></span><span class="line"><span class="ln"> 88</span><span class="cl"><span class="c1"></span>	<span class="c1">// 		判断库存是否够
+</span></span></span><span class="line"><span class="ln"> 89</span><span class="cl"><span class="c1"></span>	<span class="c1">// 		扣减库存 - 库存 会出现数据不一致的问题
+</span></span></span><span class="line"><span class="ln"> 90</span><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">store</span><span class="p">.</span><span class="nf">execTx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">queries</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 91</span><span class="cl">		<span class="kd">var</span> <span class="nx">inventory</span> <span class="nx">Inventory</span>
+</span></span><span class="line"><span class="ln"> 92</span><span class="cl">		<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln"> 93</span><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">info</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">arg</span><span class="p">.</span><span class="nf">GetGoodsInfo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 94</span><span class="cl">			<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">GetInventoryByGoodsID</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">GoodsId</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 95</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 96</span><span class="cl">				<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">sql</span><span class="p">.</span><span class="nx">ErrNoRows</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 97</span><span class="cl">					<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">NotFound</span><span class="p">,</span> <span class="s">&#34;没有该货物&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 98</span><span class="cl">				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 99</span><span class="cl">					<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Internal</span><span class="p">,</span> <span class="s">&#34;内部错误&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">100</span><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="ln">101</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">102</span><span class="cl">			<span class="k">if</span> <span class="nx">inventory</span><span class="p">.</span><span class="nx">Sticks</span> <span class="p">&lt;</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Num</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">103</span><span class="cl">				<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">InvalidArgument</span><span class="p">,</span> <span class="s">&#34;货物不够&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">104</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">105</span><span class="cl">			<span class="nx">updateArg</span> <span class="o">:=</span> <span class="nx">UpdateInventoryParams</span><span class="p">{}</span>
+</span></span><span class="line"><span class="ln">106</span><span class="cl">			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">Goods</span> <span class="p">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">GoodsId</span>
+</span></span><span class="line"><span class="ln">107</span><span class="cl">			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">Counts</span> <span class="p">=</span> <span class="o">-</span><span class="nx">info</span><span class="p">.</span><span class="nx">Num</span> <span class="c1">// 这边应该时负数
+</span></span></span><span class="line"><span class="ln">108</span><span class="cl"><span class="c1"></span>			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">UpdatedAt</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">109</span><span class="cl">			<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">UpdateInventory</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">updateArg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">110</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">111</span><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">112</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">113</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">114</span><span class="cl">		<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">115</span><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="ln">116</span><span class="cl">	<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">117</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">118</span><span class="cl">
+</span></span><span class="line"><span class="ln">119</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">store</span> <span class="o">*</span><span class="nx">SqlStore</span><span class="p">)</span> <span class="nf">RollBackTx</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">arg</span> <span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">120</span><span class="cl">	<span class="nx">err</span> <span class="o">:=</span> <span class="nx">store</span><span class="p">.</span><span class="nf">execTx</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="kd">func</span><span class="p">(</span><span class="nx">queries</span> <span class="o">*</span><span class="nx">Queries</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">121</span><span class="cl">		<span class="kd">var</span> <span class="nx">err</span> <span class="kt">error</span>
+</span></span><span class="line"><span class="ln">122</span><span class="cl">		<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">info</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">arg</span><span class="p">.</span><span class="nf">GetGoodsInfo</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">123</span><span class="cl">			<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">GetInventoryByGoodsID</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">info</span><span class="p">.</span><span class="nx">GoodsId</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">124</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">125</span><span class="cl">				<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">sql</span><span class="p">.</span><span class="nx">ErrNoRows</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">126</span><span class="cl">					<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">NotFound</span><span class="p">,</span> <span class="s">&#34;没有该货物&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">127</span><span class="cl">				<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">128</span><span class="cl">					<span class="k">return</span> <span class="nx">status</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Internal</span><span class="p">,</span> <span class="s">&#34;内部错误&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">129</span><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="ln">130</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">131</span><span class="cl">			<span class="nx">updateArg</span> <span class="o">:=</span> <span class="nx">UpdateInventoryParams</span><span class="p">{}</span>
+</span></span><span class="line"><span class="ln">132</span><span class="cl">			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">Goods</span> <span class="p">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">GoodsId</span>
+</span></span><span class="line"><span class="ln">133</span><span class="cl">			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">Counts</span> <span class="p">=</span> <span class="nx">info</span><span class="p">.</span><span class="nx">Num</span> <span class="c1">// 这边应该时正数
+</span></span></span><span class="line"><span class="ln">134</span><span class="cl"><span class="c1"></span>			<span class="nx">updateArg</span><span class="p">.</span><span class="nx">UpdatedAt</span> <span class="p">=</span> <span class="nx">time</span><span class="p">.</span><span class="nf">Now</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">135</span><span class="cl">			<span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">queries</span><span class="p">.</span><span class="nf">UpdateInventory</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">updateArg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">136</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">137</span><span class="cl">				<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">138</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">139</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">140</span><span class="cl">		<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">141</span><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="ln">142</span><span class="cl">	<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">143</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="测试">测试<a class="anchor ms-1" href="#测试"><i class="fas fa-link"></i></a></h3>
+<p><code>shop\service\inventory_srv\handler\inventory_test.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">handler</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;testing&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;github.com/stretchr/testify/require&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="s">&#34;github.com/jimyag/shop/service/inventory/proto&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="kd">func</span> <span class="nf">TestSetInv</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="nx">in</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">		<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">		<span class="nx">Num</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">SetInv</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NotNil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="kd">func</span> <span class="nf">TestInvDetail</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="nx">in</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">		<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">		<span class="nx">Num</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">InvDetail</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NotNil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">in</span><span class="p">.</span><span class="nx">Num</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">.</span><span class="nx">Num</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Equal</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">in</span><span class="p">.</span><span class="nx">GoodsId</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">.</span><span class="nx">GoodsId</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">
+</span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="kd">func</span> <span class="nf">TestSell</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">	<span class="nx">in</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">		<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="nx">Num</span><span class="p">:</span>     <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">SetInv</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NotNil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">
+</span></span><span class="line"><span class="ln">43</span><span class="cl">	<span class="nx">ins</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">		<span class="nx">GoodsInfo</span><span class="p">:</span> <span class="p">[]</span><span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">				<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">				<span class="nx">Num</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">48</span><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="ln">50</span><span class="cl">				<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">51</span><span class="cl">				<span class="nx">Num</span><span class="p">:</span>     <span class="mi">100</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">52</span><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="ln">53</span><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="ln">54</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">55</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">Sell</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">ins</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">56</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">57</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Nil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">58</span><span class="cl">
+</span></span><span class="line"><span class="ln">59</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">60</span><span class="cl">
+</span></span><span class="line"><span class="ln">61</span><span class="cl"><span class="kd">func</span> <span class="nf">TestRollBack</span><span class="p">(</span><span class="nx">t</span> <span class="o">*</span><span class="nx">testing</span><span class="p">.</span><span class="nx">T</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">62</span><span class="cl">	<span class="nx">in</span> <span class="o">:=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">63</span><span class="cl">		<span class="nx">GoodsInfo</span><span class="p">:</span> <span class="p">[]</span><span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">64</span><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="ln">65</span><span class="cl">				<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">66</span><span class="cl">				<span class="nx">Num</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">67</span><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="ln">68</span><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="ln">69</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">70</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">Rollback</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">71</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NoError</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">72</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">NotNil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">73</span><span class="cl">
+</span></span><span class="line"><span class="ln">74</span><span class="cl">	<span class="nx">in</span> <span class="p">=</span> <span class="nx">proto</span><span class="p">.</span><span class="nx">SellInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">75</span><span class="cl">		<span class="nx">GoodsInfo</span><span class="p">:</span> <span class="p">[]</span><span class="o">*</span><span class="nx">proto</span><span class="p">.</span><span class="nx">GoodInvInfo</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">76</span><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="ln">77</span><span class="cl">				<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">78</span><span class="cl">				<span class="nx">Num</span><span class="p">:</span>     <span class="mi">10</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">79</span><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="ln">80</span><span class="cl">			<span class="p">{</span>
+</span></span><span class="line"><span class="ln">81</span><span class="cl">				<span class="nx">GoodsId</span><span class="p">:</span> <span class="mi">10000</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">82</span><span class="cl">				<span class="nx">Num</span><span class="p">:</span>     <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">83</span><span class="cl">			<span class="p">},</span>
+</span></span><span class="line"><span class="ln">84</span><span class="cl">		<span class="p">},</span>
+</span></span><span class="line"><span class="ln">85</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">86</span><span class="cl">	<span class="nx">inventory</span><span class="p">,</span> <span class="nx">err</span> <span class="p">=</span> <span class="nx">inventoryClient</span><span class="p">.</span><span class="nf">Rollback</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="nx">in</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">87</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Error</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">88</span><span class="cl">	<span class="nx">require</span><span class="p">.</span><span class="nf">Nil</span><span class="p">(</span><span class="nx">t</span><span class="p">,</span> <span class="nx">inventory</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">89</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="库存服务的锁问题">库存服务的锁问题<a class="anchor ms-1" href="#库存服务的锁问题"><i class="fas fa-link"></i></a></h2>
+<p>对于减少库存也就是<code>出售商品</code>，多个携程同时对数据库进行修改，虽然我们使用了事务，但是这也不能避免。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">graph TB
+</span></span><span class="line"><span class="ln">2</span><span class="cl">	subgraph g1
+</span></span><span class="line"><span class="ln">3</span><span class="cl">	goroutinue1 --&gt; 查询服务1 --&gt; 判断逻辑1 --&gt; 业务逻辑1 --&gt; 更新数据1
+</span></span><span class="line"><span class="ln">4</span><span class="cl">	end
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl">	subgraph g2
+</span></span><span class="line"><span class="ln">7</span><span class="cl">	goroutinue2 --&gt; 查询服务  --&gt; 判断逻辑 --&gt; 业务逻辑 --&gt; 更新数据 
+</span></span><span class="line"><span class="ln">8</span><span class="cl">	end
+</span></span><span class="line"><span class="ln">9</span><span class="cl">	
+</span></span></code></pre></div><p>两个goroutine同时对数据库进行curd，在开始我们执行事务，这是g1拿到查询的值为100，g2拿到查询的值为100，g1进行更新数据更新为99，g2更新为99，两个事务提交。这时候发现数据已经不一致了。这时候我们给这个事务加锁，是可以解决这个问题的。但是这样的性能太低了，如果我只修改某一个商品的库存，那么所有的库存都要被加锁，以及我们如果有多个服务，一个系统锁只能管住一个服务实例，有多个实例即一个分布式系统时，我们就需要分布式锁。</p>
+<h3 id="基于mysql的悲观锁乐观锁">基于mysql的悲观锁，乐观锁<a class="anchor ms-1" href="#基于mysql的悲观锁乐观锁"><i class="fas fa-link"></i></a></h3>
+<h4 id="悲观锁">悲观锁<a class="anchor ms-1" href="#悲观锁"><i class="fas fa-link"></i></a></h4>
+<p>悲观锁是一种思想，一种互斥锁，串行化了</p>
+<p>mysql 的 for update</p>
+<p>@@autocommit</p>
+<p>要关闭auto commit</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">form</span><span class="w"> </span><span class="n">test</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">goods</span><span class="o">=</span><span class="mi">12</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">update</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="c1">-- 只会锁住满足条件的数据 只有 goods 是索引的话才会这样 如果where的条件没有索引，行锁会升级成表锁
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1">-- 只锁更新的语句
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1">-- 如果没有满足条件的结果，不会缩表， where 字段为索引
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="c1">-- 如果不满足条件不是索引还是会缩表
+</span></span></span></code></pre></div><h4 id="乐观锁">乐观锁<a class="anchor ms-1" href="#乐观锁"><i class="fas fa-link"></i></a></h4>
+<p>用到version</p>
+<p>查询数据的时候查询版本号，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">update</span><span class="w"> </span><span class="n">inv</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">stocks</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stocks</span><span class="o">-</span><span class="mi">2</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">+</span><span class="mi">1</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">goods</span><span class="w"> </span><span class="o">=</span><span class="mi">421</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="k">version</span><span class="w"> </span><span class="o">=</span><span class="k">version</span><span class="w">
+</span></span></span></code></pre></div><p>同时过来只有一个可以成功，但是其余的都要重试</p>
+<h3 id="基于redis的分布式锁">基于redis的分布式锁<a class="anchor ms-1" href="#基于redis的分布式锁"><i class="fas fa-link"></i></a></h3>
+<h4 id="实现原理">实现原理<a class="anchor ms-1" href="#实现原理"><i class="fas fa-link"></i></a></h4>
+<h5 id="实现原理-判断某个key是否存在且为1不存在-设置key为1">实现原理 判断某个key是否存在且为1，不存在 设置key为1<a class="anchor ms-1" href="#实现原理-判断某个key是否存在且为1不存在-设置key为1"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>判断421是否为1</li>
+<li>如果没有，设置为1</li>
+<li>如果有，就轮询等待</li>
+<li>业务逻辑做完，就删除这个key</li>
+</ol>
+<h5 id="1和2应该是一起的是一个原子操作redis实现了一个命令setnx如果key不存在设置指定的值上述过程就变为">1和2应该是一起的是一个原子操作，redis实现了一个命令setnx如果key不存在，设置指定的值，上述过程就变为<a class="anchor ms-1" href="#1和2应该是一起的是一个原子操作redis实现了一个命令setnx如果key不存在设置指定的值上述过程就变为"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>setnx(421,1)</li>
+<li>业务逻辑</li>
+<li>删除这个key</li>
+</ol>
+<h5 id="如果服务挂掉了业务逻辑挂了没有完成就不会删除这个key其他的都一直在等待这个">如果服务挂掉了？业务逻辑挂了，没有完成，就不会删除这个key，其他的都一直在等待这个。<a class="anchor ms-1" href="#如果服务挂掉了业务逻辑挂了没有完成就不会删除这个key其他的都一直在等待这个"><i class="fas fa-link"></i></a></h5>
+<p>解决方案：</p>
+<ol>
+<li>设置过期时间(过期之后自动删除)</li>
+</ol>
+<p>如果设置了过期时间，比如是<code>8秒</code>，我的业务需要10秒中才能完成，怎么办？</p>
+<ol>
+<li>在过期之前刷新一下过期时间</li>
+<li>但是需要自己启动一个携程刷新
+<ol>
+<li>延时的接口可能会带来负面影响&ndash;。如果某一个服务hung住了，本来是2s就能执行完，但是你hung住（由于各种原因，比如硬件问题）就会一直申请延长锁，导致别人永远获取不到锁，</li>
+</ol>
+</li>
+</ol>
+<h4 id="分布式锁解决的问题---基于lua脚本去做">分布式锁解决的问题 &ndash;基于lua脚本去做<a class="anchor ms-1" href="#分布式锁解决的问题---基于lua脚本去做"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>互斥性 -setnx</li>
+<li>死锁</li>
+<li>安全性
+<ol>
+<li>锁只能被持有该锁的用户删除，不能被其他用户删除，
+<ol>
+<li>设置的value是多少，只有当是的gor才能直到，</li>
+<li>在删除的时候取出redis中的值和当前自己保存下来的值对比，如果一样删除</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<h4 id="多节点redis实现的分布式锁算法redlock有效防止单点故障">多节点redis实现的分布式锁算法(RedLock):有效防止单点故障<a class="anchor ms-1" href="#多节点redis实现的分布式锁算法redlock有效防止单点故障"><i class="fas fa-link"></i></a></h4>
+<p>在一个系统中，我们有多个redis的实例，有一个是redis的master节点，其余的都是redis的slaver节点当一个服务向redis的某个节点拿到锁之后，reids的集群会自动同步所有的锁的状况，这里的同步我们先不做关心。</p>
+<p>在这个时候，master宕机了，他们之间的同步服务用不了了？？，这时候应该怎么办？</p>
+<h5 id="红锁的原理">红锁的原理：<a class="anchor ms-1" href="#红锁的原理"><i class="fas fa-link"></i></a></h5>
+<p>有5台redis的实例，在获取锁(setnx)的时候应该在5台实例上都获得锁,这五台都是相同级别的，</p>
+<p>在获得锁的时候，如果两个服务同时获得锁，一个获得了一部分，一个获得了另一部分，如果要求全部设置上的话，就都会失败，那么重试的话，就不会成功。这时应该拿到多数的台数就算成功。5台的话谁先拿到3台就成功，如果有三个服务分别拿了221，那么就重试，直到有人拿到一半以上。这里拿锁是同时去拿，同时开gor去拿锁，如果某个服务没有拿到多数的锁就应该释放当前的锁。</p>
+<h4 id="别人总结的">别人总结的<a class="anchor ms-1" href="#别人总结的"><i class="fas fa-link"></i></a></h4>
+<p>假设有5个完全独立的redis主服务器</p>
+<ol>
+<li>获取当前时间戳</li>
+<li>client尝试按照顺序使用相同的key,value获取所有redis服务的锁，在获取锁的过程中的获取时间比锁过期时间短
+很多，这是为了不要过长时间等待已经关闭的redis服务。且试着获取下一个redis实例。
+比如: TTL为5s,设置获取锁最多用1s,所以如果一秒内无法获取锁， 就放弃获取这个锁，从而尝试获取下个锁</li>
+<li>client通过获取所有能获取的锁后的时间减去第一步的时间， 这个时间差要小于TTL时间并且至少有3个redis实例
+成功获取锁,才算真正的获取锁成功</li>
+<li>如果成功获取锁，则锁的真正有效时间是TTL减去第三步的时间差的时间;比如: TTL是5s,获取所有锁用了2s,
+则真正锁有效时间为3s(其实应该再减去时钟漂移);</li>
+<li>如果客户端由于某些原因获取锁失败,便会开始解锁所有redis实例;因为可能已经获取了小于3个锁，必须释
+放，否则影响其他client获取锁</li>
+</ol>
+<h5 id="什么是时钟漂移">什么是时钟漂移<a class="anchor ms-1" href="#什么是时钟漂移"><i class="fas fa-link"></i></a></h5>
+<p>如果redis服务器的机器时钟发生了向前跳跃,就会导致这个key过早超时失效，比如说客户端1拿到锁后，key的过
+期时间是12:02分，但redis服务器本身的时钟比客户端快了2分钟，导致key在12:00的时候就失效了，这时候,如
+果客户端1还没有释放锁的话，就可能导致多个客户端同时持有同-把锁的问题。</p>
+<h5 id="redlock算法是否是异步算法-">RedLock算法是否是异步算法? ?<a class="anchor ms-1" href="#redlock算法是否是异步算法-"><i class="fas fa-link"></i></a></h5>
+<p>可以看成是同步算法;因为即使进程间(多个电脑间)没有同步时钟，但是每个进程时间流速大致相同;并且时
+钟漂移相对于TTL叫小，可以忽略,所以可以看成同步算法; (不够严谨， 算法上要算上时钟漂移，因为如果两个
+电脑在地球两端，则时钟漂移非常大)</p>
+<h5 id="redlock失败重试">RedLock失败重试<a class="anchor ms-1" href="#redlock失败重试"><i class="fas fa-link"></i></a></h5>
+<p>当client不能获取锁时，应该在随机时间后重试获取锁;且最好在同-时刻并发的把set命令发送给所有redis实
+例;而且对于已经获取锁的client在完成任务后要及时释放锁，这是为了节省时间;</p>
+<h5 id="redlock释放锁">RedLock释放锁<a class="anchor ms-1" href="#redlock释放锁"><i class="fas fa-link"></i></a></h5>
+<p>由于释放锁时会判断这个锁的value是不是自己设置的,如果是才删除;所以在释放锁时非常简单,只要向所有实
+例都发出释放锁的命令，不用考虑能否成功释放锁;</p>
+<h5 id="redlock注意点safety-arguments-">RedLock注意点(Safety arguments) :<a class="anchor ms-1" href="#redlock注意点safety-arguments-"><i class="fas fa-link"></i></a></h5>
+<p>1.先假设client获取所有实例，所有实例包含相同的key和过期时间(TTL) ,但每个实例set命令时间不同导致不能同时
+过期，第一个set命令之前是T1,最后一个set命令后为T2,则此client有效获取锁的最小时间为TTL-(T2-T1)-时钟漂移;
+2.对于以N/2+ 1(也就是一半以,上)的方式判断获取锁成功,是因为如果小于一半判断为成功的话，有可能出现多
+个client都成功获取锁的情况，从而使锁失效
+3.-个client锁定大多数事例耗费的时间大于或接近锁的过期时间，就认为锁无效,并且解锁这个redis实例(不执行
+业务) ;只要在TTL时间内成功获取一半以上的锁便是有效锁:否则无效</p>
+<h5 id="系统有活性的三个特征">系统有活性的三个特征<a class="anchor ms-1" href="#系统有活性的三个特征"><i class="fas fa-link"></i></a></h5>
+<p>1.能够自动释放锁
+2.在获取锁失败(不到一半以上)，或任务完成后 能够自动释放锁,不用等到其自动过期
+3.在client重试获取哦锁前(第-次失败到第二 次重试时间间隔) 大于第一次获取锁消耗的时间;
+4.重试获取锁要有-定次数限制</p>
+<h5 id="redlock性能及崩溃恢复的相关解决方法">RedLock性能及崩溃恢复的相关解决方法<a class="anchor ms-1" href="#redlock性能及崩溃恢复的相关解决方法"><i class="fas fa-link"></i></a></h5>
+<p>1.如果redis没有持久化功能，在clientA获取锁成功后，所有redis重启，clientB能够再次获取到锁，这样违法了锁
+的排他互斥性;
+2.如果启动AOF永久化存储，事情会好些，举例:当我们重启redis后， 由于redis过期机制是按照unix时间戳走的,
+所以在重启后，然后会按照规定的时间过期，不影响业务;但是由于AOF同步到磁盘的方式默认是每秒-次,如果在
+一秒内断电， 会导致数据丢失,立即重启会造成锁互斥性失效;但如果同步磁盘仿式使用Always(每一个写命令 都同
+步到硬盘)造成性能急剧下降;所以在锁完全有效性和性能方面要有所取舍;
+3.有效解决既保证锁完全有效性及性能高效及即使断电情况的方法是redis同步到磁盘方式保持默认的每秒,在
+redis无论因为什么原因停掉后要等待TTL时间后再重启(学名:延迟重启) ;缺点是在TTL时间内服务相当于暂停状态;</p>
+<h5 id="总结">总结<a class="anchor ms-1" href="#总结"><i class="fas fa-link"></i></a></h5>
+<p>1.TTL时长要大于正常业务执行的时间+获取所有redis服务消耗时间+时钟漂移
+2.获取redis所有服务消耗时间要远小于TTL时间,并且获取成功的锁个数要在总数的一般以上:N/2+1
+3.尝试获取每个redis实例锁时的时间要远小于TTL时间
+4.尝试获取所有锁失败后重新尝试一定要有一定次数限制
+5.在redis崩溃后(无论-个还是所有)，要延迟TTL 时间重启redis
+6.在实现多redis节点时要结合单节点分布式锁算法共同实现</p>
+<h2 id="在项目中使用">在项目中使用<a class="anchor ms-1" href="#在项目中使用"><i class="fas fa-link"></i></a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;sync&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;time&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="nx">goredislib</span> <span class="s">&#34;github.com/go-redis/redis/v8&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="s">&#34;github.com/go-redsync/redsync/v4&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="s">&#34;github.com/go-redsync/redsync/v4/redis/goredis/v8&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="c1">// Create a pool with go-redis (or redigo) which is the pool redisync will
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span>	<span class="c1">// use while communicating with Redis. This can also be any pool that
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>	<span class="c1">// implements the `redis.Pool` interface.
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>	<span class="nx">client</span> <span class="o">:=</span> <span class="nx">goredislib</span><span class="p">.</span><span class="nf">NewClient</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">goredislib</span><span class="p">.</span><span class="nx">Options</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">		<span class="nx">Addr</span><span class="p">:</span> <span class="s">&#34;localhost:36379&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">	<span class="p">})</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="nx">pool</span> <span class="o">:=</span> <span class="nx">goredis</span><span class="p">.</span><span class="nf">NewPool</span><span class="p">(</span><span class="nx">client</span><span class="p">)</span> <span class="c1">// or, pool := redigo.NewPool(...)
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="c1">// Create an instance of redisync to be used to obtain a mutual exclusion
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span>	<span class="c1">// lock.
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"></span>	<span class="nx">rs</span> <span class="o">:=</span> <span class="nx">redsync</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">pool</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="c1">// Obtain a new mutex by using the same name for all instances wanting the
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span>	<span class="c1">// same lock.
+</span></span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="nx">gNum</span> <span class="o">:=</span> <span class="mi">2</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">	<span class="nx">mutexname</span> <span class="o">:=</span> <span class="s">&#34;my-global-mutex&#34;</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">	<span class="kd">var</span> <span class="nx">wg</span> <span class="nx">sync</span><span class="p">.</span><span class="nx">WaitGroup</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">gNum</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="nx">gNum</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">
+</span></span><span class="line"><span class="ln">35</span><span class="cl">		<span class="nx">mutex</span> <span class="o">:=</span> <span class="nx">rs</span><span class="p">.</span><span class="nf">NewMutex</span><span class="p">(</span><span class="nx">mutexname</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;开始获取锁&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">			<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;获取锁成功&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">		<span class="nx">time</span><span class="p">.</span><span class="nf">Sleep</span><span class="p">(</span><span class="nx">time</span><span class="p">.</span><span class="nx">Second</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;开始释放锁&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">		<span class="k">if</span> <span class="nx">ok</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">();</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">||</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">			<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;unlock failed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">		<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;释放锁成功&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">		<span class="nx">wg</span><span class="p">.</span><span class="nf">Done</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">48</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl">	<span class="nx">wg</span><span class="p">.</span><span class="nf">Wait</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">50</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol>
+<li>
+<p>设置全局的<code>rs = redsync.New(pool)</code></p>
+</li>
+<li>
+<p>初始化全局的rs</p>
+</li>
+<li>
+<p>在需要用到的地方</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">mutex</span> <span class="o">:=</span> <span class="nx">rs</span><span class="p">.</span><span class="nf">NewMutex</span><span class="p">(</span><span class="nx">mutexname</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="s">&#34;开始获取锁&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="k">if</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mutex</span><span class="p">.</span><span class="nf">Lock</span><span class="p">();</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="nb">panic</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    <span class="c1">//错误处理
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">// 处理业务代码
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span><span class="o">...</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1">// 处理业务结束
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span><span class="k">if</span> <span class="nx">ok</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">mutex</span><span class="p">.</span><span class="nf">Unlock</span><span class="p">();</span> <span class="p">!</span><span class="nx">ok</span> <span class="o">||</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nb">panic</span><span class="p">(</span><span class="s">&#34;unlock failed&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="c1">// 处理错误
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div></li>
+</ol></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/71ef7b9d/">从0到1实现完整的微服务框架-熔断限流和降级
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/252f6a9e/">从0到1实现完整的微服务框架-分布式理论基础、分布式事务
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/71ef7b9d/">从0到1实现完整的微服务框架-熔断限流和降级
+</a>
+          <span class="float-end post-date">2022-03-29
+</span>
+        </li><li>
+          <a href="/posts/c8b300d9/">从0到1实现完整的微服务框架-链路追踪
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li><li>
+          <a href="/posts/a97428cc/">从0到1实现完整的微服务框架-负载均衡
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li><li>
+          <a href="/posts/5763d21a/">从0到1实现完整的微服务框架-服务注册、发现、配置中心
+</a>
+          <span class="float-end post-date">2022-03-28
+</span>
+        </li><li>
+          <a href="/posts/dc2dadae/">从0到1实现完整的微服务框架-用户服务
+</a>
+          <span class="float-end post-date">2022-03-25
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#快速启动库存服务">快速启动库存服务</a>
+      <ul>
+        <li><a href="#生成表结构">生成表结构</a></li>
+        <li><a href="#创建inventory数据库">创建inventory数据库</a></li>
+        <li><a href="#创建数据库">创建数据库</a></li>
+        <li><a href="#删除数据库">删除数据库</a></li>
+        <li><a href="#数据库迁移">数据库迁移</a></li>
+        <li><a href="#生成curd代码">生成curd代码</a></li>
+        <li><a href="#protoc生成go代码">protoc生成go代码</a></li>
+        <li><a href="#封装数据库curd">封装数据库curd</a></li>
+        <li><a href="#测试">测试</a></li>
+      </ul>
+    </li>
+    <li><a href="#库存服务的锁问题">库存服务的锁问题</a>
+      <ul>
+        <li><a href="#基于mysql的悲观锁乐观锁">基于mysql的悲观锁，乐观锁</a></li>
+        <li><a href="#基于redis的分布式锁">基于redis的分布式锁</a></li>
+      </ul>
+    </li>
+    <li><a href="#在项目中使用">在项目中使用</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

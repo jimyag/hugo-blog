@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Gin on 编程日记</title>
+    <link>/tags/gin/</link>
+    <description>Recent content in Gin on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 10 Jan 2022 23:20:18 +0000</lastBuildDate><atom:link href="/tags/gin/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Docker部署Go项目</title>
+      <link>/posts/e6a3ea27/</link>
+      <pubDate>Mon, 10 Jan 2022 23:20:18 +0000</pubDate>
+      
+      <guid>/posts/e6a3ea27/</guid>
+      <description>&lt;p&gt;记录自己用dockers部署Go项目&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>Casbin-入门demo</title>
+      <link>/posts/112bfef3/</link>
+      <pubDate>Sat, 18 Dec 2021 22:00:08 +0000</pubDate>
+      
+      <guid>/posts/112bfef3/</guid>
+      <description>&lt;p&gt;​	Casbin努力成为与编程语言无关的，解耦的权限框架！致力于多种语言一致体验，直白来说，就是一套规则框架，在各种编程语言中稍微改动就可以与业务系统结合使用，使其成为与语言、语言框架无关且通用的权限管理系统。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

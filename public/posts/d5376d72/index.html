@@ -1,0 +1,661 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>为什么paseto比jwt好？ - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。
+本文主要介绍JWT的弊端，以及一种新的token验证PASETO" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="为什么paseto比jwt好？">
+<meta itemprop="description" content="在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。
+本文主要介绍JWT的弊端，以及一种新的token验证PASETO"><meta itemprop="datePublished" content="2022-03-09T11:31:02+00:00" />
+<meta itemprop="dateModified" content="2022-03-09T11:31:02+00:00" />
+<meta itemprop="wordCount" content="4165">
+<meta itemprop="keywords" content="PASETO,JWT,教程," /><meta property="og:title" content="为什么paseto比jwt好？" />
+<meta property="og:description" content="在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。
+本文主要介绍JWT的弊端，以及一种新的token验证PASETO" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/d5376d72/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-09T11:31:02+00:00" />
+<meta property="article:modified_time" content="2022-03-09T11:31:02+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="为什么paseto比jwt好？"/>
+<meta name="twitter:description" content="在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。
+本文主要介绍JWT的弊端，以及一种新的token验证PASETO"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e4%b8%ba%e4%bb%80%e4%b9%88paseto%e6%af%94jwt%e5%a5%bd%ef%bc%9f&url=%2fposts%2fd5376d72%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2fd5376d72%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">为什么paseto比jwt好？</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">为什么paseto比jwt好？
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-03-09 19:31:02 &#43;0800 CST。">
+    2022-03-09
+  </span><span class="post-reading-time">
+    9 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/paseto/" class="badge post-taxonomy">PASETO</a><a href="/tags/jwt/" class="badge post-taxonomy">JWT</a><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a></span>
+</div>
+<div class="post-content mb-3"><p>在平常我们做权限控制或者认证的时候，大多数是基于 token 的身份验证。在众多类型中的token中，JSON Web Token（JWT）是最流行的之一。但是人们发现了JWT中一些安全问题，主要是因为它设计了不良的标准。</p>
+<p>本文主要介绍JWT的弊端，以及一种新的token验证PASETO</p>
+<h3 id="基于-token-的认证">基于 Token 的认证<a class="anchor ms-1" href="#基于-token-的认证"><i class="fas fa-link"></i></a></h3>
+<p>首先我们介绍基于Token的认证的过程.</p>
+<p><picture><img class="img-fluid" alt="image-20220309113330194" src="/posts/d5376d72/index/image-20220309113330194.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ol>
+<li>客户端使用用户名密码进行登录,服务端接受到请求之后进行校验.</li>
+<li>校验通过后,服务端会签发一个access_token给客户端.</li>
+<li>在之后客户端请求服务器的资源时都需要带上token,</li>
+<li>如果服务器收到客户端请求资源,校验是否有权限访问资源.</li>
+</ol>
+<p>我们在<a href="https://jwt.io/" target="_blank" rel="noopener noreferrer">JSON Web Tokens - jwt.io</a>可以看到jwt的示例</p>
+<p><picture><img class="img-fluid" alt="image-20220309114349912" src="/posts/d5376d72/index/image-20220309114349912.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>它是一个Base64编码的字符串，由3个主要部分组成，由点分隔。</p>
+<p>第一部分（带有颜色红色）是令牌的标题。当我们解码此部分时，我们将获得一个包含令牌类型JWT的JSON对象，以及用于签署令牌的算法：上述的算法是HS256</p>
+<p>令牌的第二部分（紫色）是有效载荷数据。此部分是我们存储有关登录用户的信息，例如用户名，以及该令牌将过期的时间戳。你可以自定义此JSON有效载荷以存储所需的任何其他信息。</p>
+<p>存储在JWT中的所有数据仅为Base64编码，而不是加密。因此，不需要服务器的秘密/私钥以解码其内容。它还意味着我们可以轻松地编码标题和有效载荷数据而无需键。那么服务器如何验证访问令牌的真实性吗？</p>
+<p>这是令牌第三部分的目的：数字签名（蓝色）。这个想法很简单，只有服务器有私钥签署令牌。因此，如果尝试在没有正确密钥的情况下创建虚假令牌，则服务器将在验证过程中轻松检测到它。JWT标准提供了许多不同类型的数字签名算法，但它们可以分为2个主要类别。</p>
+<h4 id="对称加密算法">对称加密算法<a class="anchor ms-1" href="#对称加密算法"><i class="fas fa-link"></i></a></h4>
+<p>第一个是对称加密算法，其中相同的密钥用于两个标志并验证令牌。由于只有1个key，它应该保密。因此，此算法适用于仅用于本地服务的本地使用，或用于内部服务，可以共享密钥的内部服务。</p>
+<p>属于该对称加密类别的一些特定算法是：HS256，HS384和HS512。这里HS256是HMAC和SHA-256的组合。HMAC代表基于哈希的消息认证码，SHA是安全散列算法。而256/384/512是输出位的数量。</p>
+<p>对称密钥算法非常有效，适用于大多数应用。但是，如果我们想要验证令牌的外部第三方服务，我们不能使用它，因为它意味着我们必须给他们我们的密钥。在这种情况下，我们必须使用第二类：非对称加密算法。</p>
+<h4 id="非对称加密算法">非对称加密算法<a class="anchor ms-1" href="#非对称加密算法"><i class="fas fa-link"></i></a></h4>
+<p>在这种类型的算法中，有一对key而不是仅为1个单个密钥。</p>
+<p>私钥用于签署令牌，而公钥仅用于验证它。</p>
+<p>因此，我们可以轻松与任何外部第三方服务分享我们的公钥，而无需担心泄露私钥。</p>
+<p>在这种不对称关键类别中，存在几组算法，例如RS组，PS组或ES组。这里，RS256基本上是具有PKCSV1.5和SHA256的RSA算法。PS256也是RSA算法，但具有概率签名方案和SHA256。它的设计比pkcsv1.5更为安全,最后一个ES256只是椭圆曲线数字签名算法</p>
+<h4 id="jwt问题">JWT问题<a class="anchor ms-1" href="#jwt问题"><i class="fas fa-link"></i></a></h4>
+<p>好的，到目前为止，它听起来像JWT是一个很好的标准，它让我们提供了很多灵活性，可以选择我们想要的任何签名算法。那么它的问题究竟是什么？</p>
+<h5 id="弱算法">弱算法<a class="anchor ms-1" href="#弱算法"><i class="fas fa-link"></i></a></h5>
+<p>第一个问题是弱签名算法。JWT为开发人员提供了太多算法来选择，包括已知易受攻击的算法，例如：带有pkcsv1.5的RSA容易收到 padding Oracle攻击。或ECDSA可以面临无效曲线攻击。对于没有安全性经验的开发人员，他们很难知道哪些算法最好使用。因此，JWT为开发人员提供了太多的灵活性来选择算法的事实就像让搬起石头砸自己的脚.</p>
+<p>JWT 标准设计看起来很不错，实际上包藏祸心，因为其设计，隐藏诸多安全问题，详细如下：</p>
+<h5 id="重置空加密算法缺陷">重置空加密算法缺陷<a class="anchor ms-1" href="#重置空加密算法缺陷"><i class="fas fa-link"></i></a></h5>
+<p>JWT 支持将算法设定为“None”，如果你使用JWT库时未设置关闭该功能，那么任何Token都是有效的。具体做法是将JWT第一部分 header 中 alg 字段设置为 None ，再将第三部分 signature 设置为空（即不添加signature字段）， 此token 可顺利通过验证。</p>
+<h5 id="密钥混淆攻击">密钥混淆攻击<a class="anchor ms-1" href="#密钥混淆攻击"><i class="fas fa-link"></i></a></h5>
+<p>JWT 最常用的两种算法是 HMAC 和 RSA。HMAC（对称加密算法）用同一个密钥对 token 进行签名和认证。而RSA（非对称加密算法）需要两个密钥，先用私钥加密生成 JWT ，然后使用其对应的公钥来解密验证。如果公钥泄露（很多人觉得公钥可以分发），那么将算法 RS256 修改为 HS256 ，即非对称加密向下降级为对称加密。再使用这个泄露的公钥对 token 进行签名，后端收到后根据头中指定的算法，将使用公钥对 token 验证，如此便认证通过。</p>
+<h5 id="密钥暴力破解">密钥暴力破解<a class="anchor ms-1" href="#密钥暴力破解"><i class="fas fa-link"></i></a></h5>
+<p>如果 JWT 使用对称加密算法（如 HS256）， 这意味着对令牌进行签名的密钥也用于对其进行验证。由于签名验证是一个自包含的过程，因此可以测试 token 本身的有效密钥，而不必将其发送回应用程序进行验证。如果密钥设置过于简单，如常用词汇、生日年份等，结合已知的泄露密码列表，将很快破解出密钥，如此便可伪造出任意token 。</p>
+<h5 id="kid-指定攻击">kid 指定攻击<a class="anchor ms-1" href="#kid-指定攻击"><i class="fas fa-link"></i></a></h5>
+<p>kid 即为 key ID ，存在于 jwt header 中，是一个可选的字段，用来指定加密算法的密钥。如在头部注入新的 kid 字段，并指定 HS256 算法的 key 为 123456，生成新的token,服务端收到将使用指定的密钥123456来验证token。因此，为了防止这攻击，它在您的服务器代码中至关重要，您必须检查令牌的算法标题，<strong>以确保它与您的服务器用于签名和验证令牌的算法匹配。</strong></p>
+<p>好的，所以现在你知道为什么JSON网上令牌不是一个非常精心设计的标准。它打开了许多潜在威胁的门。</p>
+<p>因此，很多人试图远离它，并迁移到更强大的东西。</p>
+<h3 id="paseto---与平台无关的密钥验证">PASETO - 与平台无关的密钥验证<a class="anchor ms-1" href="#paseto---与平台无关的密钥验证"><i class="fas fa-link"></i></a></h3>
+<p>PASeto或Platform Andnostic Security Token是社区广泛接受的最成功的设计之一，作为JWT的最佳安全替代品。</p>
+<h4 id="强算法">强算法<a class="anchor ms-1" href="#强算法"><i class="fas fa-link"></i></a></h4>
+<p>它首先解决了JWT的所有问题，提供了开箱即用的强大签名算法。开发人员不必再选择算法了。相反，他们只需要选择他们想要使用的 PASETO 版本。每个Paseto版本已经使用1个强大的密码套件实现。在任何时候，只有2个最新版本的PASETO都会有效。</p>
+<p>现在，经常使用的时的Paseto版本是版本1和版本2。(当然也有版本3,4的)</p>
+<h4 id="paseto-version-1">PASETO version 1<a class="anchor ms-1" href="#paseto-version-1"><i class="fas fa-link"></i></a></h4>
+<p>版本1时间较长，只能用于无法使用现代加密的传统系统。与 JWT 类似，PASETO也有2个算法类别，用于2个主要用例。</p>
+<p>对于本地或内部服务，我们使用对称密钥算法。</p>
+<p>但与只有Base64-加密的JWT不同，PASETO 实际上使用具有带有关联数据（或AEAD<a href="https://www.jianshu.com/p/7c3ca0ed307b" target="_blank" rel="noopener noreferrer">【转】什么是AEAD加密 - 简书 (jianshu.com)</a>）算法的强度认证加密，使用密钥加密并验证令牌中的所有数据。.PASETO 版本1中使用的AEAD算法是HMAC SHA384的AES256 CTR。</p>
+<p>对于公共情况而言，在有需要验证令牌的外部服务的情况下，我们必须使用非对称密钥算法。在这种情况下，PASETO 使用与JWT相同的方法，这意味着它不会加密令牌数据，而且只使用Base64编码，并使用私钥以数字签名签署内容。PASETO 版本1中所选的不对称关键算法是带SHA384的RSA PSS。</p>
+<h4 id="paseto-version-2">PASETO version 2<a class="anchor ms-1" href="#paseto-version-2"><i class="fas fa-link"></i></a></h4>
+<p>在版本2的PASETO中，正在使用2个安全和现代算法。对于本地对称关键场景，它使用具有Poly1305算法的Xchacha20。并且对于公众非对称关键场景，使用具有曲线25519的爱德华曲线数字签名算法。</p>
+<h4 id="non-trivial-forgery">Non-trivial forgery<a class="anchor ms-1" href="#non-trivial-forgery"><i class="fas fa-link"></i></a></h4>
+<p>现在随着Paseto的设计，令牌伪造不再是小事。</p>
+<p>由于算法标题不再存在，因此攻击者无法将其设置为None，或强制服务器使用它在此标题中选择的算法。令牌中的一切也用<strong>AEAD</strong>认证，因此无法篡改它。</p>
+<p>此外，如果使用本地对称密钥算法，则现在加密有效载荷，而不仅仅是编码，因此黑客不可能在不知道服务器的密钥的情况下读取或更改存储在令牌中的数据。</p>
+<p>与JWT相比，PASETO 不仅更安全，而且更容易实现更简单，更简单。</p>
+<h4 id="paseto结构">PASETO结构<a class="anchor ms-1" href="#paseto结构"><i class="fas fa-link"></i></a></h4>
+<p>现在，让我们来看看Paseto标记的结构。</p>
+<p>这是一个用于本地使用目的的Paseto版本2令牌。令牌有4个主要部分，用点分开。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">v2</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nx">local</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">QAxIpVeECVNI1z4xQbm_qQYomyT3h8FtV8bxkz8pBJWkT8f7HtlOpbroPDEZUKop_vaglyp76CzYy375cHmKCW8e1CCkV0Lflu4GTDyXMqQdpZMM1E6OaoQW27gaRSvWBrR3IgbFIa0AkuUFw</span><span class="p">.</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">UGFyYWdvbiBJbml0aWF0aXZlIEVudGVycHJpc2Vz</span>
+</span></span></code></pre></div><p>每一段是一个部分</p>
+<p>第一部分是PASETO版本，这是版本2。</p>
+<p>第二部分是令牌的目的，它用于本地或公共场景吗？在这种情况下，它是本地的，这意味着使用对称密钥认证加密算法。</p>
+<p>第三部分是令牌的主要内容或有效载荷数据。请注意，它是加密的，因此如果我们使用key解密它，我们将获得3个较小的部分：</p>
+<h4 id="paseto-example-1">PASETO Example 1<a class="anchor ms-1" href="#paseto-example-1"><i class="fas fa-link"></i></a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">v2.local.QAxIpVe-ECVNI1z4xQbm_qQYomyT3h8FtV8bxkz8pBJWkT8f7HtlOpbroPDEZUKop_vaglyp76CzYy375cHmKCW8e1CCkV0Lflu4GTDyXMqQdpZMM1E6OaoQW27gaRSvWBrR3IgbFIa0AkuUFw.UGFyYWdvbiBJbml0aWF0aXZlIEVudGVycHJpc2Vz
+</span></span></code></pre></div><p>This decodes to:</p>
+<ul>
+<li>
+<p>Version: <code>v2</code></p>
+</li>
+<li>
+<p>Purpose: <code>local</code> (shared-key authenticated encryption)</p>
+</li>
+<li>
+<p>Payload (hex-encoded):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">400c48a557be10254d235cf8c506e6fea418a26c93de1f05b55f1bc64cfca412
+</span></span><span class="line"><span class="ln">2</span><span class="cl">56913f1fec7b653a96eba0f0c46542a8a7fbda825ca9efa0b3632dfbe5c1e628
+</span></span><span class="line"><span class="ln">3</span><span class="cl">25bc7b5082915d0b7e5bb81930f25cca9076964c33513a39aa105b6ee06914af
+</span></span><span class="line"><span class="ln">4</span><span class="cl">581ad1dc881b1486b4024b9417
+</span></span></code></pre></div><ul>
+<li>Nonce: <code>400c48a557be10254d235cf8c506e6fea418a26c93de1f05</code></li>
+<li>Authentication tag: <code>6914af581ad1dc881b1486b4024b9417</code></li>
+</ul>
+</li>
+<li>
+<p>Decrypted Payload:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">{
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  &#34;data&#34;: &#34;this is a signed message&#34;,
+</span></span><span class="line"><span class="ln">3</span><span class="cl">  &#34;exp&#34;: &#34;2039-01-01T00:00:00+00:00&#34;
+</span></span><span class="line"><span class="ln">4</span><span class="cl">}
+</span></span></code></pre></div><ul>
+<li>
+<p>Key used in this example (hex-encoded):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">707172737475767778797a7b7c7d7e7f808182838485868788898a8b8c8d8e8f  
+</span></span></code></pre></div></li>
+</ul>
+</li>
+<li>
+<p>Footer:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">Paragon Initiative Enterprises
+</span></span></code></pre></div></li>
+</ul>
+<ol>
+<li>首先，有效载荷体。在这种情况下，我们只需存储一个简单的消息和令牌的到期时间。</li>
+<li>其次，在加密和消息身份验证过程中使用的nonce值。</li>
+<li>最后，消息身份验证标记要验证加密消息及其关联的未加密数据。</li>
+</ol>
+<p>在这种情况下，未加密的数据是令牌的版本，用途和页脚。</p>
+<p>您可以存储页脚中的任何公共信息，因为它不会像有效负载体一样加密，但只有Base64编码。所以任何有令牌的人都可以解码它以读取页脚数据。</p>
+<p>请注意，页脚是可选的，因此您可以在没有页脚的情况下拥有Paseto令牌。</p>
+<p>例如，这是公共使用场景的另一个Paseto标记：它只有3份，没有页脚。第一部分是Paseto版本，这是版本2。</p>
+<h4 id="paseto-example-2">PASETO Example 2<a class="anchor ms-1" href="#paseto-example-2"><i class="fas fa-link"></i></a></h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">v2.
+</span></span><span class="line"><span class="ln">2</span><span class="cl">public.
+</span></span><span class="line"><span class="ln">3</span><span class="cl">eyJleHAiOiIyMDM5LTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwiZGF0YSI6InRoaXMgaXMgYSBzaWduZWQgbWVzc2FnZSJ91gC7-
+</span></span><span class="line"><span class="ln">4</span><span class="cl">jCWsN3mv4uJaZxZp0btLJgcyVwL-svJD7f4IHyGteKe3HTLjHYTGHI1MtCqJ-ESDLNoE7otkIzamFskCA
+</span></span></code></pre></div><p>This decodes to:</p>
+<ul>
+<li>
+<p>Version: <code>v2</code></p>
+</li>
+<li>
+<p>Purpose: <code>public</code> (public-key digital signature)</p>
+</li>
+<li>
+<p>Payload:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">{
+</span></span><span class="line"><span class="ln">2</span><span class="cl">  &#34;data&#34;: &#34;this is a signed message&#34;,
+</span></span><span class="line"><span class="ln">3</span><span class="cl">  &#34;exp&#34;: &#34;2039-01-01T00:00:00+00:00&#34;
+</span></span><span class="line"><span class="ln">4</span><span class="cl">}
+</span></span></code></pre></div></li>
+<li>
+<p>Signature (hex-encoded):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">d600bbfa3096b0dde6bf8b89699c59a746ed2c981cc95c0bfacbc90fb7f8207c
+</span></span><span class="line"><span class="ln">2</span><span class="cl">86b5e29edc74cb8c761318723532d0aa27e1120cb36813ba2d908cda985b2408
+</span></span></code></pre></div></li>
+<li>
+<p>Public key (hex-encoded):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln">1</span><span class="cl">11324397f535562178d53ff538e49d5a162242970556b4edd950c87c7d86648a
+</span></span></code></pre></div></li>
+</ul>
+<p>To learn what each version means, please see <a href="https://github.com/paragonie/paseto/tree/master/docs/01-Protocol-Versions" target="_blank" rel="noopener noreferrer">this page in the documentation</a>.</p>
+<p>第二部分是其目的：在这种情况下公开，这意味着非对称关键数字签名算法用于签署令牌，其有效载荷数据不会被加密，但只有base64编码。</p>
+<p>如您所见，有效载荷的部分实际上是编码的主体，我们可以轻松解码以获得此JSON对象(eyJleHAiOiIyMDM5LTAxLTAxVDAwOjAwOjAwKzAwOjAwIiwiZGF0YSI6InRoaXMgaXMgYSBzaWduZWQgbWVzc2FnZSJ91gC7-)。</p>
+<p>而有效载荷的(jCWsN3mv4uJaZxZp0btLJgcyVwL-svJD7f4IHyGteKe3HTLjHYTGHI1MtCqJ-ESDLNoE7otkIzamFskCA)是令牌的签名，由使用私钥的数字签名算法创建。服务器将使用其配对的公钥来验证此签名的真实性。</p>
+<p>我们已经了解了JSON Web令牌的设计缺陷，这导致了过去的许多安全问题，以及Paseto如何发明解决所有这些问题，从而使我们的开发人员的生活更容易。</p>
+<h3 id="paseto与jwt的使用">PASETO与JWT的使用<a class="anchor ms-1" href="#paseto与jwt的使用"><i class="fas fa-link"></i></a></h3>
+<p><a href="https://github.com/jimyag/token" target="_blank" rel="noopener noreferrer">jimyag/token (github.com)</a></p>
+<h3 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h3>
+<p><a href="https://github.com/o1egl/paseto" target="_blank" rel="noopener noreferrer">o1egl/paseto: Platform-Agnostic Security Tokens implementation in GO (Golang) (github.com)</a></p>
+<p><a href="https://dev.to/techschoolguru/why-paseto-is-better-than-jwt-for-token-based-authentication-1b0c" target="_blank" rel="noopener noreferrer">Why PASETO is better than JWT for token-based authentication? - DEV Community</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/3259ac99/">GRPC-四种模式实践
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/1dc739af/">安装Go1.18环境
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/3259ac99/">GRPC-四种模式实践
+</a>
+          <span class="float-end post-date">2022-03-09
+</span>
+        </li><li>
+          <a href="/posts/17eab2e7/">在同一机器上安装Go的不同版本
+</a>
+          <span class="float-end post-date">2022-02-17
+</span>
+        </li><li>
+          <a href="/posts/c4697fb2/">TCP/IP协议三次握手、四次挥手
+</a>
+          <span class="float-end post-date">2022-02-10
+</span>
+        </li><li>
+          <a href="/posts/387f5f40/">Kubernetes学习记录
+</a>
+          <span class="float-end post-date">2022-01-27
+</span>
+        </li><li>
+          <a href="/posts/b7d0417a/">Golang中的make和new
+</a>
+          <span class="float-end post-date">2022-01-18
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#基于-token-的认证">基于 Token 的认证</a></li>
+        <li><a href="#paseto---与平台无关的密钥验证">PASETO - 与平台无关的密钥验证</a></li>
+        <li><a href="#paseto与jwt的使用">PASETO与JWT的使用</a></li>
+        <li><a href="#参考">参考</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

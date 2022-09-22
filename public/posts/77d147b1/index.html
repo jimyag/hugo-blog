@@ -1,0 +1,1941 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>大数据技术及应用-复习资料 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="大数据技术及应用的复习资料。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="大数据技术及应用-复习资料">
+<meta itemprop="description" content="大数据技术及应用的复习资料。"><meta itemprop="datePublished" content="2022-04-24T22:50:12+08:00" />
+<meta itemprop="dateModified" content="2022-04-24T22:50:12+08:00" />
+<meta itemprop="wordCount" content="19505">
+<meta itemprop="keywords" content="复习资料," /><meta property="og:title" content="大数据技术及应用-复习资料" />
+<meta property="og:description" content="大数据技术及应用的复习资料。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/77d147b1/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-04-24T22:50:12+08:00" />
+<meta property="article:modified_time" content="2022-04-24T22:50:12+08:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="大数据技术及应用-复习资料"/>
+<meta name="twitter:description" content="大数据技术及应用的复习资料。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e5%a4%a7%e6%95%b0%e6%8d%ae%e6%8a%80%e6%9c%af%e5%8f%8a%e5%ba%94%e7%94%a8-%e5%a4%8d%e4%b9%a0%e8%b5%84%e6%96%99&url=%2fposts%2f77d147b1%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f77d147b1%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">大数据技术及应用-复习资料</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">大数据技术及应用-复习资料
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-04-24 22:50:12 &#43;0800 CST。">
+    2022-04-24
+  </span><span class="post-reading-time">
+    39 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge post-taxonomy">复习资料</a></span>
+</div>
+<div class="post-content mb-3"><p>大数据技术及应用的复习资料。</p>
+<h2 id="大数据概述">大数据概述<a class="anchor ms-1" href="#大数据概述"><i class="fas fa-link"></i></a></h2>
+<h3 id="大数据概念">大数据概念<a class="anchor ms-1" href="#大数据概念"><i class="fas fa-link"></i></a></h3>
+<p>指无法在一定时间范围内用常规软件工具进行捕捉、管理和处理的数据集合，是需要新处理模式才能具有更强的决策力、洞察发现力和流程优化能力来适应海量、高增长率和多样化的信息资产。</p>
+<h3 id="大数据特性">大数据特性<a class="anchor ms-1" href="#大数据特性"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>海量性</li>
+<li>多样性</li>
+<li>真实性</li>
+<li>价值密度低</li>
+<li>高速性</li>
+<li>可变性</li>
+</ol>
+<p><picture><img class="img-fluid" alt="img" src="/posts/77d147b1/index/wps1.jpg" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="大数据的影响">大数据的影响<a class="anchor ms-1" href="#大数据的影响"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>数据的运行、计算速度越来越快</p>
+</li>
+<li>
+<p>数据存储成本下降</p>
+</li>
+<li>
+<p>实现信息对等解放脑力，机器拥有人的智慧</p>
+</li>
+</ol>
+<h3 id="大数据的关键技术">大数据的关键技术<a class="anchor ms-1" href="#大数据的关键技术"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>分布式系统基础架构Hadoop的出现，为大数据带来了新的曙光；</p>
+</li>
+<li>
+<p>HDFS为海量的数据提供了存储；</p>
+</li>
+<li>
+<p>MapReduce则为海量的数据提供了并行计算，从而大大提高了计算效率；</p>
+</li>
+<li>
+<p>Spark、Storm、Impala、Flink等各种各样的技术进入人们的视野。</p>
+</li>
+</ol>
+<h3 id="大数据与云计算物联网的关系">大数据与云计算物联网的关系<a class="anchor ms-1" href="#大数据与云计算物联网的关系"><i class="fas fa-link"></i></a></h3>
+<p>物联网、云计算和大数据三者互为基础。</p>
+<p>物联网产生大数据，大数据需要云计算。</p>
+<p>物联网在将物品和互联网连接起来，进行信息交换和通信，以实现智能化识别、定位、跟踪、监控和管理的过程中，产生的大量数据，云计算解决万物互联带来的巨大数据量，所以三者互为基础，又相互促进。如果不那么严格的说，它们三者可以看做一个整体，相互发展、相互促进。</p>
+<p>以下关于云计算、大数据和物联网之间的关系，论述错误的是： B</p>
+<p>A、物联网可以借助于大数据实现海量数据的分析</p>
+<p>B、云计算侧重于数据分析</p>
+<p>C、物联网可以借助于云计算实现海量数据的存储</p>
+<p>D、云计算、大数据和物联网三者紧密相关，相辅相成</p>
+<h2 id="hadoop简介">hadoop简介<a class="anchor ms-1" href="#hadoop简介"><i class="fas fa-link"></i></a></h2>
+<h3 id="hadoop简介-1">Hadoop简介<a class="anchor ms-1" href="#hadoop简介-1"><i class="fas fa-link"></i></a></h3>
+<p>hadoop是一个分布式系统基础架构，hadoop的框架最核心的设计是HDFS和MapReduce，HDFS为海量的数据提供了存储能力，MapReduce为海量数据提供了计算能力</p>
+<h3 id="hadoop特性优点">Hadoop特性/优点<a class="anchor ms-1" href="#hadoop特性优点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>高可靠性 ：采用冗余数据存贮方式，即使一个副本发生故障，其他副本也可以保证对外工作的正常进行</p>
+</li>
+<li>
+<p>高扩展性 ：采用冗余数据存贮方式，即使一个副本发生故障，其他副本也可以保证对外工作的正常进行。</p>
+</li>
+<li>
+<p>高效性 ：作为并行分布式计算平台，hadoop采用分布式存贮和分布式处理两大核心技术，能够高效的处理PB级别的数据</p>
+</li>
+<li>
+<p>高容错性 ：采用冗余数据存贮方式，自动保存数据的多个副本，并且能够自动将失败的任务重新分配。</p>
+</li>
+<li>
+<p>经济性：hadoop采用廉价的计算机集群，普通的用户也可以pc机搭建环境</p>
+</li>
+<li>
+<p>运行在linux平台上，hadoop是基于java语言开发的，可以较好的运行在linux的平台上</p>
+</li>
+<li>
+<p>支持多种编程语言，如：C++等/</p>
+</li>
+</ol>
+<h3 id="hadoop缺点">Hadoop缺点<a class="anchor ms-1" href="#hadoop缺点"><i class="fas fa-link"></i></a></h3>
+<p>在当前Hadoop的设计中，所有的metadata操作都要通过集中式的NameNode来进行，NameNode有可能是性能的瓶颈。</p>
+<p>当前Hadoop单一NameNode、单一Jobtracker的设计严重制约了整个Hadoop可扩展性和可靠性。</p>
+<p>首先，NameNode和JobTracker是整个系统中明显的单点故障源。再次，单一NameNode的内存容量有限，使得Hadoop集群的节点数量被限制到2000个左右，能支持的文件系统大小被限制在10-50PB，最多能支持的文件数量大约为1.5亿左右。实际上，有用户抱怨其集群的NameNode重启需要数小时，这大大降低了系统的可用性。</p>
+<h3 id="hadoop项目结构">Hadoop项目结构<a class="anchor ms-1" href="#hadoop项目结构"><i class="fas fa-link"></i></a></h3>
+<p>详细介绍</p>
+<p><picture><img class="img-fluid" alt="img" src="/posts/77d147b1/index/wps2.jpg" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="1corecommon">1，core/common<a class="anchor ms-1" href="#1corecommon"><i class="fas fa-link"></i></a></h4>
+<p>Hadoop Common原名为Hadoop Core,0.20版本之后改为common。自0.21版本之后，HDFS和MapReduce被分离出来作为单独的子项目，其余部分构成Hadoop Common。</p>
+<p>Common是为Hadoop及其他子项目提供支持的常用工具，主要包括文件系统，RPC和串行化库，他们为在廉价的硬件上搭建云计算环境提供基本的服务，同时也为运行在该平台上的软件开发提供所需要的API。</p>
+<h4 id="2avro">2，Avro<a class="anchor ms-1" href="#2avro"><i class="fas fa-link"></i></a></h4>
+<p>Avro是Hadoop的一个子项目，也是Apache中的一个独立项目。</p>
+<p>Avro是一个用于<strong>数据序列化的系统</strong>，提供了丰富的数据结构类型，快速可压缩的二进制数据格式，存储持久性数据的文件集，远程调用的功能和简单的动态语言集成功能。</p>
+<p>Avro可以将数据结构或对象转化成便于存储和传输的格式，节约数据存储空间和网络传输带宽，Hadoop的其它子项目的客户端与服务端之间的数据传输都采用Avro。</p>
+<h4 id="3hdfs">3，HDFS<a class="anchor ms-1" href="#3hdfs"><i class="fas fa-link"></i></a></h4>
+<p>HDFS是Hadoop项目的两大核心之一，它是针对谷歌文件系统（GFS）的开源实现。</p>
+<p>HDFS具有处理超大数据，流式处理，可以运行在廉价商用服务器上等优点。</p>
+<p>HDFS在设计之初就是要运行在廉价的大型服务器集群上，因此，在设计上就把硬件故障作为一种常态来考虑，可以保证在部分硬件发生故障的情况下，仍能保证文件系统的整体的可用性和可靠性。</p>
+<p>HDFS放宽了一部分POSIX约束，从而实现以流的形式访问文件系统中的数据。</p>
+<p>HDFS在访问应用程序数据时候，可以具有很高的吞吐量，因此，对于超大数据集的应用程序而言，选择HDFS作为底层数据存储是较好的选择。</p>
+<h4 id="4hbase">4，HBase<a class="anchor ms-1" href="#4hbase"><i class="fas fa-link"></i></a></h4>
+<p>HBase是一个提供高可靠性，高性能，可伸缩，实时读写，分布式的列式数据库，一般采用HDFS作为其底层数据存储。</p>
+<p><strong>HBase是针对谷歌的BigTable的开源实现</strong>，二者都采用了相同的数据模型，具有强大的<strong>非结构化数据存储能力</strong>。HBase与传统关系数据库的一个重要区别就是，前者是基于<strong>列的存储</strong>，而后者采用基于行的存储。HBase具有良好的<strong>横向扩展</strong>能力，可以通过不断增加廉价的商用服务器来增加存储能力。</p>
+<h4 id="5mapreduce">5，MapReduce<a class="anchor ms-1" href="#5mapreduce"><i class="fas fa-link"></i></a></h4>
+<p>Hadoop MapReduce是这对google 的MapReduce的实现。</p>
+<p>MapReduce是一种编程模型，用于大规模数据集的<strong>并行计算</strong>，它将复杂，运行于大规模集群上的并行计算过程高度的抽象到了两个函数——<strong>Map和Reduce</strong>，并允许用户在不了解分分布式系统底层细节的情况下开发并行应用程序，并将其运行于廉价计算机集群上，完成海量数据的处理。</p>
+<h4 id="6zookeeper">6，Zookeeper<a class="anchor ms-1" href="#6zookeeper"><i class="fas fa-link"></i></a></h4>
+<p>Zookeeper是针对谷歌Chubby的一个开源实现，是高效和可靠的协同工作系统，提供<strong>分布式锁之类</strong>的基本服务，用于构建分布式应用，减轻分布式应用程序锁承担的协调任务。</p>
+<p>Zookeeper使用Java编写，很容易编程接入，它使用了一个和文件树结构相似的数据模型，可以使用Java或者C来进行编程接入。</p>
+<h4 id="7hive">7，Hive<a class="anchor ms-1" href="#7hive"><i class="fas fa-link"></i></a></h4>
+<p>Hive是一个基于Hadoop的数据仓库工具，可以用于对Hadoop文件中的数据集进行数据整理，特殊查询和分析存储。</p>
+<p>Hive的学习门槛较低，因为，它提供了类似于关系数据SQL语言的特殊查询语言——Hive QL,可以通过Hive QL语句快速实现简单的MapReduce统计，Hive自身可以将<strong>Hive QL语句转换为MapReduce任务</strong>进行运行，而不必开发专门的MapReduce应用，因而十分适合数据仓库的统计分析。</p>
+<h4 id="8pig">8，Pig<a class="anchor ms-1" href="#8pig"><i class="fas fa-link"></i></a></h4>
+<p>Pig是一种数据流语言和运行环境，适合于使用Hadoop和MapReduce平台来查询大型半结构化数据集。</p>
+<p>Pig的出现大大简化了Hadoop常见的工作任务，它在MapReduce的基础上创建了更简单的过程语言抽象，为Hadoop应用程序提供了一种更加接近结构化查询语言的接口。</p>
+<p>Pig是一个相对简单的语言，它可以执行SQL语句，因此，当我们需要从大型数据集中搜索满足某个给定搜索条件的记录时，采用Pig要比MapReduce具有明显的优势，前者只需要编写一个简单的脚本在集群中自动并行处理与分发，而后者则需要编写一个单独的MapReduce应用程序。</p>
+<h4 id="9sqoop">9，Sqoop<a class="anchor ms-1" href="#9sqoop"><i class="fas fa-link"></i></a></h4>
+<p>Sqoop可以改进数据的互操作性，主要用来在Hadoop和<strong>关系数据库</strong>直接交换数据。</p>
+<p>通过Sqoop,我们可以方便的将关系数据库之中的数据导入Hadoop，或者将Hadoop中的数据导入关系数据库。<strong>Sqoop主要通过JDBC</strong>和关系数据库进行交互，理论上，支持JDBC的关系数据库都可以使Sqoop和Hadoop进行数据交互。</p>
+<p>Sqoop是专门为大数据集设计的，支持增量更新，可以将新纪录添加到最近一次到处的数据源上，或者指定上次修改的时间戳。</p>
+<h4 id="10chukwa">10，Chukwa<a class="anchor ms-1" href="#10chukwa"><i class="fas fa-link"></i></a></h4>
+<p>Chukwa是一个开源的，用于监控大型分布式系统的数据收集系统，可以将各种类型的数据收集成合适的Hadoop处理的文件，并保存在HDFS中供Hadoop进行各种MapReduce操作。</p>
+<p>Chukwa构建在Hadoop的HDFS和MapReduce框架之上，继承了Hadoop的可伸缩性和可扩展性。</p>
+<p>Chukwa内置了一个强大而灵活的工具集，可用于展示，监控和分析已收集的数据。</p>
+<h3 id="hadoop生态系统">Hadoop生态系统<a class="anchor ms-1" href="#hadoop生态系统"><i class="fas fa-link"></i></a></h3>
+<p>详细介绍</p>
+<p>1.Hive 2.Hbase 3.Pig 4.Sqoop 5.Flume 6.Zookeeper 7.Spark 8.Storm 9.Avr</p>
+<p><picture><img class="img-fluid" alt="img" src="/posts/77d147b1/index/wps3.jpg" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h2 id="hdfs">Hdfs<a class="anchor ms-1" href="#hdfs"><i class="fas fa-link"></i></a></h2>
+<p>HDFS( Hadoop Distributed File System)是一个易于扩展的分布式文件系统</p>
+<h3 id="hdfs体系结构">Hdfs体系结构<a class="anchor ms-1" href="#hdfs体系结构"><i class="fas fa-link"></i></a></h3>
+<p>HDFS 采用的是master/slaves主从结构模型来管理数据.</p>
+<p>这种结构模型主要由四个部分组成：</p>
+<p>Client(客户端)、Namenode(名称节点)、Datanode(数据节点)和SecondaryNamenode(第二名称节点，辅助Namenode)。</p>
+<p>一个真正的HDFS集群包括一个Namenode和若干数目的Datanode。</p>
+<p>Namenode是一个中心服务器，负责管理文件系统的命名空间 (Namespace )及客户端对文件的访问。</p>
+<p>集群中的Datanode一般是一个节点运行一个Datanode进程，负责管理客户端的读写请求，在Namenode的统一调度下进行数据块的创建、删除和复制等操作。</p>
+<h4 id="client的主要功能">Client的主要功能<a class="anchor ms-1" href="#client的主要功能"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>在上传文件时将文件切分为Block，在文件下载时将文件合并；</li>
+<li>上传与下载数据文件时，与NameNode交互，获取文件元数据；</li>
+<li>上传与下载数据文件时，与DataNode交互，读取或写入数据。</li>
+</ol>
+<h3 id="namenode介绍">NameNode介绍<a class="anchor ms-1" href="#namenode介绍"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>主要功能提供名称查询服务，用来保存metadata信息</li>
+<li>管理文件系统的命名空间；（它维护着文件系统树及整棵树内所有的文件和目录。这些信息以两个文件形式永久保存在本地磁盘上</li>
+<li>管理元数据：文件的位置、所有者、权限、数据块block信息</li>
+<li>管理Block副本策略：多少个副本，默认3个副本；</li>
+<li>处理客户端读写请求，为DataNode分配任务。</li>
+</ol>
+<h3 id="datanode介绍">DataNode介绍<a class="anchor ms-1" href="#datanode介绍"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>主要功能保存Block。</li>
+<li>Slave工作节点（可大规模扩展）；</li>
+<li>存储Block和数据校验和执行客户端发送的读写操作；</li>
+<li>通过心跳机制定期（默认3秒）向NameNode汇报运行状态和Block列表信息，如果NN10分钟没有收到DN的心跳，则认为其已经lost，并复制其上的block到其它DN；</li>
+<li>集群启动时，DataNode向NameNode提供Block列表信息。（数据块的位置并不是由namenode维护的，而是以块列表的形式，存储在datanode中，在安全模式中，datanode会向namenode发送最新的块列表信息。）</li>
+</ol>
+<h3 id="bloack数据块">Bloack数据块<a class="anchor ms-1" href="#bloack数据块"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>HDFS是HDFS的最小存储单元；</li>
+<li>文件写入HDFS会被切分成若干个Block；</li>
+<li>Block大小固定，默认为128MB，可自定义；</li>
+<li>若一个Block的大小小于设定值，物理上不会占用整个块空间；</li>
+<li>默认情况下每个Block有3个副本。</li>
+<li>Block和元数据分开存储：Block存储于DataNode，元数据存储于NameNode；</li>
+<li>如何设置Block大小：
+<ol>
+<li>目标：最小化寻址开销，降到1%以下</li>
+<li>默认大小：128M</li>
+<li>块太小：寻址时间占比过高</li>
+<li>块太大：Map任务数太少，作业执行速度变慢</li>
+</ol>
+</li>
+<li>Block多副本：
+<ol>
+<li>以DataNode节点为备份对象</li>
+<li>机架感知：将副本存储到不同的机架上，实现数据的高容错</li>
+<li>副本均匀分布：提高访问带宽和读取性能，实现负载均衡</li>
+</ol>
+</li>
+</ol>
+<h3 id="元数据存储">元数据存储<a class="anchor ms-1" href="#元数据存储"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>元数据的两种存储形式：
+<ol>
+<li>内存元数据（NameNode）</li>
+<li>文件元数据（edits + fsimage）</li>
+</ol>
+</li>
+</ol>
+<h3 id="block副本放置机制">Block副本放置机制<a class="anchor ms-1" href="#block副本放置机制"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>第一个副本：放置在上传文件的DN上，如果是集群外提交，则随机挑选一台磁盘不太满、CPU不太忙的节点上；</li>
+<li>第二个副本：与第一个不同机架的节点上；</li>
+<li>第三个副本：与第一个机架相同的其他节点上</li>
+</ol>
+<p>节点选择：同等条件下优先选择空闲节点</p>
+<p><picture><img class="img-fluid" alt="image-20220427153152628" src="/posts/77d147b1/index/image-20220427153152628.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>Block大小和副本数由Client端上传文件到HDFS时设置，其中副本数可以变更，Block是不可以在上传后变更的。</p>
+<p>不一次性写三份，而是由一个dn写入另一个dn，目的是防止阻塞，防止并发量过大。</p>
+<h3 id="安全模式">安全模式<a class="anchor ms-1" href="#安全模式"><i class="fas fa-link"></i></a></h3>
+<h4 id="什么是安全模式">什么是安全模式<a class="anchor ms-1" href="#什么是安全模式"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>安全模式是HDFS的一种特殊状态，在这种状态下，<strong>HDFS只接收读数据请求</strong>，而<strong>不接收写入、删除、修改</strong>等变更请求；</li>
+<li>安全模式是HDFS确保Block数据安全的一种保护机制；</li>
+<li>Active NameNode启动时，HDFS会进入安全模式，DataNode主动向NameNode汇报可用Block列表等信息，在系统达到安全标准前，HDFS一直处于“只读”状态。</li>
+</ol>
+<h4 id="何时正常离开安全模式">何时正常离开安全模式<a class="anchor ms-1" href="#何时正常离开安全模式"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Block上报率：DataNode上报的可用Block个数 / NameNode元数据记录的Block个数；</li>
+<li>当Block上报率 &gt;= 阈值时，HDFS才能离开安全模式，默认阈值为0.999；</li>
+<li>不建议手动强制退出安全模式。</li>
+</ol>
+<h4 id="触发安全模式的原因">触发安全模式的原因<a class="anchor ms-1" href="#触发安全模式的原因"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>NameNode重启</li>
+<li>NameNode磁盘空间不足</li>
+<li>Block上报率低于阈值</li>
+<li>DataNode无法正常启动</li>
+<li>日志中出现严重异常</li>
+<li>用户操作不当，如：强制关机（特别注意！）</li>
+</ol>
+<h3 id="hdfs文件的读取-重点">HDFS文件的读取-重点<a class="anchor ms-1" href="#hdfs文件的读取-重点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>客户端向NameNode请求读取文件</li>
+<li>NameNode查找目录树，查询块和NameNode的关系</li>
+<li>按照NameNode与客户端的距离由近到远的顺序列表返回给客户端</li>
+<li>客户端与最近的DataNode连接</li>
+<li>DataNode返回相应Block的数据</li>
+<li>客户端组装block成一个文件</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220425234518340" src="/posts/77d147b1/index/image-20220425234518340.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="hdfs文件的写入">HDFS文件的写入<a class="anchor ms-1" href="#hdfs文件的写入"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>客户端请求上传文件</li>
+<li>NameNode检查目录中是否存在这个文件，并返回是否可以上传</li>
+<li>客户端将文件切块</li>
+<li>客户端向NamNode提出上传的各个block的列表</li>
+<li>NameNode检查DataNode信息</li>
+<li>NameNode返回可以上传的DataNode列表</li>
+<li>客户端请求与DataNode建立传输Block的通道
+<ol>
+<li>上传到一个结点A之后，通过这个结点A复制到另一个结点B</li>
+<li>再通过复制的结点B复制到新的结点C</li>
+</ol>
+</li>
+<li>客户端以Packet为单位发送数据</li>
+<li>客户端通知NameNode成功写入Block</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220425234554417" src="/posts/77d147b1/index/image-20220425234554417.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="hdfs存储原理">Hdfs存储原理<a class="anchor ms-1" href="#hdfs存储原理"><i class="fas fa-link"></i></a></h3>
+<p>HDFS采用master/slave架构。一个HDFS集群是由一个Namenode和一定数目的Datanodes组成。NameNode作为master服务，它负责管理文件系统的命名空间和客户端对文件的访问。DataNode作为slave服务，在集群中可以存在多个。通常每一个DataNode都对应于一个物理节点。DataNode负责管理节点上它们拥有的存储，它将存储划分为多个block块，管理block块信息，同时周期性的将其所有的block块信息发送给NameNode。</p>
+<h3 id="hadoop10与20的区别">Hadoop1.0与2.0的区别<a class="anchor ms-1" href="#hadoop10与20的区别"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>提出HDFS Federation，它让多个NameNode分管不同的目录进而实现访问隔离和横向扩展，同时彻底解决了<strong>NameNode单点故障</strong>问题</li>
+<li>针对Hadoop1.0中的MapReduce在扩展性和多框架支持等方面的不足，它将JobTracker中的资源管理和作业控制分开，分别由ResourceManager（负责所有应用程序的资源分配）和ApplicationMaster（负责管理一个应用程序）实现，即引入了资源管理框架Yarn。通用的资源管理模块，可为各类应用程序进行资源管理和调度</li>
+</ol>
+<h3 id="hdfs的主要组件及功能">HDFS的主要组件及功能<a class="anchor ms-1" href="#hdfs的主要组件及功能"><i class="fas fa-link"></i></a></h3>
+<p>Block是HDFS最小存储单元，大小固定，1.X默认是64MB2.X默认为128MB，可自定义。默认情况下每个Block有（至少）三个副本，通过水平复制，达到数据冗余度的要求。</p>
+<p>单一master（NameNode）来协调存储元数据。</p>
+<table>
+<thead>
+<tr>
+<th>nameNode</th>
+<th>DataNode</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>存储元数据</td>
+<td>存储我呢见数据</td>
+</tr>
+<tr>
+<td>元数据保存在内存中</td>
+<td>文件保存在磁盘上</td>
+</tr>
+<tr>
+<td>保存文件，Block，DataNode之间的映射关系</td>
+<td>维护了block id 到datanode本地文件的映射关系</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hdfs适用场景">HDFS适用场景<a class="anchor ms-1" href="#hdfs适用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>超大文件</li>
+<li>流式数据访问
+<ol>
+<li>一次写入、多次读取</li>
+<li>传输时间和寻址时间</li>
+</ol>
+</li>
+</ol>
+<h3 id="不适用">不适用<a class="anchor ms-1" href="#不适用"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>低延时</li>
+<li>大量小文件</li>
+<li>多用户写入、任意修改文件</li>
+</ol>
+<h3 id="shell语法">Shell语法<a class="anchor ms-1" href="#shell语法"><i class="fas fa-link"></i></a></h3>
+<p><code>ls：查看文件</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -ls / 查看HDFS文件系统上的文件
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hadoop fs -ls -R / 查看HDFS文件系统多层文件夹
+</span></span></code></pre></div><p><code>mkdir：创建文件夹</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -mkdir /test/ 创建test文件夹
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hadoop fs -mkdir -p /a/b 创建多层文件夹
+</span></span></code></pre></div><p><code>put：上传文件</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -put 1.tar /test 把当前目录的1.tar上传到hdfs的test目录
+</span></span></code></pre></div><p><code>cat/text ：查看文件内容</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -cat 1.txt
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hadoop fs -text 1.txt
+</span></span></code></pre></div><p><code>get：下载文件</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -get /test/1.tar test.tar 把hdfs的test目录下的1.tar下载到本地，命名为test.tar
+</span></span></code></pre></div><p><code>rm：删除文件</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">hadoop fs -rm /test/1.tar 删除HDFS系统上test目录下的1.tar文件
+</span></span><span class="line"><span class="ln">2</span><span class="cl">hadoop fs rm -r /test/ 删除HDFS系统上test目录
+</span></span><span class="line"><span class="ln">3</span><span class="cl">或者
+</span></span><span class="line"><span class="ln">4</span><span class="cl">hadoop fs -rmr /test/ 删除HDFS系统上test目录
+</span></span></code></pre></div><h2 id="mapreduce">MapReduce<a class="anchor ms-1" href="#mapreduce"><i class="fas fa-link"></i></a></h2>
+<h3 id="特点">特点<a class="anchor ms-1" href="#特点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>无需管理master、slave和分布式，程序员只需关注业务本身。</li>
+<li>计算跟着数据走</li>
+<li>良好的扩展性：计算能力随着节点数增加，近似线性递增</li>
+<li>高容错</li>
+<li>状态监控</li>
+<li>适合海量数据的离线批处理</li>
+<li>降低了分布式编程的门槛</li>
+<li>MapReduce框架采用了Master/Slave架构，包括一个Master和若干个Slave。</li>
+<li>Master上运行JobTracker，负责作业管理、状态监控和任务调度等，Slave上运行TaskTracker，负责任务的执行和任务状态的汇报；</li>
+</ol>
+<h3 id="适用场景">适用场景<a class="anchor ms-1" href="#适用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>数据统计，如：网站的PV（page view）、UV（user visit）统计，搜索引擎构建索引</li>
+<li>海量数据查询、复杂数据分析算法实现</li>
+</ol>
+<h3 id="不适用场景">不适用场景<a class="anchor ms-1" href="#不适用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>OLAP（On-Line Analytical Processing）联机分析处理</p>
+</li>
+<li>
+<p>要求毫秒或秒级返回结果</p>
+</li>
+<li>
+<p>流计算</p>
+<p>流计算的输入数据集是动态的，而MapReduce是静态的</p>
+</li>
+<li>
+<p>多步骤的复杂计算任务</p>
+</li>
+</ol>
+<h3 id="mapreduce体系结构">MapReduce体系结构<a class="anchor ms-1" href="#mapreduce体系结构"><i class="fas fa-link"></i></a></h3>
+<p>主要由四个部分组成，分别是Client、JobTracker、TaskTracker以及Task。</p>
+<p><picture><img class="img-fluid" alt="image-20220427162140197" src="/posts/77d147b1/index/image-20220427162140197.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="client">Client<a class="anchor ms-1" href="#client"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>用户编写的MapReduce程序通过Client提交到JobTracker端；</li>
+<li>用户可通过Client提供的一些接口查看作业运行状态。</li>
+</ol>
+<h4 id="jobtracker">JobTracker<a class="anchor ms-1" href="#jobtracker"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>JobTracker负责资源监控和作业调度；</li>
+<li>JobTracker 监控所有TaskTracker与Job的健康状况，一旦发现失败，就将相应的任务转移到其他节点；</li>
+<li>JobTracker 会跟踪任务的执行进度、资源使用量等信息，并将这些信息告诉任务调度器（TaskScheduler），而调度器会在资源出现空闲时，选择合适的任务去使用这些资源。</li>
+</ol>
+<h4 id="tasktracker">TaskTracker<a class="anchor ms-1" href="#tasktracker"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>TaskTracker 会周期性地通过“心跳”将本节点上资源的使用情况和任务的运行进度汇报给JobTracker，同时接收JobTracker 发送过来的命令并执行相应的操作（如启动新任务、杀死任务等）；</li>
+<li>TaskTracker 使用“slot”等量划分本节点上的资源量（CPU、内存等）。一个Task 获取到一个slot 后才有机会运行，而Hadoop调度器的作用就是将各个TaskTracker上的空闲slot分配给Task使用。slot 分为Map slot 和Reduce slot 两种，分别供MapTask 和Reduce Task 使用。</li>
+</ol>
+<h4 id="task">Task<a class="anchor ms-1" href="#task"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Task 分为Map Task 和Reduce Task 两种，均由TaskTracker 启动。</li>
+</ol>
+<h3 id="mapreduce工作流程">MapReduce工作流程<a class="anchor ms-1" href="#mapreduce工作流程"><i class="fas fa-link"></i></a></h3>
+<p>MapReduce 就是将输入进行分片，交给不同的 Map 任务进行处理，然后由 Reduce 任务合并成最终的解。</p>
+<p><picture><img class="img-fluid" alt="image-20220427204105219" src="/posts/77d147b1/index/image-20220427204105219.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ol>
+<li>对输入的数据进行分片格式化。</li>
+<li>执行MapTask。每个切片分配一个map()任务，map()对其中的数据进行计算，对每个数据用键值对的形式记录。</li>
+<li>对MapTask进行Shuffle，形成内部有序，整体无序的小文件</li>
+<li>将小文件传到Reduce()中执行，，然后进行归并排序，最终输出</li>
+</ol>
+<h4 id="注意">注意<a class="anchor ms-1" href="#注意"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>不同的Map任务之间不会进行通信</li>
+<li>不同的Reduce任务之间也不会发生任何信息交换</li>
+<li>用户不能显式地从一台机器向另一台机器发送消息</li>
+<li>所有的数据交换都是通过MapReduce框架自身去实现的</li>
+</ol>
+<h4 id="wordcount流程">WordCount流程<a class="anchor ms-1" href="#wordcount流程"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220427205450352" src="/posts/77d147b1/index/image-20220427205450352.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ol>
+<li>我们将任务切为三份，所以启动三个map任务。</li>
+<li>我们会启动四个reduce任务，所以数据被重构，重新分布成四份，每份对应一个reduce。</li>
+<li>map将数据转换为键值对，reduce将键值对合并。</li>
+</ol>
+<p>其中：spliting和Mapping是用户实现的，Shuffling是框架实现的，Reducing是用户实现</p>
+<p><picture><img class="img-fluid" alt="image-20220427213043596" src="/posts/77d147b1/index/image-20220427213043596.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="job--task作业与任务">Job & Task（作业与任务）<a class="anchor ms-1" href="#job--task作业与任务"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>作业是客户端请求执行的一个工作单元，如整个wordcount计算作业；</li>
+<li>包括输入数据、MapReduce程序、配置信息</li>
+<li>任务是将作业分解后得到的细分工作单元，如其中的一个map任务。</li>
+<li>分为Map任务和Reduce任务两类</li>
+</ol>
+<h4 id="split切片">Split（切片）<a class="anchor ms-1" href="#split切片"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>输入数据被划分成等长的小数据块，称为输入切片（Input Split），简称切片；</li>
+<li>每个Split交给一个Map任务处理，Split的数量决定Map任务的数量；</li>
+<li>Split的划分方式由程序设定，按照HDFS block是其中的一种；</li>
+<li>Split越小，负载越均衡，但集群的开销越大；</li>
+</ol>
+<h4 id="shuffle阶段洗牌">Shuffle阶段（洗牌）<a class="anchor ms-1" href="#shuffle阶段洗牌"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Map、Reduce阶段的中间环节，负责执行Partition（分区）、Sort（排序）、Spill（溢写）、Merge（合并）、抓取（Fetch）等工作；</li>
+<li>Partition决定了Map任务输出的每条数据放入哪个分区，交给哪个Reduce任务处理；</li>
+<li>Reduce任务的数量决定了Partition数量；（ reduce任务的数量并非由输入数据的大小决定，而是特别指定的。 ）</li>
+<li>Partition编号 = Reduce任务编号 =“hash（key） % reduce task number”；</li>
+<li>避免和减少Shuffle是MapReduce程序调优的重点。</li>
+</ol>
+<h4 id="mapperpartitionreducer数目的确定与关系">Mapper、Partition、Reducer数目的确定与关系？<a class="anchor ms-1" href="#mapperpartitionreducer数目的确定与关系"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Mapper：由客户端分片情况决定，客户端获取到输入路径的所有文件，依次对每个文件执行分片，分片大小通过最大分片大小、最小分片大小、hdfs的blocksize综合确定，分片结果写入job.split提交给yarn，对每个分片分配一个Mapper，即确定了数目。</li>
+<li>Partition：由PartitionerClass中的逻辑确定，默认情况下使用的HashPartitioner中使用了hash值与reducerNum的余数，即由reducerNum决定，等于Reducer数目。如果自定义的PartitionerClass中有其他逻辑比如固定了，也可以与Reducer数目无关，但注意这种情况下，如果reducerNum小于分区数则会报错，如果大于则会产生无任务的reduecer但不会影响结果。但是如果reducerNum只有1个，则不会报错而是所有分区都交给唯一的reducer。</li>
+<li>Reducer：通过job.setNumReduceTasks手动设置决定。</li>
+</ol>
+<h3 id="mapreduce-shuffle过程">MapReduce shuffle过程<a class="anchor ms-1" href="#mapreduce-shuffle过程"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="img" src="/posts/77d147b1/index/wps4.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="map端的shuffle过程">Map端的shuffle过程<a class="anchor ms-1" href="#map端的shuffle过程"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220427221211907" src="/posts/77d147b1/index/image-20220427221211907.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ol>
+<li>
+<p>每个Map任务分配一个缓存</p>
+<p>MapReduce默认100MB缓存</p>
+</li>
+<li>
+<p>设置溢写比例0.8</p>
+</li>
+<li>
+<p>分区默认采用哈希函数</p>
+</li>
+<li>
+<p>排序是默认的操作</p>
+</li>
+<li>
+<p>排序后可以合并（Combine）（自定义）</p>
+</li>
+<li>
+<p>合并不能改变最终结果</p>
+</li>
+<li>
+<p>在Map任务全部结束之前进行归并</p>
+</li>
+<li>
+<p>归并得到一个大的文件，放在本地磁盘</p>
+</li>
+<li>
+<p>文件归并时，如果溢写文件数量大于预定值（默认是3）则可以再次启动Combiner，少于3不需要</p>
+</li>
+<li>
+<p>JobTracker会一直监测Map任务的执行，并通知Reduce任务来领取数据</p>
+</li>
+</ol>
+<p><strong>合并（Combine）和归并（Merge）的区别：</strong></p>
+<blockquote>
+<p>两个键值对&lt;“a”,1&gt;和&lt;“a”,1&gt;，如果合并，会得到&lt;“a”,2&gt;，如果归并，会得到&lt;“a”,&lt;1,1&raquo;</p>
+</blockquote>
+<p><picture><img class="img-fluid" alt="image-20220427222720142" src="/posts/77d147b1/index/image-20220427222720142.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="reduce端的shuffle过程">Reduce端的Shuffle过程<a class="anchor ms-1" href="#reduce端的shuffle过程"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Reduce任务通过RPC（远程过程调用）向JobTracker询问Map任务是否已经完成，若完成，则领取数据；</li>
+<li>Reduce领取数据先放入缓存，来自不同Map机器，先归并，再合并，写入磁盘；</li>
+<li>多个溢写文件归并成一个或多个大文件，文件中的键值对是排序的；</li>
+<li>当数据很少时，不需要溢写到磁盘，直接在缓存中归并，然后输出给Reduce。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220427222754270" src="/posts/77d147b1/index/image-20220427222754270.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid" alt="image-20220427222847111" src="/posts/77d147b1/index/image-20220427222847111.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="shuffle详解-及这个就行">Shuffle详解-及这个就行<a class="anchor ms-1" href="#shuffle详解-及这个就行"><i class="fas fa-link"></i></a></h4>
+<h5 id="map端">Map端<a class="anchor ms-1" href="#map端"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>Map任务将中间结果写入专用内存缓冲区Buffer（默认100M），同时进行Partition和Sort（先按“key hashcode % reduce task number”对数据进行分区，分区内再按key排序）</li>
+<li>当Buffer的数据量达到阈值（默认80%）时，将数据溢写（Spill）到磁盘的一个临时文件中，文件内数据先分区后排序</li>
+<li>Map任务结束前，将多个临时文件合并（Merge）为一个Map输出文件，文件内数据先分区后排序</li>
+<li>所有Map任务完成后，Map阶段结束，一般每个Map任务都有输出</li>
+</ol>
+<h5 id="reduce端">Reduce端<a class="anchor ms-1" href="#reduce端"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>Reduce任务从多个Map输出文件中主动抓取（Fetch）属于自己的分区数据，先写入Buffer，数据量达到阈值后，溢写到磁盘的一个临时文件中</li>
+<li>数据抓取完成后，将多个临时文件合并为一个Reduce输入文件，文件内数据按key排序</li>
+</ol>
+<h4 id="yarn模式-hadoop-2x-">YARN模式（ Hadoop 2.X ）<a class="anchor ms-1" href="#yarn模式-hadoop-2x-"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220427223407142" src="/posts/77d147b1/index/image-20220427223407142.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid" alt="image-20220427223414098" src="/posts/77d147b1/index/image-20220427223414098.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h2 id="hbase">HBase<a class="anchor ms-1" href="#hbase"><i class="fas fa-link"></i></a></h2>
+<h3 id="hbase概念">HBase概念<a class="anchor ms-1" href="#hbase概念"><i class="fas fa-link"></i></a></h3>
+<p>HBase是一个高可靠、高性能、面向列、可伸缩的分布式数据库，主要用来存储非结构化和半结构化的松散数据。</p>
+<h3 id="hbase与传统数据库的对比">HBase与传统数据库的对比：<a class="anchor ms-1" href="#hbase与传统数据库的对比"><i class="fas fa-link"></i></a></h3>
+<p>数据类型：传统数据库数据类型较丰富，Hbase数据类型更加简单。</p>
+<p>数据操作：传统数据库涉及多表连接，Hbase不存在。</p>
+<p>存储模式：关系数据库是基于行模式存储的。HBase是基于列存储的。</p>
+<p>数据索引：关系数据库可以针对不同列构建多个索引，HBase只有行键索引。</p>
+<p>数据维护：传统数据库更新会丢失版本旧的数据，Hbase更新会保留版本旧的数据。</p>
+<p>可伸缩性：关系数据库很难实现横向扩展，纵向扩展的空间也比较有限。Hbase相反。</p>
+<h3 id="hbase适用场景">HBase适用场景<a class="anchor ms-1" href="#hbase适用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>并发查询</p>
+<ol>
+<li>海量数据</li>
+<li>高并发</li>
+<li>简单条件查询</li>
+</ol>
+</li>
+<li>
+<p>半结构化和非结构化数据存储</p>
+<ol>
+<li>10K~10M的结构化和非结构化数据</li>
+</ol>
+</li>
+</ol>
+<h3 id="hbase数据模型">HBase数据模型<a class="anchor ms-1" href="#hbase数据模型"><i class="fas fa-link"></i></a></h3>
+<h4 id="数据模型概述">数据模型概述<a class="anchor ms-1" href="#数据模型概述"><i class="fas fa-link"></i></a></h4>
+<p>HBase是一个稀疏、多维度、排序的映射表，这张表的索引是行键、列族、列限定符和时间戳</p>
+<h4 id="数据模型相关概念">数据模型相关概念<a class="anchor ms-1" href="#数据模型相关概念"><i class="fas fa-link"></i></a></h4>
+<p><strong>1.</strong> 表：HBase采用表组织数据，由行和列构成</p>
+<p><strong>2.</strong> 行：由行键来标识</p>
+<p><strong>3.</strong> 列族：基本的访问控制单元</p>
+<p><strong>4.</strong> 列限定符：数据通过列限定符定位</p>
+<p><strong>5.</strong> 单元格：通过行、列、列限定符确定一个单元格</p>
+<p><strong>6.</strong> 时间戳：每个单元格都保存着同一份数据的不同版本，这些版本采用时间戳进行索引。</p>
+<h4 id="四维模型">四维模型<a class="anchor ms-1" href="#四维模型"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220427230835914" src="/posts/77d147b1/index/image-20220427230835914.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>HBase中需要根据行键、列族、列限定符和时间戳来确定一个单元格，因此，可以视为一个“四维坐标”，即<code>[行键, 列族, 列限定符, 时间戳]</code></p>
+<p><picture><img class="img-fluid" alt="image-20220427231407273" src="/posts/77d147b1/index/image-20220427231407273.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><picture><img class="img-fluid" alt="image-20220427231550636" src="/posts/77d147b1/index/image-20220427231550636.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="hbase实现原理">Hbase实现原理<a class="anchor ms-1" href="#hbase实现原理"><i class="fas fa-link"></i></a></h3>
+<h4 id="功能组件">功能组件<a class="anchor ms-1" href="#功能组件"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>库函数</p>
+</li>
+<li>
+<p>一个Master主服务器 : 负责管理和维护HBase表的分区信息，维护Region服务器列表，分配Region，负载均衡</p>
+</li>
+<li>
+<p>许多个Region服务器: 负责存储和维护分配给自己的Region，处理来自客户端的读写请求；客户端并不是直接从Master主服务器上读取数据，而是在获得Region的存储位置信息后，直接从Region服务器上读取数据</p>
+</li>
+</ol>
+<h5 id="region">Region<a class="anchor ms-1" href="#region"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>分布式存储和负载的最小单元；</li>
+<li>系统将表水平划分（按行）为多个Region，每个Region保存表的一段连续数据；</li>
+<li>默认每张表开始只有一个Region，随着数据不断写入，Region不断增大，当Region大小超过阀值时，当前Region会分裂成两个子Region。</li>
+<li>每个Region默认大小是100MB到200MB（2006年以前的硬件配置）
+<ol>
+<li>每个Region的最佳大小取决于单台服务器的有效处理能力</li>
+<li>目前每个Region最佳大小建议1GB-2GB（2013年以后的硬件配置）</li>
+</ol>
+</li>
+<li>同一个Region不会被分拆到多个Region服务器</li>
+<li>每个Region服务器存储10-1000个Region</li>
+<li>表被切分成多个Regions,分布到多个RegionServers上</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220427233651462" src="/posts/77d147b1/index/image-20220427233651462.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="hbase三层结构">Hbase三层结构<a class="anchor ms-1" href="#hbase三层结构"><i class="fas fa-link"></i></a></h4>
+<p>一、Zookeeper文件：记录了-ROOT-表的位置信息</p>
+<p>二、ROOT-表：记录了.META.表的Region位置信息</p>
+<p>三、META.表：-记录了数据表的Region位置信息</p>
+<p>为了加快访问速度，.META.表的全部Region都会被保存在内存中</p>
+<p><picture><img class="img-fluid" alt="image-20220427234006224" src="/posts/77d147b1/index/image-20220427234006224.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="客户端访问数据时的三级寻址">客户端访问数据时的“三级寻址”<a class="anchor ms-1" href="#客户端访问数据时的三级寻址"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>为了加速寻址，客户端会缓存位置信息，同时，需要解决缓存失效问题；</li>
+<li>寻址过程客户端只需要询问Zookeeper服务器，不需要连接Master服务器。</li>
+</ol>
+<h3 id="hbase系统架构">HBase系统架构<a class="anchor ms-1" href="#hbase系统架构"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="image-20220427234840843" src="/posts/77d147b1/index/image-20220427234840843.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="客户端">客户端<a class="anchor ms-1" href="#客户端"><i class="fas fa-link"></i></a></h4>
+<p>客户端包含访问HBase的接口，同时在缓存中维护着已经访问过的Region位置信息，用来加快后续数据访问过程。</p>
+<h4 id="zookeeper服务器">Zookeeper服务器<a class="anchor ms-1" href="#zookeeper服务器"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>Zookeeper可以帮助选举出一个Master作为集群的总管，并保证在任何时刻总有唯一一个Master在运行，这就避免了Master的“单点失效”问题；</p>
+<p><picture><img class="img-fluid" alt="image-20220427235003425" src="/posts/77d147b1/index/image-20220427235003425.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+</li>
+<li>
+<p>监控RegionServer的上下线信息，并通知Master；存储元数据的寻址入口；存储所有Region的寻址入口。</p>
+</li>
+<li>
+<p>Zookeeper是一个很好的集群管理工具，被大量用于分布式计算，提供配置维护、域名服务、分布式同步、组服务等。</p>
+</li>
+</ol>
+<h4 id="master">Master<a class="anchor ms-1" href="#master"><i class="fas fa-link"></i></a></h4>
+<ul>
+<li>主服务器Master主要负责表和Region的管理工作：
+<ul>
+<li>管理用户对表的增加、删除、修改、查询等操作</li>
+<li>实现不同Region服务器之间的负载均衡</li>
+<li>在Region分裂或合并后，负责重新调整Region的分布</li>
+<li>对发生故障失效的Region服务器上的Region进行迁移</li>
+<li>不处理Client的数据读写请求</li>
+</ul>
+</li>
+</ul>
+<h4 id="region服务器slave">Region服务器（Slave）<a class="anchor ms-1" href="#region服务器slave"><i class="fas fa-link"></i></a></h4>
+<ul>
+<li>Region服务器是HBase中最核心的模块，负责维护分配给自己的Region，并响应用户的读写请求。</li>
+<li>管理Region Split（分裂）</li>
+<li>管理StoreFile Compaction（合并）</li>
+</ul>
+<h4 id="region服务器工作原理">Region服务器工作原理<a class="anchor ms-1" href="#region服务器工作原理"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt=" Region服务器" src="/posts/77d147b1/index/image-20220427235506601.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h5 id="region按照列族分为多个store下图">Region按照列族，分为多个Store。（下图）<a class="anchor ms-1" href="#region按照列族分为多个store下图"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>一个Region由多个Store组成，每个Store存储一个列族。Region是分布式存储的最小单元，而Store是存储落盘的最小单元。</li>
+<li>Store由一个MemStore和若干StoreFile组成。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428094104999" src="/posts/77d147b1/index/image-20220428094104999.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h5 id="memstore与storefile">MemStore与StoreFile<a class="anchor ms-1" href="#memstore与storefile"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>MemStore是Store的<strong>内存缓冲区</strong>，StoreFile是MemStore的<strong>磁盘溢写文件</strong>，在HDFS中被称为HFile。</li>
+<li>数据读写都先访问MemStore。Client读取数据时，先找MemStore，再找StoreFile。写数据时，先写MemStore，当数据量超过阈值时，RegionServer会将MemStore中的数据溢写磁盘，每次溢写都生成一个独立的StoreFile（HFile）；
+<ol>
+<li>读数据时
+<ol>
+<li>client先找MemStore，再找StoreFile</li>
+</ol>
+</li>
+<li>写数据时
+<ol>
+<li>先再MemStore中写入，</li>
+<li>数据量超过阈值时，RegionServer将MemStore中的数据溢写磁盘。每次溢写独立生成一个StoreFile</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428094921168" src="/posts/77d147b1/index/image-20220428094921168.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="用户写入数据">用户写入数据<a class="anchor ms-1" href="#用户写入数据"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>用户写入数据时，被分配到相应Region服务器去执行</li>
+<li>用户数据首先被写入到MemStore和Hlog中</li>
+<li>只有当操作写入Hlog之后，commit()调用才会将其返回给客户端</li>
+</ol>
+<h5 id="向hbase写入数据">向Hbase写入数据<a class="anchor ms-1" href="#向hbase写入数据"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>访问ZK，获取meta表所在RegionServer和Region</li>
+<li>读取meta表，获取所有Region在所有RegionServer上的分布，和每个Region中维护的表数据的范围。</li>
+<li>根据主键和meta表，得出待写数据归属的Region和RegionServer，<strong>向特定RegionServer发送数据</strong>。</li>
+</ol>
+<h5 id="regionserver接受数据">RegionServer接受数据<a class="anchor ms-1" href="#regionserver接受数据"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>RegionServer收到数据。先将操作写入HLog，再将数据写入MemStore。当MemStore的数据量超过阈值时，将数据溢写磁盘，生成一个StoreFile文件。</li>
+<li>当Store中StoreFile的数量超过阈值时，将若干小StoreFile合并。</li>
+<li>当Region中最大Store的大小超过阈值时，Region分裂成两个子Region</li>
+</ol>
+<h5 id="hlog">HLog<a class="anchor ms-1" href="#hlog"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>含义：以WAL（Write Ahead Log，预写日志）方式写数据时产生的日志文件</li>
+<li>目的：RegionServer意外宕机时的数据恢复</li>
+<li>先写HLog，再写MemStore，最后写StoreFile，每个RegionServer维护一个HLog</li>
+<li>定期删除HLog过期数据</li>
+<li>用户更新数据必须首先写入日志后，才能写入MemStore缓存，并且，直到MemStore缓存内容对应的日志已经写入磁盘，该缓存内容才能被刷写到磁盘。</li>
+<li>Zookeeper会实时监测每个Region服务器的状态，当某个Region服务器发生故障时，Zookeeper会通知Master；</li>
+<li>Master首先会处理该故障Region服务器上面遗留的HLog文件，这个遗留的HLog文件中包含了来自多个Region对象的日志记录；</li>
+<li>系统会根据每条日志记录所属的Region对象对HLog数据进行拆分，分别放到相应Region对象的目录下，然后，再将失效的Region重新分配到可用的Region服务器中，并把与该Region对象相关的HLog日志记录也发送给相应的Region服务器；</li>
+<li>Region服务器领取到分配给自己的Region对象以及与之相关的HLog日志记录以后，会重新做一遍日志记录中的各种操作，把日志记录中的数据写入到MemStore缓存中，然后，刷新到磁盘的StoreFile文件中，完成数据恢复；</li>
+<li>共用日志优点：提高对表的写操作性能；缺点：恢复时需要分拆日志。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428100325890" src="/posts/77d147b1/index/image-20220428100325890.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="用户读数据">用户读数据<a class="anchor ms-1" href="#用户读数据"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220428100532053" src="/posts/77d147b1/index/image-20220428100532053.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>Client从Hbase读取数据</p>
+<ol>
+<li>访问ZK，获取meta表所在RegionServer和Region</li>
+<li>读取meta表，获取所有Region在所有RegionServer上的分布，和每个Region中维护的表数据的范围。</li>
+<li>缓存meta表位置和内容。根据表空间、表名、主键和meta表内容，得出待读数据归属的Region和RegionServer，从特定RegionServer读数据。</li>
+<li>RegionServer先从MemStore读取数据，如未找到，再从StoreFile中读取。</li>
+</ol>
+<h4 id="shell">Shell<a class="anchor ms-1" href="#shell"><i class="fas fa-link"></i></a></h4>
+<p>查看当前namespace，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">list_namespace
+</span></span></code></pre></div><p>创建一个新的namespace “test”，</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">create_namespace <span class="s1">&#39;test&#39;</span>
+</span></span></code></pre></div><p>并设置最大建表数为10</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">alter_namespace <span class="s1">&#39;test&#39;</span>, <span class="o">{</span><span class="nv">METHOD</span> <span class="o">=</span>&gt; <span class="s1">&#39;set&#39;</span>, <span class="s1">&#39;hbase.namespace.quota.maxtables&#39;</span> <span class="o">=</span>&gt; <span class="s1">&#39;10&#39;</span><span class="o">}</span>
+</span></span></code></pre></div><p>创建一个表test01，有两个列族f1,f2，设置f1的最大版本数为5，设置表的预分区为3个</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">create <span class="s1">&#39;test:test01&#39;</span>, <span class="o">{</span><span class="nv">NAME</span><span class="o">=</span>&gt;<span class="s1">&#39;f1&#39;</span>, <span class="nv">VERSIONS</span><span class="o">=</span>&gt;5<span class="o">}</span>, <span class="s1">&#39;f2&#39;</span>, <span class="nv">SPLITS</span> <span class="o">=</span>&gt; <span class="o">[</span><span class="s1">&#39;10&#39;</span>,<span class="s1">&#39;20&#39;</span>,<span class="s1">&#39;30&#39;</span><span class="o">]</span>
+</span></span></code></pre></div><p>创建另一个表test02，有两个列族g1，g2</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">create <span class="s1">&#39;test:test02&#39;</span>,<span class="s1">&#39;g1&#39;</span>,<span class="s1">&#39;g2&#39;</span>
+</span></span></code></pre></div><p>查看namespace test 中的表</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">list
+</span></span></code></pre></div><p>删除表test02中的g2列</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">alter <span class="s1">&#39;test:test02, &#39;</span>delete<span class="s1">&#39;=&gt;&#39;</span>g2<span class="err">&#39;</span>
+</span></span></code></pre></div><p>修改表test02的的属性MAX_FILESIZE为256128256</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">alter <span class="s1">&#39;test:test02&#39;</span>, <span class="nv">MAX_FILESIZE</span><span class="o">=</span><span class="s1">&#39;256128256&#39;</span>
+</span></span></code></pre></div><p>为表test02增加一列s1，设置s1的最大版本数为5</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">alter <span class="s1">&#39;test:test02&#39;</span>, <span class="o">{</span><span class="nv">NAME</span><span class="o">=</span>&gt;<span class="s1">&#39;s1&#39;</span>, <span class="nv">VERSIONS</span><span class="o">=</span>&gt;<span class="s1">&#39;5&#39;</span><span class="o">}</span>
+</span></span></code></pre></div><p>删除表test02</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">drop <span class="s1">&#39;test:test02&#39;</span>
+</span></span></code></pre></div><p>为表test01添加数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">put <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r01&#39;</span>, <span class="s1">&#39;f1:name&#39;</span>, <span class="s1">&#39;zhang&#39;</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">put <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r01&#39;</span>, <span class="s1">&#39;f1:num&#39;</span>, <span class="s1">&#39;10&#39;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">put <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r01&#39;</span>, <span class="s1">&#39;f1:addr&#39;</span>, <span class="s1">&#39;shanghai&#39;</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">put <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r02&#39;</span>, <span class="s1">&#39;f1:name&#39;</span>, <span class="s1">&#39;wang&#39;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">put <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r02&#39;</span>, <span class="s1">&#39;f2:addr&#39;</span>, <span class="s1">&#39;hangzhou&#39;</span>
+</span></span></code></pre></div><p>全表扫描数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">scan <span class="s1">&#39;test:test01&#39;</span>
+</span></span></code></pre></div><p>查看r02行的name列数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">get <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r02&#39;</span>, <span class="s1">&#39;f1:name&#39;</span>
+</span></span></code></pre></div><p>删除r02行f2列的数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">delete <span class="s1">&#39;test:test01&#39;</span>, <span class="s1">&#39;r02&#39;</span>, <span class="s1">&#39;f2&#39;</span>
+</span></span></code></pre></div><p>清空表test01的数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">truncate_preserve <span class="s1">&#39;test:test01&#39;</span>
+</span></span></code></pre></div><p>现有以下关系型数据库中的表和数据，要求将其转换为适合于HBase存储的表，绘出表格，然后插入数据，并查看数据。建议用列族的方式来创建。</p>
+<table>
+<thead>
+<tr>
+<th>学号（S_No）</th>
+<th>姓名（S_Name）</th>
+<th>年龄（S_Age）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2018001</td>
+<td>Lily</td>
+<td>21</td>
+</tr>
+<tr>
+<td>2018002</td>
+<td>Jacky</td>
+<td>22</td>
+</tr>
+<tr>
+<td>2018003</td>
+<td>Mouse</td>
+<td>21</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>课程号（C_No）</th>
+<th>课程名（C_Name）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>123001</td>
+<td>English</td>
+</tr>
+<tr>
+<td>123002</td>
+<td>Computer</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>学号（SC_Sno）</th>
+<th>课程号（SC_Cno）</th>
+<th>成绩（SC_Score）</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2018001</td>
+<td>123001</td>
+<td>89</td>
+</tr>
+<tr>
+<td>2018001</td>
+<td>123002</td>
+<td>78</td>
+</tr>
+<tr>
+<td>2018002</td>
+<td>123001</td>
+<td>90</td>
+</tr>
+<tr>
+<td>2018002</td>
+<td>123002</td>
+<td>69</td>
+</tr>
+<tr>
+<td>2018003</td>
+<td>123001</td>
+<td>78</td>
+</tr>
+<tr>
+<td>2018003</td>
+<td>1230023</td>
+<td>65</td>
+</tr>
+</tbody>
+</table>
+<p>构造的HBase表格可以为（仅供参考）</p>
+<p><picture><img class="img-fluid" alt="image-20220428111607380" src="/posts/77d147b1/index/image-20220428111607380.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>主键的列名是随机分配的，因此无需创建主键列。</p>
+<p>创建表：create 表名，字段名1 / 列族1，字段名2 / 列族2，……</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">create <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;basic_info&#39;</span>,<span class="s1">&#39;score&#39;</span>
+</span></span></code></pre></div><p>插入数据：put 表名，rowkey，字段名1，字段值1</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;basic_info:s_no&#39;</span>,<span class="s1">&#39;2018001&#39;</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;basic_info:s_name&#39;</span>,<span class="s1">&#39;Lily&#39;</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;basic_info:s_age&#39;</span>,<span class="s1">&#39;21&#39;</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;score:english&#39;</span>,<span class="s1">&#39;89&#39;</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;score:computer&#39;</span>,<span class="s1">&#39;78&#39;</span>
+</span></span></code></pre></div><p>查看数据：scan 表名</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">scan <span class="s1">&#39;scs&#39;</span>
+</span></span></code></pre></div><p>如果在学生表中为学生增加一项“联系电话（S_Tel）”，如何完成？插入数据后，查看数据。（提示：使用列族，添加列限定符）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">put <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;basic_info:tel&#39;</span>,<span class="s1">&#39;185CCCCCCCC&#39;</span>
+</span></span></code></pre></div><p>若查看rowkey为“s001”（值是示例，根据你自己设置的rowkey值进行查询）的所有课程成绩（SC表），如何完成？（提示：get 表名 key值）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">get <span class="s1">&#39;scs&#39;</span>,<span class="s1">&#39;s001&#39;</span>,<span class="s1">&#39;score&#39;</span>
+</span></span></code></pre></div><h2 id="hive">Hive<a class="anchor ms-1" href="#hive"><i class="fas fa-link"></i></a></h2>
+<h3 id="hive概念">Hive概念<a class="anchor ms-1" href="#hive概念"><i class="fas fa-link"></i></a></h3>
+<p>Hive是一个数据仓库基础工具在Hadoop中用来处理结构化数据。</p>
+<h3 id="hive特点">Hive特点<a class="anchor ms-1" href="#hive特点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>Hive是一个构建于Hadoop顶层的数据仓库工具</li>
+<li>支持大规模数据存储、分析，具有良好的可扩展性</li>
+<li>某种程度上可以看作是用户编程接口，本身不存储和处理数据</li>
+<li>依赖分布式文件系统HDFS存储数据</li>
+<li>依赖分布式并行计算模型MapReduce处理数据</li>
+<li>定义了简单的类似SQL 的查询语言——HiveQL</li>
+<li>用户可以通过编写的HiveQL语句运行MapReduce任务</li>
+<li>可以很容易把原来构建在关系数据库上的数据仓库应用程序移植到Hadoop平台上</li>
+<li>是一个可以提供有效、合理、直观组织和使用数据的分析工具</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428115338830" src="/posts/77d147b1/index/image-20220428115338830.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="hive具有的特点非常适用于数据仓库">Hive具有的特点非常适用于数据仓库<a class="anchor ms-1" href="#hive具有的特点非常适用于数据仓库"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>采用批处理方式处理海量数据</p>
+</li>
+<li>
+<p>提供适合数据仓库操作的工具</p>
+</li>
+</ol>
+<h3 id="hive缺点">Hive缺点<a class="anchor ms-1" href="#hive缺点"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>延迟较高:默认MR为执行引擎,MR延迟较高。</p>
+</li>
+<li>
+<p>不支持物化视图 :Hive支持普通视图，不支持物化视图（数据转换成表）。Hive不能在视图上更新、插入、删除数据。</p>
+</li>
+<li>
+<p>不适用OLTP :暂不支持列级别的数据添加、更新、删除操作。</p>
+</li>
+<li>
+<p>暂不支持存储过程</p>
+</li>
+</ol>
+<h3 id="hive应用场景">Hive应用场景<a class="anchor ms-1" href="#hive应用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>数据挖掘</p>
+</li>
+<li>
+<p>非实时分析</p>
+</li>
+<li>
+<p>数据汇总</p>
+</li>
+<li>
+<p>数据仓库</p>
+</li>
+</ol>
+<h3 id="hive系统架构">Hive系统架构<a class="anchor ms-1" href="#hive系统架构"><i class="fas fa-link"></i></a></h3>
+<p>由用户接口模块、驱动模块和元数据存储模块构成</p>
+<p><picture><img class="img-fluid" alt="image-20220428120944208" src="/posts/77d147b1/index/image-20220428120944208.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="相关概念">相关概念<a class="anchor ms-1" href="#相关概念"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>Metastore，存储元数据的角色。Hive将元数据存储在传统的关系型数据库（mysql、derby）中。</li>
+<li>Hive中的元数据包括：表的名字、表的数据所在的HDFS目录、数据在目录中的分布规则、以及其他表属性。</li>
+<li>正如Oracle使用的SQL方言是PL/SQL，Hive所使用的SQL方言是HQL。</li>
+<li>Hive将HQL语句转换成分布式的MapReduce计算任务。</li>
+<li>Hive计算引擎可以是Apache MapReduce或者Apache Spark。</li>
+</ol>
+<h4 id="hive数据存储模型">Hive数据存储模型<a class="anchor ms-1" href="#hive数据存储模型"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220428123540480" src="/posts/77d147b1/index/image-20220428123540480.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="内部表与外部表">内部表与外部表<a class="anchor ms-1" href="#内部表与外部表"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>表（Table）
+<ol>
+<li>表是数据管理和存储的基本对象，由元数据和表数据组成</li>
+<li>元数据保存在Metastore中</li>
+<li>表的数据保存在存储引擎中，如 HDFS文件系统</li>
+</ol>
+</li>
+<li>Hive+HDFS
+<ol>
+<li>表数据保存在HDFS，每个表对应一个目录，表名=目录名。每个数据库对应一个目录，目录名=数据库名.db，表数据是目录内的文件。表目录在数据库目录下。在表目录下，数据还可以按照分区和分桶方式分布。</li>
+</ol>
+</li>
+</ol>
+<h5 id="内部表table托管表">内部表（Table）/托管表<a class="anchor ms-1" href="#内部表table托管表"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>内部表与关系数据库中的Table在概念上类似；</li>
+<li>每个Table在Hive中都有一个相应的目录存储数据；</li>
+<li>所有的Table数据（不包括External Table）都保存在这个目录中；</li>
+<li>内部表的创建过程和数据加载过程，可以分别独立完成，也可以在同一个语句中完成，在加载数据的过程中，数据会被移动到数据仓库目录中；之后对数据访问将会直接在数据仓库目录中完成。</li>
+<li>删除表时，元数据与数据都会被删除。</li>
+</ol>
+<h5 id="外部表-external-table-">外部表（ External Table ）<a class="anchor ms-1" href="#外部表-external-table-"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>外部表指向已经在HDFS中存在的数据。</li>
+<li>它和内部表在元数据的组织上是相同的，而实际数据的存储则有较大的差异。</li>
+<li>外部表只有一个过程，创建表和加载数据同时完成（CREATE EXTERNAL TABLE …… LOCATION），实际数据是存储在LOCATION后面指定的HDFS路径中，并不会移动到数据仓库目录中。</li>
+<li>删除表时，仅删除该链接，不删除数据。</li>
+</ol>
+<h5 id="注意-1">注意<a class="anchor ms-1" href="#注意-1"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>默认创建内部表/托管表，Hive会将数据移动到数据仓库目录。</li>
+<li>创建外部表，这时Hive会到仓库目录以外的位置访问数据。</li>
+<li>如果所有处理都由Hive完成，建议使用内部表/托管表。</li>
+<li>如果要用Hive和其它工具来处理同一个数据集，建议使用外部表。</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>内部表</th>
+<th>外部表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>创建加载可以独立完成</td>
+<td>数据移到仓库目录</td>
+<td>数据位置不移动</td>
+</tr>
+<tr>
+<td>创建加载同时完成</td>
+<td>元数据和数据会被一起删除</td>
+<td>只删除元数据</td>
+</tr>
+</tbody>
+</table>
+<h4 id="分区分桶">分区分桶<a class="anchor ms-1" href="#分区分桶"><i class="fas fa-link"></i></a></h4>
+<h5 id="分区">分区<a class="anchor ms-1" href="#分区"><i class="fas fa-link"></i></a></h5>
+<p>通过特定条件将表的数据分发到分区目录中，或者将分区中的数据分发到子分区目录中。</p>
+<ol>
+<li>分区的作用：减少不必要的全表扫描，提升查询效率。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428133543362" src="/posts/77d147b1/index/image-20220428133543362.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h5 id="分桶">分桶<a class="anchor ms-1" href="#分桶"><i class="fas fa-link"></i></a></h5>
+<p>通过分桶键哈希取模的方式，将表或分区中的数据随机、均匀地分发到N个桶中，桶数N一般为质数，桶编号为0, 1, …, N-1</p>
+<ol>
+<li>分桶的作用：提高取样效率，提高Join查询效率，对应桶抽取数据就好</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428133755400" src="/posts/77d147b1/index/image-20220428133755400.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h5 id="区别">区别：<a class="anchor ms-1" href="#区别"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>分区：
+<ol>
+<li>数据表可以按照某个字段的值划分分区。</li>
+<li>每个分区是一个目录。</li>
+<li>分区数量不固定。</li>
+<li>分区下可再有分区或者桶。</li>
+</ol>
+</li>
+<li>分桶
+<ol>
+<li>数据可以根据桶的方式将不同数据放入不同的桶中。</li>
+<li>每个桶是一个文件。</li>
+<li>建表时指定桶个数，桶内可排序。</li>
+<li>数据按照某个字段的值Hash后放入某个桶中。</li>
+</ol>
+</li>
+</ol>
+<h4 id="文件格式">文件格式<a class="anchor ms-1" href="#文件格式"><i class="fas fa-link"></i></a></h4>
+<h5 id="text表">Text表<a class="anchor ms-1" href="#text表"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>系统默认的表类型，无压缩，行存储，仅支持批量Insert</li>
+<li>分析查询的性能较低，主要用于导入原始文本数据时建立过渡表</li>
+</ol>
+<h5 id="orc表">ORC表<a class="anchor ms-1" href="#orc表"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>优化的列式存储，轻量级索引，压缩比高，仅支持批量Insert</li>
+<li>Hive计算的主要表类型，主要用于数仓的离线分析，通常由Text表生成</li>
+</ol>
+<h3 id="用户向hive输入一段命令或查询时hive需要与hadoop交互工作来完成该操作">用户向Hive输入一段命令或查询时，Hive需要与Hadoop交互工作来完成该操作<a class="anchor ms-1" href="#用户向hive输入一段命令或查询时hive需要与hadoop交互工作来完成该操作"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>驱动模块接收该命令或查询编译器</li>
+<li>对该命令或查询进行解析编译</li>
+<li>由优化器对该命令或查询进行优化计算</li>
+<li>该命令或查询通过执行器进行执行</li>
+</ol>
+<h3 id="shell-1">Shell<a class="anchor ms-1" href="#shell-1"><i class="fas fa-link"></i></a></h3>
+<p>首先通过show databases命令查看已存在的数据库。然后使用create命令创建一个新的数据库，在本实验中命名为“demo+学号后4位”</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">create database <span class="s1">&#39;demo0737&#39;</span><span class="p">;</span>
+</span></span></code></pre></div><p>使用USE命令，将你创建的demo数据库设置为当前使用的数据库</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">use <span class="s1">&#39;demo0737&#39;</span><span class="p">;</span>
+</span></span></code></pre></div><p>通过create table命令创建一个表，表名users，创建完成后，用describe 表名 命令查看建表结果，确保建表成功。表属性包含：</p>
+<blockquote>
+<p>id：int，记录编号，具有唯一性</p>
+<p>uid：string，用户id</p>
+<p>item_id：string，商品id</p>
+<p>behavior_type：int，包括浏览、收藏、加购物车、购买，分别为1、2、3、4</p>
+<p>item_category：string，商品分类</p>
+<p>visit_date：date，该记录产生时间</p>
+<p>province：string，用户所在省份</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">external</span><span class="w">  </span><span class="k">table</span><span class="w"> </span><span class="n">users</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="w"></span><span class="err">​</span><span class="w">	</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="n">uid</span><span class="w"> </span><span class="n">string</span><span class="w"> </span><span class="p">,</span><span class="n">item_id</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="n">behavior_type</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="p">,</span><span class="n">item_category</span><span class="w"> </span><span class="n">string</span><span class="p">,</span><span class="w"> </span><span class="n">visit_date</span><span class="w"> </span><span class="nb">date</span><span class="p">,</span><span class="n">province</span><span class="w"> </span><span class="n">string</span><span class="w"> 
+</span></span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="w"></span><span class="p">)</span><span class="k">row</span><span class="w"> </span><span class="n">format</span><span class="w"> </span><span class="n">delimited</span><span class="w"> </span><span class="n">fields</span><span class="w"> </span><span class="n">terminated</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="err">‘\</span><span class="n">t</span><span class="err">’</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>按照给定的附件中表样式（users_table.txt，字段间隔为tab）自己编写更多的txt数据，然后使用load data local inpath +‘路径’命令，注意：local表示加载本地系统中文件的数据，而不是HDFS中的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl">load data <span class="nb">local</span> inpath <span class="s1">&#39;./users_table.txt&#39;</span> into table users<span class="p">;</span>
+</span></span></code></pre></div><p>查询visit_date为“2019-11-11”的记录。（给定检索条件）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">demo0737</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">visit_date</span><span class="o">=</span><span class="s1">&#39;2019-11-11&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>查询visit_date为“2019-11-11”的前5条用户购买商品的商品分类和用户所在省份。（给定检索条件，并限定检索数量，limit）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span> item_category,province from demo0737 where <span class="nv">visit_date</span><span class="o">=</span><span class="s1">&#39;2019-11-11&#39;</span> limit 5<span class="p">;</span>
+</span></span></code></pre></div><p>使用聚合函数count（）计算出表内有多少行数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span><span class="w"> </span><span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">demo0737</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></div><p>查询uid不重复的数据有多少条。（distinct）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="ln">1</span><span class="cl"><span class="k">select</span> distinct uid from demo0737<span class="p">;</span>
+</span></span></code></pre></div><h2 id="spark">Spark<a class="anchor ms-1" href="#spark"><i class="fas fa-link"></i></a></h2>
+<h3 id="spark特点">Spark特点<a class="anchor ms-1" href="#spark特点"><i class="fas fa-link"></i></a></h3>
+<p>1.运行速度快</p>
+<p>2.容易使用</p>
+<p>3.通用性</p>
+<p>4.运行模式多样</p>
+<h3 id="与hadoop的关系">与Hadoop的关系<a class="anchor ms-1" href="#与hadoop的关系"><i class="fas fa-link"></i></a></h3>
+<p>Spark在借鉴Hadoop MapReduce优点的同时，</p>
+<ol>
+<li>Spark编辑模型比Hadoop更灵活，</li>
+<li>spark提高了内存计算，对于迭代运算效率更高。</li>
+<li>Spark基于DAG的任务调度执行机制优于Hadoop的迭代执行机制。</li>
+</ol>
+<h3 id="spark生态系统">Spark生态系统<a class="anchor ms-1" href="#spark生态系统"><i class="fas fa-link"></i></a></h3>
+<p>主要包含了Spark Core、Spark SQL、Spark Streaming、MLLib和GraphX 等组件。</p>
+<h3 id="spark生态系统组件应用场景">Spark生态系统组件应用场景<a class="anchor ms-1" href="#spark生态系统组件应用场景"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>复杂的批量数据处理</p>
+</li>
+<li>
+<p>基于历史数据的交互式查询</p>
+</li>
+<li>
+<p>基于实时数据流的数据处理</p>
+</li>
+<li>
+<p>基于历史数据的数据挖掘</p>
+</li>
+<li>
+<p>图结构数据的处理</p>
+</li>
+</ol>
+<h3 id="spark运行架构">Spark运行架构<a class="anchor ms-1" href="#spark运行架构"><i class="fas fa-link"></i></a></h3>
+<p>集群资源管理器（Cluster Manager）</p>
+<p>运行作业任务的工作节点（Worker Node）</p>
+<p>每个应用的任务控制节点（Driver）</p>
+<p>每个工作节点上负责具体任务的执行进程（Executor）</p>
+<p><picture><img class="img-fluid" alt="image-20220428185119904" src="/posts/77d147b1/index/image-20220428185119904.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<ol>
+<li>一个应用由一个任务控制节点Driver和若干个作业Job构成，一个作业由多个阶段Stage构成，一个阶段由多个没有Shuffle关系的任务Task组成。</li>
+<li>当执行一个应用时，Driver会向集群管理器申请资源，启动Executor，并向Executor发送应用程序代码和文件，然后在Executor上执行任务，运行结束后，执行结果会返回给Driver，或者写到HDFS或者其他数据库中。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428185344469" src="/posts/77d147b1/index/image-20220428185344469.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="spark运行基本流程">Spark运行基本流程<a class="anchor ms-1" href="#spark运行基本流程"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220428190140394" src="/posts/77d147b1/index/image-20220428190140394.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><code>SparkContext对象代表了和一个集群的连接</code></p>
+<ol>
+<li>首先为应用构建起基本的运行环境，即由Driver创建一个SparkContext，进行资源的申请、任务的分配和监控；</li>
+<li>资源管理器为Executor分配资源，并启动Executor进程；</li>
+<li>SparkContext根据RDD的依赖关系构建DAG图，DAG图提交给DAGScheduler解析成Stage，然后把一个个TaskSet提交给底层调度器TaskScheduler处理；Executor向SparkContext申请Task，Task Scheduler将Task发放给Executor运行，并提供应用程序代码；</li>
+<li>Task在Executor上运行，把执行结果反馈给TaskScheduler，然后反馈给DAGScheduler，运行完毕后写入数据并释放所有资源 。</li>
+</ol>
+<h3 id="rdd工作原理">RDD工作原理<a class="anchor ms-1" href="#rdd工作原理"><i class="fas fa-link"></i></a></h3>
+<h4 id="rdd弹性分布式数据集概念">RDD(弹性分布式数据集)概念<a class="anchor ms-1" href="#rdd弹性分布式数据集概念"><i class="fas fa-link"></i></a></h4>
+<p>一个只读的分区记录集合。不能直接修改，只能基于稳定的物理存储中的数据集创建RDD，或者通过在其他RDD上执行确定的转换操作（如map、join和group by）而创建得到新的RDD。</p>
+<h4 id="rdd执行过程">RDD执行过程<a class="anchor ms-1" href="#rdd执行过程"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>RDD读入外部数据源进行创建</li>
+<li>RDD经过一系列的转换（Transformation）操作，每一次都会产生不同的RDD，供给下一个转换操作使用</li>
+<li>最后一个RDD经过“动作”操作进行转换，并输出到外部数据源</li>
+</ol>
+<p>这一系列处理称为一个Lineage（血缘关系），即DAG拓扑排序的结果。
+<strong>优点：惰性调用、管道化、避免同步等待、不需要保存中间结果、每次操作变得简单。</strong></p>
+<p><picture><img class="img-fluid" alt="image-20220428192622942" src="/posts/77d147b1/index/image-20220428192622942.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="rdd特性">RDD特性<a class="anchor ms-1" href="#rdd特性"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>高效的容错性</li>
+<li>中间结果持久化到内存</li>
+<li>存放的数据可以是未序列化的Java 对象</li>
+</ol>
+<h3 id="宽依赖与窄依赖">宽依赖与窄依赖<a class="anchor ms-1" href="#宽依赖与窄依赖"><i class="fas fa-link"></i></a></h3>
+<p><picture><img class="img-fluid" alt="image-20220428192802610" src="/posts/77d147b1/index/image-20220428192802610.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h4 id="窄依赖">窄依赖<a class="anchor ms-1" href="#窄依赖"><i class="fas fa-link"></i></a></h4>
+<p>一个父RDD的分区对应于一个子RDD的分区或多个父RDD的分区对应于一个子RDD的分区。<strong>多对一或一对一</strong></p>
+<h4 id="宽依赖">宽依赖<a class="anchor ms-1" href="#宽依赖"><i class="fas fa-link"></i></a></h4>
+<p>存在一个父RDD的一个分区对应一个子RDD的多个分区。<strong>多对多</strong></p>
+<h4 id="forkjoin的优化原理">fork/join的优化原理<a class="anchor ms-1" href="#forkjoin的优化原理"><i class="fas fa-link"></i></a></h4>
+<p><picture><img class="img-fluid" alt="image-20220428193606941" src="/posts/77d147b1/index/image-20220428193606941.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p><strong>所以，如果连续的变换操作序列都是窄依赖，就可以把多个fork/join合并为一个，这个过程称为“流水线（pipeline）优化”。</strong></p>
+<ol>
+<li>窄依赖可以实现“流水线”优化</li>
+<li>宽依赖无法实现“流水线”优化（节点间需shuffle）</li>
+</ol>
+<h4 id="阶段划分">阶段划分<a class="anchor ms-1" href="#阶段划分"><i class="fas fa-link"></i></a></h4>
+<p>Spark通过分析各个RDD的依赖关系生成了DAG，再通过分析各个RDD中的分区之间的依赖关系来决定如何划分Stage，具体划分方法是：</p>
+<ol>
+<li>在DAG中进行反向解析，遇到宽依赖就断开</li>
+<li>遇到窄依赖就把当前的RDD加入到Stage中</li>
+<li>将窄依赖尽量划分在同一个Stage中，可以实现流水线计算</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428195422536" src="/posts/77d147b1/index/image-20220428195422536.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<p>被分成三个Stage，在Stage2中，从map到union都是窄依赖，这两步操作可以形成一个流水线操作</p>
+<h4 id="rdd运行原理">RDD运行原理<a class="anchor ms-1" href="#rdd运行原理"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>创建RDD对象；</li>
+<li>SparkContext负责计算RDD之间的依赖关系，构建DAG；</li>
+<li>DAGScheduler负责把DAG图分解成多个Stage，每个Stage中包含了多个Task，每个Task会被TaskScheduler分发给各个WorkerNode上的Executor去执行。</li>
+</ol>
+<p><picture><img class="img-fluid" alt="image-20220428221524926" src="/posts/77d147b1/index/image-20220428221524926.png" loading="lazy"
+    
+     />
+</picture>
+
+</p>
+<h3 id="spark-sql工作原理">Spark SQL工作原理<a class="anchor ms-1" href="#spark-sql工作原理"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>
+<p>将SQL转换成抽象语法树</p>
+</li>
+<li>
+<p>将抽象语法树转换成查询块</p>
+</li>
+<li>
+<p>将查询块转换成逻辑查询计划</p>
+</li>
+<li>
+<p>重写逻辑查询计划</p>
+</li>
+<li>
+<p>讲逻辑计划转成物理计划</p>
+</li>
+<li>
+<p>选择最佳优化查询策略</p>
+</li>
+</ol>
+<h3 id="spark-mllib基本原理">Spark Mllib基本原理<a class="anchor ms-1" href="#spark-mllib基本原理"><i class="fas fa-link"></i></a></h3>
+<p>MLlib是Spark的机器学习库，旨在简化机器学习的工程实践工作。Mllib常见机器学习问题：分类、回归、聚类、协同过滤。</p>
+<h4 id="dataframe">DataFrame<a class="anchor ms-1" href="#dataframe"><i class="fas fa-link"></i></a></h4>
+<p>使用 SparkSQL 中的 DataFrame 作为数据集，可以容纳各种数据类型。较之 RDD，DataFrame 包含了 schema 信息，更加类似传统数据库中的二维表。</p>
+<p>它被 ML Pipeline 用来存储源数据。</p>
+<h4 id="transformer">Transformer<a class="anchor ms-1" href="#transformer"><i class="fas fa-link"></i></a></h4>
+<p><strong>转换器</strong>，是一种可以将一个 <strong>DataFrame</strong> 转换为另一个 <strong>DataFrame</strong> 的算法。如一个模型就是一个 <strong>Transformer</strong>。它可以把一个不包含预测标签的测试集的 <strong>DataFrame</strong> 打上标签，转化成另一个包含预测标签的 <strong>DataFrame</strong>。</p>
+<p>大致方法原型为 <code>DataFrame Transformer.transform(DataFrame)</code></p>
+<h4 id="estimator">Estimator<a class="anchor ms-1" href="#estimator"><i class="fas fa-link"></i></a></h4>
+<p><strong>估计器或评估器</strong>，它是某种<strong>学习算法</strong>，或在训练数据上的<strong>训练方法的概念抽象</strong>。在 Pipeline 里通常是被用来操作 <strong>DataFrame</strong> 数据并生成一个 <strong>Transformer</strong>。</p>
+<p>从技术上将，估计器有一个抽象方法 fit () 需要被具体算法去实现，它接收一个 DataFrame 并产生一个转换器。</p>
+<p>大致方法原型如下 <code>Transformer Estimator.fit(DataFrame)</code>。</p>
+<p>即通过 Estimator 对某个数据集进行 fit 操作后得到 Transformer。</p>
+<h4 id="parameter">Parameter<a class="anchor ms-1" href="#parameter"><i class="fas fa-link"></i></a></h4>
+<p><strong>参数</strong>，参数被用来设置 <strong>Transformer</strong> 或者 <strong>Estimator</strong> 的参数。现在所有转换器和估计器可共享用于指定参数的公共 API。</p>
+<h4 id="pipeline">PipeLine<a class="anchor ms-1" href="#pipeline"><i class="fas fa-link"></i></a></h4>
+<p><strong>流水线或管道</strong>，流水线将多个工作流阶段（转换器和估计器）连接在一起，形成机器学习的工作流，并获得结果输出。</p>
+<p>注意流水线本身也是一个 <strong>Estimator</strong>，在执行完 fit 操作后，产生一个 PipelineModel，它也是一个 Transformer。</p>
+<h2 id="参考">参考<a class="anchor ms-1" href="#参考"><i class="fas fa-link"></i></a></h2>
+<p><a href="https://blog.csdn.net/weixin_33727510/article/details/90305967" target="_blank" rel="noopener noreferrer">Hadoop项目结构_weixin_33727510的博客-CSDN博客</a></p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/70f03d51/">Newcoder Top 101 链表专题
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/b983a6c5/">Git删除不小心上传的大文件
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/6e1fe6f1/">Sit-计算机网络原理-复习
+</a>
+          <span class="float-end post-date">2021-12-12
+</span>
+        </li><li>
+          <a href="/posts/b68db71a/">文法和语言
+</a>
+          <span class="float-end post-date">2021-10-14
+</span>
+        </li><li>
+          <a href="/posts/12879185/">编译原理 有限自动机
+</a>
+          <span class="float-end post-date">2021-10-14
+</span>
+        </li><li>
+          <a href="/posts/29dc6b0/">编译原理-作业
+</a>
+          <span class="float-end post-date">2021-10-06
+</span>
+        </li><li>
+          <a href="/posts/70f03d51/">Newcoder Top 101 链表专题
+</a>
+          <span class="float-end post-date">2022-04-22
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li><a href="#大数据概述">大数据概述</a>
+      <ul>
+        <li><a href="#大数据概念">大数据概念</a></li>
+        <li><a href="#大数据特性">大数据特性</a></li>
+        <li><a href="#大数据的影响">大数据的影响</a></li>
+        <li><a href="#大数据的关键技术">大数据的关键技术</a></li>
+        <li><a href="#大数据与云计算物联网的关系">大数据与云计算物联网的关系</a></li>
+      </ul>
+    </li>
+    <li><a href="#hadoop简介">hadoop简介</a>
+      <ul>
+        <li><a href="#hadoop简介-1">Hadoop简介</a></li>
+        <li><a href="#hadoop特性优点">Hadoop特性/优点</a></li>
+        <li><a href="#hadoop缺点">Hadoop缺点</a></li>
+        <li><a href="#hadoop项目结构">Hadoop项目结构</a></li>
+        <li><a href="#hadoop生态系统">Hadoop生态系统</a></li>
+      </ul>
+    </li>
+    <li><a href="#hdfs">Hdfs</a>
+      <ul>
+        <li><a href="#hdfs体系结构">Hdfs体系结构</a></li>
+        <li><a href="#namenode介绍">NameNode介绍</a></li>
+        <li><a href="#datanode介绍">DataNode介绍</a></li>
+        <li><a href="#bloack数据块">Bloack数据块</a></li>
+        <li><a href="#元数据存储">元数据存储</a></li>
+        <li><a href="#block副本放置机制">Block副本放置机制</a></li>
+        <li><a href="#安全模式">安全模式</a></li>
+        <li><a href="#hdfs文件的读取-重点">HDFS文件的读取-重点</a></li>
+        <li><a href="#hdfs文件的写入">HDFS文件的写入</a></li>
+        <li><a href="#hdfs存储原理">Hdfs存储原理</a></li>
+        <li><a href="#hadoop10与20的区别">Hadoop1.0与2.0的区别</a></li>
+        <li><a href="#hdfs的主要组件及功能">HDFS的主要组件及功能</a></li>
+        <li><a href="#hdfs适用场景">HDFS适用场景</a></li>
+        <li><a href="#不适用">不适用</a></li>
+        <li><a href="#shell语法">Shell语法</a></li>
+      </ul>
+    </li>
+    <li><a href="#mapreduce">MapReduce</a>
+      <ul>
+        <li><a href="#特点">特点</a></li>
+        <li><a href="#适用场景">适用场景</a></li>
+        <li><a href="#不适用场景">不适用场景</a></li>
+        <li><a href="#mapreduce体系结构">MapReduce体系结构</a></li>
+        <li><a href="#mapreduce工作流程">MapReduce工作流程</a></li>
+        <li><a href="#mapreduce-shuffle过程">MapReduce shuffle过程</a></li>
+      </ul>
+    </li>
+    <li><a href="#hbase">HBase</a>
+      <ul>
+        <li><a href="#hbase概念">HBase概念</a></li>
+        <li><a href="#hbase与传统数据库的对比">HBase与传统数据库的对比：</a></li>
+        <li><a href="#hbase适用场景">HBase适用场景</a></li>
+        <li><a href="#hbase数据模型">HBase数据模型</a></li>
+        <li><a href="#hbase实现原理">Hbase实现原理</a></li>
+        <li><a href="#hbase系统架构">HBase系统架构</a></li>
+      </ul>
+    </li>
+    <li><a href="#hive">Hive</a>
+      <ul>
+        <li><a href="#hive概念">Hive概念</a></li>
+        <li><a href="#hive特点">Hive特点</a></li>
+        <li><a href="#hive缺点">Hive缺点</a></li>
+        <li><a href="#hive应用场景">Hive应用场景</a></li>
+        <li><a href="#hive系统架构">Hive系统架构</a></li>
+        <li><a href="#用户向hive输入一段命令或查询时hive需要与hadoop交互工作来完成该操作">用户向Hive输入一段命令或查询时，Hive需要与Hadoop交互工作来完成该操作</a></li>
+        <li><a href="#shell-1">Shell</a></li>
+      </ul>
+    </li>
+    <li><a href="#spark">Spark</a>
+      <ul>
+        <li><a href="#spark特点">Spark特点</a></li>
+        <li><a href="#与hadoop的关系">与Hadoop的关系</a></li>
+        <li><a href="#spark生态系统">Spark生态系统</a></li>
+        <li><a href="#spark生态系统组件应用场景">Spark生态系统组件应用场景</a></li>
+        <li><a href="#spark运行架构">Spark运行架构</a></li>
+        <li><a href="#rdd工作原理">RDD工作原理</a></li>
+        <li><a href="#宽依赖与窄依赖">宽依赖与窄依赖</a></li>
+        <li><a href="#spark-sql工作原理">Spark SQL工作原理</a></li>
+        <li><a href="#spark-mllib基本原理">Spark Mllib基本原理</a></li>
+      </ul>
+    </li>
+    <li><a href="#参考">参考</a></li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script><script defer src="/assets/mermaid/bundle.min.e0678d67a61d9ab297dc3f1de9ca8e43614ce49e9e0d310b80787e532fca37a1.js" integrity="sha256-4GeNZ6YdmrKX3D8d6cqOQ2FM5J6eDTELgHh&#43;Uy/KN6E=" crossorigin="anonymous"></script>
+
+</body>
+</html>

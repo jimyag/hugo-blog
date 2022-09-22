@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hexo on 编程日记</title>
+    <link>/categories/hexo/</link>
+    <description>Recent content in Hexo on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 11 Apr 2022 11:47:04 +0800</lastBuildDate><atom:link href="/categories/hexo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>从hexo迁移到Hugo</title>
+      <link>/posts/642ecc47/</link>
+      <pubDate>Mon, 11 Apr 2022 11:47:04 +0800</pubDate>
+      
+      <guid>/posts/642ecc47/</guid>
+      <description>&lt;p&gt;由于之前Hexo的NexT主题加载实在太慢，关闭加载动画之后还是很慢。索性换一个新的博客框架。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>pandoc exited with code null</title>
+      <link>/posts/80ae3d28/</link>
+      <pubDate>Sat, 12 Feb 2022 00:18:31 +0000</pubDate>
+      
+      <guid>/posts/80ae3d28/</guid>
+      <description>&lt;p&gt;你是否也遇到了这个问题 &lt;code&gt;pandoc exited with code null.&lt;/code&gt;
+昨天还可以生成，今天就完了。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

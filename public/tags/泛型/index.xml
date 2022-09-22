@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>泛型 on 编程日记</title>
+    <link>/tags/%E6%B3%9B%E5%9E%8B/</link>
+    <description>Recent content in 泛型 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Tue, 26 Apr 2022 23:52:28 +0800</lastBuildDate><atom:link href="/tags/%E6%B3%9B%E5%9E%8B/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Go泛型的限制和对中间件的影响</title>
+      <link>/posts/33cd41f9/</link>
+      <pubDate>Tue, 26 Apr 2022 23:52:28 +0800</pubDate>
+      
+      <guid>/posts/33cd41f9/</guid>
+      <description>&lt;p&gt;本文是基于GoCN 2022年第八期泛型的讲座的笔记。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

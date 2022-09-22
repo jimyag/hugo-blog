@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on 编程日记</title>
+    <link>/tags/hugo/</link>
+    <description>Recent content in Hugo on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Tue, 28 Jun 2022 21:16:21 +0800</lastBuildDate><atom:link href="/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>将博客迁移到七牛云</title>
+      <link>/posts/3aafaaaf/</link>
+      <pubDate>Tue, 28 Jun 2022 21:16:21 +0800</pubDate>
+      
+      <guid>/posts/3aafaaaf/</guid>
+      <description>&lt;p&gt;七牛云对注册的用户提供永久免费存储和CDN额度&lt;a href=&#34;https://marketing.qiniu.com/activity/2021618-act-cdn&#34; target=&#34;_blank&#34; rel=&#34;noopener noreferrer&#34;&gt;CDN 优惠专场 (qiniu.com)&lt;/a&gt;，所以打算将自己博客迁移过来。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>从hexo迁移到Hugo</title>
+      <link>/posts/642ecc47/</link>
+      <pubDate>Mon, 11 Apr 2022 11:47:04 +0800</pubDate>
+      
+      <guid>/posts/642ecc47/</guid>
+      <description>&lt;p&gt;由于之前Hexo的NexT主题加载实在太慢，关闭加载动画之后还是很慢。索性换一个新的博客框架。&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

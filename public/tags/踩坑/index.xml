@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>踩坑 on 编程日记</title>
+    <link>/tags/%E8%B8%A9%E5%9D%91/</link>
+    <description>Recent content in 踩坑 on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 25 Apr 2022 15:07:07 +0800</lastBuildDate><atom:link href="/tags/%E8%B8%A9%E5%9D%91/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Git删除不小心上传的大文件</title>
+      <link>/posts/b983a6c5/</link>
+      <pubDate>Mon, 25 Apr 2022 15:07:07 +0800</pubDate>
+      
+      <guid>/posts/b983a6c5/</guid>
+      <description>&lt;p&gt;在git中不小心上传了大文件，推送到GitHub时被拒绝。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>解决win端口没被占用提示access Permissions</title>
+      <link>/posts/bf108eb3/</link>
+      <pubDate>Tue, 12 Apr 2022 22:32:00 +0800</pubDate>
+      
+      <guid>/posts/bf108eb3/</guid>
+      <description>&lt;p&gt;Win10端口没被却占用提示&lt;code&gt;An attempt was made to access a socket in a way forbidden by its access permissions&lt;/code&gt;,我不理解&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>为什么Request.Body需要被关闭</title>
+      <link>/posts/60b013aa/</link>
+      <pubDate>Thu, 24 Feb 2022 15:31:16 +0000</pubDate>
+      
+      <guid>/posts/60b013aa/</guid>
+      <description>&lt;p&gt;面试时被问到为什么request中的body被访问一次就不能再次访问了。&lt;/p&gt;</description>
+    </item>
+    
+    <item>
+      <title>golang-import自己的proto文件报红</title>
+      <link>/posts/155b4227/</link>
+      <pubDate>Sun, 13 Feb 2022 16:03:36 +0000</pubDate>
+      
+      <guid>/posts/155b4227/</guid>
+      <description>&lt;p&gt;写proto时，在引入其它自己的定义的proto，之后会发现goland提示import路径不存在&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

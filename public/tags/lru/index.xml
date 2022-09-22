@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>LRU on 编程日记</title>
+    <link>/tags/lru/</link>
+    <description>Recent content in LRU on 编程日记</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <copyright>Copyright © 2019-{year} jimyag. All Rights Reserved. </copyright>
+    <lastBuildDate>Mon, 30 May 2022 23:18:19 +0800</lastBuildDate><atom:link href="/tags/lru/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>LRU缓存实现</title>
+      <link>/posts/7a57e53d/</link>
+      <pubDate>Mon, 30 May 2022 23:18:19 +0800</pubDate>
+      
+      <guid>/posts/7a57e53d/</guid>
+      <description>&lt;p&gt;使用C++和Go实现LRU缓存&lt;/p&gt;</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,2186 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>编译原理-作业 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="课上不努力、课后徒伤悲。好好听网课，好好学习！" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="编译原理-作业">
+<meta itemprop="description" content="课上不努力、课后徒伤悲。好好听网课，好好学习！"><meta itemprop="datePublished" content="2021-10-06T19:08:03+00:00" />
+<meta itemprop="dateModified" content="2021-10-06T19:08:03+00:00" />
+<meta itemprop="wordCount" content="6309">
+<meta itemprop="keywords" content="复习资料," /><meta property="og:title" content="编译原理-作业" />
+<meta property="og:description" content="课上不努力、课后徒伤悲。好好听网课，好好学习！" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/29dc6b0/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2021-10-06T19:08:03+00:00" />
+<meta property="article:modified_time" content="2021-10-06T19:08:03+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="编译原理-作业"/>
+<meta name="twitter:description" content="课上不努力、课后徒伤悲。好好听网课，好好学习！"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=%e7%bc%96%e8%af%91%e5%8e%9f%e7%90%86-%e4%bd%9c%e4%b8%9a&url=%2fposts%2f29dc6b0%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f29dc6b0%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">编译原理-作业</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">编译原理-作业
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2021-10-07 03:08:03 &#43;0800 CST。">
+    2021-10-06
+  </span><span class="post-reading-time">
+    13 分钟阅读
+  </span><span class="post-taxonomies"><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge post-taxonomy">编译原理</a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge post-taxonomy">复习资料</a></span>
+</div>
+<div class="post-content mb-3"><p>课上不努力、课后徒伤悲。好好听网课，好好学习！</p>
+<h3 id="first集合">FIRST集合<a class="anchor ms-1" href="#first集合"><i class="fas fa-link"></i></a></h3>
+<h4 id="定义">定义<a class="anchor ms-1" href="#定义"><i class="fas fa-link"></i></a></h4>
+<p>FIRST(X)是X所有可能推导的开头终结符号或可能推导的<code>ε</code>所构成的集合。</p>
+<h4 id="构造first集合">构造FIRST集合<a class="anchor ms-1" href="#构造first集合"><i class="fas fa-link"></i></a></h4>
+<p>对于每个非终结符或终结符X连续使用以下规则，直至每个X的FIRST集合不再增大为止</p>
+<ol>
+<li>若左边第一个符号是<strong>终结符</strong>或者是<strong>ε</strong>，将其放在FIRST(X)中;</li>
+<li>若左边第一个符号是<strong>非终结符</strong>，将其FIRST集合中<strong>非ε</strong>元素加入FIRST(X)中;</li>
+<li>若左边第一个符号是<strong>非终结符</strong>而且紧随其后有很多<strong>非终结符</strong>，要注意是否有<strong>ε</strong>;</li>
+<li>若第i个非终结符的FIRST集中有ε，则把第i+1个非终结符的FIRST集合除ε的元素加入FRIST(X);</li>
+<li>若所有非终结符的FIRST集中都有ε，则把ε加入FIRST(X);</li>
+</ol>
+<p>重复使用以上规则，直至每个X的FIRST集合不再增大为止。</p>
+<h4 id="例题">例题<a class="anchor ms-1" href="#例题"><i class="fas fa-link"></i></a></h4>
+<blockquote>
+<p>对于文法G(E):</p>
+<blockquote>
+<p>$$E-&gt; TE^{\prime} $$</p>
+<p>$$E^{\prime}-&gt; +TE^{\prime} |ε $$</p>
+<p>$$T-&gt;FT^{\prime}$$</p>
+<p>$$T^{\prime}-&gt;*FT^{\prime}|ε$$</p>
+<p>$$F-&gt;(E)|i$$</p>
+</blockquote>
+<p>构造每个非终结符的FIRST集合</p>
+</blockquote>
+<p>我们使用上述规则进行构造</p>
+<h5 id="第一轮">第一轮<a class="anchor ms-1" href="#第一轮"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1">E-> TE1<a class="anchor ms-1" href="#e--te1"><i class="fas fa-link"></i></a></h6>
+<p>左边第一个是非终结符、紧随其后的也是终结符符合<code>2</code>,<code>3</code>规则，但是他们的FISRT集合都为空。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε"><i class="fas fa-link"></i></a></h6>
+<p>规则 <code>1</code>：左边第一个是终结符和<strong>ε</strong>，将他们放进FIRST{E1}集中</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1">T->FT1<a class="anchor ms-1" href="#t-ft1"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>2</code>: 将FIRSR{F}中的<strong>非ε</strong>元素加入FIRST(T)，FIRST{T}为空</p>
+<p>规则<code>3</code>:FIRST{T}和FIRST{F1}为空</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 *，ε加入FIRST{T1}</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei">F->(E)|i<a class="anchor ms-1" href="#f-ei"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 （，i加入FIRST{F}</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<p>FIRST集合还在增大所以继续下一轮</p>
+<h5 id="第二轮">第二轮<a class="anchor ms-1" href="#第二轮"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-1">E-> TE1<a class="anchor ms-1" href="#e--te1-1"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>2</code>: FISRT{T}为空</p>
+<p>规则<code>3</code>:   FISRT{T}为空</p>
+<p>不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-1">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-1"><i class="fas fa-link"></i></a></h6>
+<p>规则 <code>1</code>：左边第一个是终结符和<strong>ε</strong>，将他们放进FIRST{E1}集中。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center"></td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-1">T->FT1<a class="anchor ms-1" href="#t-ft1-1"><i class="fas fa-link"></i></a></h6>
+<p><strong>规则<code>2</code>: 将FIRSR{F}中的非ε元素加入FIRST(T) 变化了。</strong></p>
+<p>规则<code>3</code>:FIRST{F}没有ε，不用考虑了。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-1">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-1"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 *，ε加入FIRST{T1}。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-1">F->(E)|i<a class="anchor ms-1" href="#f-ei-1"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 （，i加入FIRST{F}不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center"></td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<p>有变化，继续从头开始扫描</p>
+<h5 id="第三轮">第三轮<a class="anchor ms-1" href="#第三轮"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-2">E-> TE1<a class="anchor ms-1" href="#e--te1-2"><i class="fas fa-link"></i></a></h6>
+<p><strong>规则<code>2</code>: 把FISRT{T}放入FISRT{E}中</strong> 有变化</p>
+<p>规则<code>3</code>:   FISRT{T}中没有<strong>ε</strong>，不用管</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-2">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-2"><i class="fas fa-link"></i></a></h6>
+<p>规则 <code>1</code>：左边第一个是终结符和<strong>ε</strong>，将他们放进FIRST{E1}集中。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-2">T->FT1<a class="anchor ms-1" href="#t-ft1-2"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>2</code>: 将FIRSR{F}中的非ε元素加入FIRST(T)。已经放过了</p>
+<p>规则<code>3</code>:FIRST{F}没有ε，不用考虑了。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-2">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-2"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 *，ε加入FIRST{T1}。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-2">F->(E)|i<a class="anchor ms-1" href="#f-ei-2"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 （，i加入FIRST{F}不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<p>有变化，继续从头开始扫描</p>
+<h5 id="第四轮">第四轮<a class="anchor ms-1" href="#第四轮"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-3">E-> TE1<a class="anchor ms-1" href="#e--te1-3"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>2</code>: 把FISRT{T}放入FISRT{E}中 。没有增大</p>
+<p>规则<code>3</code>:   FISRT{T}中没有<strong>ε</strong>，不用管</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-3">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-3"><i class="fas fa-link"></i></a></h6>
+<p>规则 <code>1</code>：左边第一个是终结符和<strong>ε</strong>，将他们放进FIRST{E1}集中。没有增大</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-3">T->FT1<a class="anchor ms-1" href="#t-ft1-3"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>2</code>: 将FIRSR{F}中的非ε元素加入FIRST(T)。没有增大</p>
+<p>规则<code>3</code>:FIRST{F}没有ε，不用考虑了。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-3">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-3"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 *，ε加入FIRST{T1}。没有增大</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-3">F->(E)|i<a class="anchor ms-1" href="#f-ei-3"><i class="fas fa-link"></i></a></h6>
+<p>规则<code>1</code>:将 （，i加入FIRST{F} 没有增大</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<p>没有增大 结束。</p>
+<p>最终结果为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FIRST{E}$$</th>
+<th style="text-align:center">$$FIRST{E^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{T}$$</th>
+<th style="text-align:center">$$FIRST{T^{\prime}}$$</th>
+<th style="text-align:center">$$FIRST{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">+，ε</td>
+<td style="text-align:center">（，i</td>
+<td style="text-align:center">*，ε</td>
+<td style="text-align:center">（，i</td>
+</tr>
+</tbody>
+</table>
+<h3 id="follow集合">FOLLOW集合<a class="anchor ms-1" href="#follow集合"><i class="fas fa-link"></i></a></h3>
+<h4 id="定义-1">定义<a class="anchor ms-1" href="#定义-1"><i class="fas fa-link"></i></a></h4>
+<p>FOLLOW(A)是所有矩形中出现在紧接A之后的终结符或#所构成的集合</p>
+<h4 id="构造follow集合">构造FOLLOW集合、<a class="anchor ms-1" href="#构造follow集合"><i class="fas fa-link"></i></a></h4>
+<p>对于每个非终结符A，连续使用以下规则，直至每个FOLLOW集合不再增大</p>
+<ol>
+<li>对于文法的开始符号S，置#于FOLLOW(S)中</li>
+<li>若A-&gt; αBβ是一个产生式，则把FISRT{β}中非<strong>ε</strong>元素放入FOLLOW{B}中</li>
+<li>若 A-&gt; αB 或 A-&gt; αBβ 【ε∈FISRT{B}】则把FOLLOW{A}中的元素放入FOLLOW{B}。</li>
+</ol>
+<p>αβ是由终结符和非终结符构成的</p>
+<h4 id="例题-1">例题<a class="anchor ms-1" href="#例题-1"><i class="fas fa-link"></i></a></h4>
+<blockquote>
+<p>对于文法G(E):</p>
+<blockquote>
+<p>$$E-&gt; TE^{\prime} $$</p>
+<p>$$E^{\prime}-&gt; +TE^{\prime} |ε $$</p>
+<p>$$T-&gt;FT^{\prime}$$</p>
+<p>$$T^{\prime}-&gt;*FT^{\prime}|ε$$</p>
+<p>$$F-&gt;(E)|i$$</p>
+</blockquote>
+<p>构造每个非终结符的FOLLOW集合</p>
+</blockquote>
+<p>根据规则<code>1</code>将# 放入FOLLOW{E}中</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h5 id="第一轮-1">第一轮<a class="anchor ms-1" href="#第一轮-1"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-4">E-> TE1<a class="anchor ms-1" href="#e--te1-4"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为T，E１为β。将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中</p>
+<p>规则３：α为T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-4">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-4"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＋，B为T，β为E１，将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中　</p>
+<p>规则３：α为＋T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center"></td>
+<td style="text-align:center"></td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-4">T->FT1<a class="anchor ms-1" href="#t-ft1-4"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中</p>
+<p>规则３：α为F，B为T１　FOLLOW{T}中的元素放入FOLLOW{T１}。</p>
+<p>规则３：α为空，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T}中的元素放入FOLLOW{F}。</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-4">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-4"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＊，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中</p>
+<p>规则３：α为＊F，B为T１　FOLLOW{T１}中的元素放入FOLLOW{T１}。不变</p>
+<p>规则３：α为＊，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T１}中的元素放入FOLLOW{F}。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-4">F->(E)|i<a class="anchor ms-1" href="#f-ei-4"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为（，B为E，）为β。将FISRT{）}中非<strong>ε</strong>元素放入FOLLOW{E}中</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*</td>
+</tr>
+</tbody>
+</table>
+<h5 id="第二轮-1">第二轮<a class="anchor ms-1" href="#第二轮-1"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-5">E-> TE1<a class="anchor ms-1" href="#e--te1-5"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为T，E１为β。将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中。已经放过</p>
+<p>规则３：α为T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。已经放过</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-5">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-5"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＋，B为T，β为E１，将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中</p>
+<p>规则３：α为＋T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。没变</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。没变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-5">T->FT1<a class="anchor ms-1" href="#t-ft1-5"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中。没变</p>
+<p>规则３：α为F，B为T１　FOLLOW{T}中的元素放入FOLLOW{T１}。变了</p>
+<p>规则３：α为空，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T}中的元素放入FOLLOW{F}。变了</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-5">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-5"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＊，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中。已经放过</p>
+<p>规则３：α为＊F，B为T１　FOLLOW{T１}中的元素放入FOLLOW{T１}。不变</p>
+<p>规则３：α为＊，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T１}中的元素放入FOLLOW{F}。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-5">F->(E)|i<a class="anchor ms-1" href="#f-ei-5"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为（，B为E，）为β。将FISRT{）}中非<strong>ε</strong>元素放入FOLLOW{E}中。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h5 id="第三轮-1">第三轮<a class="anchor ms-1" href="#第三轮-1"><i class="fas fa-link"></i></a></h5>
+<h6 id="e--te1-6">E-> TE1<a class="anchor ms-1" href="#e--te1-6"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为T，E１为β。将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中。已经放过</p>
+<p>规则３：α为T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。没变</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。已经放过</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="e1--te1ε-6">E1-> +TE1|ε<a class="anchor ms-1" href="#e1--te1ε-6"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＋，B为T，β为E１，将FISRT{E１}中非<strong>ε</strong>元素放入FOLLOW{T}中。已经放过</p>
+<p>规则３：α为＋T，B为E１　FOLLOW{E}中的元素放入FOLLOW{Ｅ１}。没变</p>
+<p>规则３：α为空，B为T，E１为β，FISRT{E１}中有<strong>ε</strong>，将FOLLOW{E}中的元素放入FOLLOW{T}。没变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃</td>
+<td style="text-align:center">*，+，＃</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t-ft1-6">T->FT1<a class="anchor ms-1" href="#t-ft1-6"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为空，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中。已经放过</p>
+<p>规则３：α为F，B为T１　FOLLOW{T}中的元素放入FOLLOW{T１}。没变</p>
+<p>规则３：α为空，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T}中的元素放入FOLLOW{F}。没变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h6 id="t1-ft1ε-6">T1->*FT1|ε<a class="anchor ms-1" href="#t1-ft1ε-6"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为＊，B为F，T１为β。将FISRT{T１}中非<strong>ε</strong>元素放入FOLLOW{F}中。已经放过</p>
+<p>规则３：α为＊F，B为T１　FOLLOW{T１}中的元素放入FOLLOW{T１}。不变</p>
+<p>规则３：α为＊，B为F，T１为β，FISRT{T１}中有<strong>ε</strong>，将FOLLOW{T１}中的元素放入FOLLOW{F}。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h6 id="f-ei-6">F->(E)|i<a class="anchor ms-1" href="#f-ei-6"><i class="fas fa-link"></i></a></h6>
+<p>规则２：α为（，B为E，）为β。将FISRT{）}中非<strong>ε</strong>元素放入FOLLOW{E}中。不变</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<p>所有的FOLLOW已经没在变化了，这时候已经计算完了。</p>
+<p>最后的结果为：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center">$$FOLLOW{E}$$</th>
+<th style="text-align:center">$$FOLLOW{E^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{T}$$</th>
+<th style="text-align:center">$$FOLLOW{T^{\prime}}$$</th>
+<th style="text-align:center">$$FOLLOW{F}$$</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">+，＃，）</td>
+<td style="text-align:center">*，+，＃，）</td>
+</tr>
+</tbody>
+</table>
+<h3 id="消除左递归">消除左递归<a class="anchor ms-1" href="#消除左递归"><i class="fas fa-link"></i></a></h3>
+<h4 id="法一">法一<a class="anchor ms-1" href="#法一"><i class="fas fa-link"></i></a></h4>
+<p>将左递归变为右递归</p>
+<blockquote>
+<p>P-&gt;Pα|β</p>
+<p>变为</p>
+<p>P-&gt;βP1</p>
+<p>P1-&gt;αP1|ε</p>
+</blockquote>
+<p>对于文法<code>P-&gt;Pα|β</code>我们可以推导出他能识别的串，它是以β开头后面接着0-n个α的串；βαααααα&hellip;.</p>
+<h4 id="法二">法二<a class="anchor ms-1" href="#法二"><i class="fas fa-link"></i></a></h4>
+<h5 id="条件">条件<a class="anchor ms-1" href="#条件"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>不含以<strong>ε</strong>为右部的产生式</li>
+<li>不含回路（p-&gt;p）</li>
+</ol>
+<h5 id="方法">方法<a class="anchor ms-1" href="#方法"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>对非终结符进行排列P1&hellip;..Pn</li>
+<li>从P1到Pn遍历,把Pi改为<code>α|Pi+1|Pi+2|...|Pn</code>
+<ol>
+<li>从j=1 到j=i-1把形如Pi-&gt;Pjγ的改写为<code>Pi-&gt;ζ1γ|ζ2γ|...|ζkγ </code> 其中<code>Pj-&gt;ζ1|ζ2|...|ζk</code>。此时就可以得到形如 <code>Pi-&gt;α|Pi|Pi|...|Pi+k|...</code></li>
+<li>使用直接消除Pi使用<code>方法一</code></li>
+</ol>
+</li>
+<li>化简<code>2</code>，去除从开始符号出发永远无法到达的非终结符产生规则</li>
+</ol>
+<h4 id="例题-2">例题<a class="anchor ms-1" href="#例题-2"><i class="fas fa-link"></i></a></h4>
+<blockquote>
+<p>考虑文法G[S]</p>
+<blockquote>
+<p>S-&gt;(T)|a+S|a</p>
+<p>T-&gt;T，S|S</p>
+</blockquote>
+<p>消除左递归</p>
+</blockquote>
+<h5 id="第一步">第一步<a class="anchor ms-1" href="#第一步"><i class="fas fa-link"></i></a></h5>
+<p>只有两个非终结符，按照一定顺序排序，按照T，S的顺序排列</p>
+<h5 id="第二步">第二步<a class="anchor ms-1" href="#第二步"><i class="fas fa-link"></i></a></h5>
+<ol>
+<li>
+<p>先处理T</p>
+<blockquote>
+<p>T-&gt;T，S|S</p>
+</blockquote>
+<p>由于T在前面，S在后面，所以S不处理(2.1)。由于本身有左递归，使用方法一直接消除左递归</p>
+<blockquote>
+<p>T-&gt;ST1</p>
+<p>T1-&gt; ,ST1|ε</p>
+</blockquote>
+</li>
+<li>
+<p>处理S</p>
+<blockquote>
+<p>S-&gt;(T)|a+S|a</p>
+</blockquote>
+<p>由于T在S的前面，所以要将T处理掉。T又有（T-&gt;ST1）进行替换</p>
+<blockquote>
+<p>S-&gt;(ST1)|a+S|a</p>
+</blockquote>
+<p>不含有左递归，处理结束</p>
+</li>
+<li>
+<p>化简</p>
+<blockquote>
+<p>S-&gt;(ST1)|a+S|a</p>
+<p>T-&gt;ST1</p>
+<p>T1-&gt; ,ST1|ε</p>
+</blockquote>
+<p>从开始符号都可以到达，所以不用去掉</p>
+</li>
+</ol>
+<h5 id="结果为">结果为<a class="anchor ms-1" href="#结果为"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>S-&gt;(ST1)|a+S|a</p>
+<p>T-&gt;ST1</p>
+<p>T1-&gt; ,ST1|ε</p>
+</blockquote>
+<h3 id="提取左公共因子">提取左公共因子<a class="anchor ms-1" href="#提取左公共因子"><i class="fas fa-link"></i></a></h3>
+<p>对于规则S</p>
+<blockquote>
+<p>S -&gt;  aB1|aB2|aB3|aB4|&hellip;|aBn|y</p>
+</blockquote>
+<p>可以改写为</p>
+<blockquote>
+<p>S-&gt; aS1|y
+S1 -&gt; B1|B2|B3&hellip;|Bn</p>
+</blockquote>
+<h3 id="fisrtvt集合">FISRTVT集合<a class="anchor ms-1" href="#fisrtvt集合"><i class="fas fa-link"></i></a></h3>
+<h4 id="方法-1">方法<a class="anchor ms-1" href="#方法-1"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>A-&gt;a&hellip;..  则将a加入FIRSTVT(A)中</li>
+<li>A-&gt;B&hellip;. 将FIRSTVT(B)加入到FIRSTVT(A)中</li>
+<li>A-&gt;Ba&hellip;</li>
+</ol>
+<h4 id="例题-3">例题<a class="anchor ms-1" href="#例题-3"><i class="fas fa-link"></i></a></h4>
+<p>已给文法：</p>
+<blockquote>
+<p>G[S]:
+S→a|b|(B)
+A→S, A|S
+B→A</p>
+</blockquote>
+<p>求非终结符的FISRTVT集合</p>
+<h5 id="求firstvts">求FIRSTVT(S)<a class="anchor ms-1" href="#求firstvts"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>S→a|b|(B)</p>
+</blockquote>
+<p>根据规则<code>1</code>可得</p>
+<p>FIRSTVT(S)= {a,b,(}</p>
+<h5 id="求firstvta">求FIRSTVT(A)<a class="anchor ms-1" href="#求firstvta"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>A→S, A|S</p>
+</blockquote>
+<p>根据规则<code>2</code>可得，应该FISRTVT(S)中的放入FIRSTVT(A)中</p>
+<p>FIRSTVT(A) = {a,b,(}</p>
+<p>根据规则<code>3</code>，应该把<code>,</code>放入FIRSTVT(A)中</p>
+<p>FIRSTVT(A) = {a,b,(,逗号}</p>
+<h5 id="求firstvtb">求FIRSTVT(B)<a class="anchor ms-1" href="#求firstvtb"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>B→A</p>
+</blockquote>
+<p>根据规则<code>3</code>，应该FISRTVT(A)中的放入FIRSTVT(B)中</p>
+<p>FIRSTVT(B) = {a,b,(,逗号}</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">FISRTVT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">S</td>
+<td style="text-align:center">{a,b,(}</td>
+</tr>
+<tr>
+<td style="text-align:center">A</td>
+<td style="text-align:center">{a,b,(,逗号}</td>
+</tr>
+<tr>
+<td style="text-align:center">B</td>
+<td style="text-align:center">{a,b,(,逗号}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="lastvt集合">LASTVT集合<a class="anchor ms-1" href="#lastvt集合"><i class="fas fa-link"></i></a></h3>
+<h4 id="方法-2">方法<a class="anchor ms-1" href="#方法-2"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>A-&gt;&hellip;..a  把a加入LASTVT(A)中</li>
+<li>A-&gt;&hellip;..B  把LASTVT(B)加入LASTVT(A)中</li>
+<li>A-&gt;&hellip;.aB 把a加入LASTVT(A)中</li>
+</ol>
+<h4 id="例题-4">例题<a class="anchor ms-1" href="#例题-4"><i class="fas fa-link"></i></a></h4>
+<p>已给文法：</p>
+<blockquote>
+<p>G[S]:
+S→a|b|(B)
+A→S, A|S
+B→A</p>
+</blockquote>
+<p>求非终结符的LASTVT集合</p>
+<h5 id="求lastvts">求LASTVT(S)<a class="anchor ms-1" href="#求lastvts"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>S→a|b|(B)</p>
+</blockquote>
+<p>根据规则<code>1</code>可得</p>
+<p>LASTVT(S)= {a,b,)}</p>
+<h5 id="求lastvta">求LASTVT(A)<a class="anchor ms-1" href="#求lastvta"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>A→S, A|S</p>
+</blockquote>
+<p>根据规则<code>2</code>可得，应该LASTVT(S)中的放入LASTVT(A)中</p>
+<p>LASTVT(A) = {a,b,)}</p>
+<p>根据规则<code>3</code>，应该把<code>,</code>放入LASTVT(A)中</p>
+<p>LASTVT(A) = {a,b,),逗号}</p>
+<h5 id="求lastvtb">求LASTVT(B)<a class="anchor ms-1" href="#求lastvtb"><i class="fas fa-link"></i></a></h5>
+<blockquote>
+<p>B→A</p>
+</blockquote>
+<p>根据规则<code>3</code>，应该LASTVT(A)中的放入LASTVT(B)中</p>
+<p>FIRSTVT(B) = {a,b,),逗号}</p>
+<table>
+<thead>
+<tr>
+<th style="text-align:center"></th>
+<th style="text-align:center">LASTVT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center">S</td>
+<td style="text-align:center">{a,b,)}</td>
+</tr>
+<tr>
+<td style="text-align:center">A</td>
+<td style="text-align:center">{a,b,),逗号}</td>
+</tr>
+<tr>
+<td style="text-align:center">B</td>
+<td style="text-align:center">{a,b,),逗号}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="算符优先文法opg的条件">算符优先文法OPG的条件<a class="anchor ms-1" href="#算符优先文法opg的条件"><i class="fas fa-link"></i></a></h3>
+<ol>
+<li>OPG文法条件
+<ol>
+<li>无S-&gt;&hellip;AB&hellip;</li>
+<li>无ε产生式</li>
+</ol>
+</li>
+<li>两两终结符间至多一种优先关系</li>
+</ol>
+<h3 id="判断算符优先级">判断算符优先级<a class="anchor ms-1" href="#判断算符优先级"><i class="fas fa-link"></i></a></h3>
+<h4 id="方法一">方法一<a class="anchor ms-1" href="#方法一"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>找出所有非终结符，画出一下表格</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>c</th>
+<th>&hellip;</th>
+<th>n</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>c</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>n</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>＝ 找aQb形式的，a=b，横排找a，竖排找b</p>
+</li>
+<li>
+<p>&lt;  找aQ形式的，a与FISRSTVT(Q)的每个元素交叉处填<code>&lt;</code>，a为横排元素</p>
+</li>
+<li>
+<p>&gt;  找Qa形式的，在竖排中找到a，在横排中找到LASTVT(Q)中的元素，相交处填<code>&gt;</code></p>
+</li>
+<li>
+<p># &lt; FIRSTVT(A)</p>
+</li>
+<li>
+<p>LASTVT(A)&gt;#</p>
+</li>
+</ol>
+<h4 id="例题-5">例题<a class="anchor ms-1" href="#例题-5"><i class="fas fa-link"></i></a></h4>
+<p>已给文法：</p>
+<blockquote>
+<p>G[S]:
+S→a|b|(B)
+A→S, A|S
+B→A</p>
+</blockquote>
+<p>判断算符优先级</p>
+<p>根据上面我们已经求出非终结符的FIRSTVT和LASTVT集合。列表</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>，</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>=  我们可以找到<code>(B)</code>是符合要求的，则</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（</td>
+<td></td>
+<td></td>
+<td></td>
+<td>=</td>
+<td></td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>，</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol start="2">
+<li>&lt; 我们找到aQ形式的，有<code>(B</code>,<code>,A</code> 则从横排找<code>(</code>,在竖排中找到FIRSTVT(B)，在交叉处填上<code>&lt;</code>。在横排中找到<code>，</code>在竖排中国找到FIRSTVT(A)中的元素，在交叉处填上<code>&lt;</code></li>
+</ol>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>=</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>，</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td></td>
+<td>&lt;</td>
+</tr>
+</tbody>
+</table>
+<ol start="3">
+<li>
+<p>&gt; 我们找到Qa形式的，有<code>B)</code>,<code>S,</code> ，在竖排中找到<code>)</code>,在横排中找到LASTVT(B)中的元素，在交叉处填上<code>&gt;</code>, 在竖排找到<code>,</code> 在横排找到LASTVT(S)，在交叉处填上<code>&gt;</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>（</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>=</td>
+<td>&lt;</td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>，</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&gt;</td>
+<td>&lt;</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p># &lt; FIRSTVT(A)  横纵额外添加一列(行)<code>#</code></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+<th>#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>（</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>=</td>
+<td>&lt;</td>
+<td></td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>，</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&gt;</td>
+<td>&lt;</td>
+<td></td>
+</tr>
+<tr>
+<td>#</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td></td>
+<td>&lt;</td>
+<td>&gt;</td>
+</tr>
+</tbody>
+</table>
+<p># &lt; FIRSTVT(S)</p>
+<p># &lt; FIRSTVT(A)</p>
+<p># &lt; FIRSTVT(B)</p>
+</li>
+<li>
+<p>LASTVTVT(A)&gt;#</p>
+<p>LASTVTVT(S)&gt;#</p>
+<p>LASTVTVT(A)&gt;#</p>
+<p>LASTVTVT(B)&gt;#</p>
+</li>
+</ol>
+<h4 id="结果如下">结果如下<a class="anchor ms-1" href="#结果如下"><i class="fas fa-link"></i></a></h4>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>（</th>
+<th>）</th>
+<th>，</th>
+<th>#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>（</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>=</td>
+<td>&lt;</td>
+<td></td>
+</tr>
+<tr>
+<td>）</td>
+<td></td>
+<td></td>
+<td></td>
+<td>&gt;</td>
+<td>&gt;</td>
+<td>&gt;</td>
+</tr>
+<tr>
+<td>，</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&gt;</td>
+<td>&lt;</td>
+<td></td>
+</tr>
+<tr>
+<td>#</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td>&lt;</td>
+<td></td>
+<td>&lt;</td>
+<td>&gt;</td>
+</tr>
+</tbody>
+</table>
+<h4 id="方法二">方法二<a class="anchor ms-1" href="#方法二"><i class="fas fa-link"></i></a></h4>
+<ol>
+<li>
+<p>对于文法的开始符号S，增加拓广文法S1-&gt;#S#</p>
+</li>
+<li>
+<p>找出所有非终结符，画出一下表格</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>a</th>
+<th>b</th>
+<th>c</th>
+<th>&hellip;</th>
+<th>n</th>
+<th>#</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>b</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>c</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>&hellip;</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>n</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>#</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>＝ 找aQb形式的，a=b，横排找a，竖排找b</p>
+</li>
+<li>
+<p>&lt;  找aQ形式的，a与FISRSTVT(Q)的每个元素交叉处填<code>&lt;</code>，a为横排元素</p>
+</li>
+<li>
+<p>&gt;  找Qa形式的，在竖排中找到a，在横排中找到LASTVT(Q)中的元素，相交处填<code>&gt;</code></p>
+</li>
+</ol>
+<p>此方法不用额外判断<code>#</code>的优先级，在与其他的处理过程中，会一同处理</p></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/c14b5b33/">二进制引发的思考
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/b68db71a/">文法和语言
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/c14b5b33/">二进制引发的思考
+</a>
+          <span class="float-end post-date">2021-10-02
+</span>
+        </li><li>
+          <a href="/posts/c8d9f0a8/">9.15随笔
+</a>
+          <span class="float-end post-date">2021-09-15
+</span>
+        </li><li>
+          <a href="/posts/5306f355/">基于YOLOv5-DeepSort的目标追踪器的封装
+</a>
+          <span class="float-end post-date">2021-08-04
+</span>
+        </li><li>
+          <a href="/posts/d9d2de90/">目标检测评估指标
+</a>
+          <span class="float-end post-date">2021-08-03
+</span>
+        </li><li>
+          <a href="/posts/37cab689/">Hexo-NexT使用LaTeX公式
+</a>
+          <span class="float-end post-date">2021-08-03
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#first集合">FIRST集合</a></li>
+        <li><a href="#follow集合">FOLLOW集合</a></li>
+        <li><a href="#消除左递归">消除左递归</a></li>
+        <li><a href="#提取左公共因子">提取左公共因子</a></li>
+        <li><a href="#fisrtvt集合">FISRTVT集合</a></li>
+        <li><a href="#lastvt集合">LASTVT集合</a></li>
+        <li><a href="#算符优先文法opg的条件">算符优先文法OPG的条件</a></li>
+        <li><a href="#判断算符优先级">判断算符优先级</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>

@@ -1,0 +1,942 @@
+<!doctype html><html class="position-relative" itemscope itemtype="http://schema.org/WebPage" lang="zh-cn"
+  
+   data-palette="blue"
+  >
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>gRPC-四种模式实践 - 编程日记</title><link rel="apple-touch-icon" href="/images/icons/icon-180x180.png" sizes="180x180">
+<link rel="icon" href="/images/icons/icon-32x32.png" sizes="32x32" type="image/png">
+<link rel="icon" href="/images/icons/icon-16x16.png" sizes="16x16" type="image/png">
+<link rel="icon" href="/images/icons/favicon.ico">
+<link rel="manifest" href="/manifest.json">
+<script type="text/javascript"
+        async
+        src="https://cdn.bootcss.com/mathjax/2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+MathJax.Hub.Config({
+  tex2jax: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\[\[','\]\]']],
+    processEscapes: true,
+    processEnvironments: true,
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+    TeX: { equationNumbers: { autoNumber: "AMS" },
+         extensions: ["AMSmath.js", "AMSsymbols.js"] }
+  }
+});
+
+MathJax.Hub.Queue(function() {
+    
+    
+    
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i = 0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';
+    }
+});
+</script>
+
+<style>
+code.has-jax {
+    font: inherit;
+    font-size: 100%;
+    background: inherit;
+    border: inherit;
+    color: #515151;
+}
+</style>
+
+<meta name="keywords" content="" />
+<meta name="description" content="本文介绍如何使用gRPC的四种模式
+gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。" /><meta name="robots" content="index, follow" /><meta itemprop="name" content="gRPC-四种模式实践">
+<meta itemprop="description" content="本文介绍如何使用gRPC的四种模式
+gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。"><meta itemprop="datePublished" content="2022-03-09T09:41:28+00:00" />
+<meta itemprop="dateModified" content="2022-03-09T09:41:28+00:00" />
+<meta itemprop="wordCount" content="2654">
+<meta itemprop="keywords" content="教程,gRPC," /><meta property="og:title" content="gRPC-四种模式实践" />
+<meta property="og:description" content="本文介绍如何使用gRPC的四种模式
+gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/posts/3259ac99/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-03-09T09:41:28+00:00" />
+<meta property="article:modified_time" content="2022-03-09T09:41:28+00:00" /><meta property="og:site_name" content="编程日记" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="gRPC-四种模式实践"/>
+<meta name="twitter:description" content="本文介绍如何使用gRPC的四种模式
+gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。"/>
+<meta property="og:image" content="/images/spider-man.jpg"/>
+  <meta name="twitter:image" content="/images/spider-man.jpg"/><link rel="stylesheet" href="/assets/main/bundle.min.d09b7f7f687cbba5a0470808fba7973668726b909146fb392a44aa897b257a10.css" integrity="sha256-0Jt/f2h8u6WgRwgI+6eXNmhya5CRRvs5KkSqiXslehA=" crossorigin="anonymous"><link rel="stylesheet" href="/assets/viewer/bundle.min.f05183267bb952fbc8c63a7178364de2951614ab71d544ec1068ad36c7447ccc.css" integrity="sha256-8FGDJnu5UvvIxjpxeDZN4pUWFKtx1UTsEGitNsdEfMw=" crossorigin="anonymous"></head>
+  <body><script>const items=['mode','palette'];items.forEach(function(e){const t=localStorage.getItem('hbs-'+e);t&&document.body.parentElement.setAttribute('data-'+e,t)})</script><header><nav class="navbar top-app-bar top-app-bar-expand-lg fixed-top">
+  <div class="container">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <i class="fas fa-bars"></i>
+    </button><a class="navbar-brand flex-grow-1 flex-lg-grow-0 text-center text-lg-start mx-auto me-lg-3" href="/"><picture><img class="logo" alt="Logo" src="/images/spider-man.jpg" loading="lazy"
+     width="556" height="559"
+     />
+</picture>
+编程日记
+    </a>
+    <div class="offcanvas offcanvas-bottom surface" tabindex="-1" id="offcanvasSocialShare" aria-labelledby="offcanvasSocialShare">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">Share</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body">
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Twitter Share Button"
+      target="_blank" href="https://twitter.com/intent/tweet?title=gRPC-%e5%9b%9b%e7%a7%8d%e6%a8%a1%e5%bc%8f%e5%ae%9e%e8%b7%b5&url=%2fposts%2f3259ac99%2f">
+      <i class="fab fa-fw fa-twitter"></i> Twitter
+    </a>
+    <a class="btn btn-sm btn-outline-primary social-share-button" rel="noopener noreferrer" aria-label="Facebook Share Button"
+      target="_blank" href="https://www.facebook.com/sharer/sharer.php?u=%2fposts%2f3259ac99%2f">
+      <i class="fab fa-fw fa-facebook-f"></i> Facebook
+    </a>
+  </div>
+</div>
+    <button class="navbar-settings" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSettings"
+  aria-controls="offcanvasSettings" aria-label="Toggle settings">
+  <i class="fas fa-ellipsis-v"></i>
+</button>
+
+<div class="offcanvas offcanvas-end surface h-100" tabindex="-1" id="offcanvasSettings" aria-labelledby="offcanvasSettings">
+  <div class="offcanvas-header">
+    <h3 class="offcanvas-title">设置</h3>
+    <button type="button" class="btn btn-sm btn-outline-primary" data-bs-dismiss="offcanvas" aria-label="Close">
+      <i class="fas fa-times"></i>
+    </button>
+  </div>
+  <div class="offcanvas-body d-flex flex-column">
+
+<div class="setting">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-adjust"></i> 模式</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" id="modeSwitcher">
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="setting">
+  <form class="font-size-switcher-form row">
+    <div class="col-auto">
+      <label for="fontSize" class="form-label"><i class="fas fa-fw fa-font"></i> 字体大小</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <input type="range" class="form-range" min="-2" max="2" id="fontSize">
+    </div>
+  </form>
+</div>
+
+
+<div class="setting palettes">
+  <form class="row">
+    <div class="col-auto">
+      <label><i class="fas fa-fw fa-palette"></i> 配色</label>
+    </div>
+    <div class="col-auto ms-auto">
+      <a id="btnPalette" class="btn btn-sm btn-outline-primary" role="button" aria-label="palettePicker">
+        <i class="fas fa-eye-dropper"></i>
+      </a>
+    </div>
+  </form>
+  <div class="mt-2 d-flex justify-content-between visually-hidden" id="palettePicker"><button type="button" id="palette-blue" aria-label="蓝色"
+        class="btn btn-sm w-100 palette" data-palette="blue">
+      </button><button type="button" id="palette-blue-gray" aria-label="蓝灰色"
+        class="btn btn-sm w-100 palette" data-palette="blue-gray">
+      </button><button type="button" id="palette-brown" aria-label="棕色"
+        class="btn btn-sm w-100 palette" data-palette="brown">
+      </button><button type="button" id="palette-cyan" aria-label="青色"
+        class="btn btn-sm w-100 palette" data-palette="cyan">
+      </button><button type="button" id="palette-green" aria-label="绿色"
+        class="btn btn-sm w-100 palette" data-palette="green">
+      </button><button type="button" id="palette-indigo" aria-label="靛青色"
+        class="btn btn-sm w-100 palette" data-palette="indigo">
+      </button><button type="button" id="palette-orange" aria-label="橙色"
+        class="btn btn-sm w-100 palette" data-palette="orange">
+      </button><button type="button" id="palette-pink" aria-label="粉色"
+        class="btn btn-sm w-100 palette" data-palette="pink">
+      </button><button type="button" id="palette-purple" aria-label="紫色"
+        class="btn btn-sm w-100 palette" data-palette="purple">
+      </button><button type="button" id="palette-red" aria-label="红色"
+        class="btn btn-sm w-100 palette" data-palette="red">
+      </button><button type="button" id="palette-teal" aria-label="蓝绿色"
+        class="btn btn-sm w-100 palette" data-palette="teal">
+      </button><button type="button" id="palette-yellow" aria-label="黄色"
+        class="btn btn-sm w-100 palette" data-palette="yellow">
+      </button></div>
+</div>
+<div class="setting actions d-flex justify-content-around mt-auto overflow-auto">
+  <a role="button" class="action action-go-back" href="javascript: window.history.back();">
+    <span class="action-icon"><i class="fas fa-2x fa-chevron-circle-down" data-fa-transform="rotate-90"></i></span> 返回
+  </a>
+  <a role="button" class="action action-reload-page">
+    <span class="action-icon"><i class="fas fa-2x fa-redo-alt"></i></span> 刷新
+  </a>
+  <a role="button" class="action action-copy-url">
+    <span class="action-icon"><i class="fas fa-2x fa-link"></i></span> 复制链接
+  </a><a class="action action-social-share" role="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSocialShare"
+    aria-controls="offcanvasSocialShare" aria-label="Toggle social share">
+    <span class="action-icon"><i class="fas fa-2x fa-share-alt"></i></span> 分享
+  </a></div>
+
+</div>
+</div>
+
+    <div class="collapse navbar-collapse" tabindex="-1" id="navbarSupportedContent" aria-labelledby="navbarSupportedContent">
+      <form class="search-bar my-1" action="/search">
+  <div class="input-group input-group-sm">
+    <span class="btn btn-search disabled position-absolute left-0"><i class="fas fa-fw fa-search"></i></span>
+    <input class="form-control rounded-pill" name="q" type="search" aria-label="Search">
+  </div>
+</form>
+      <ul class="navbar-nav ms-auto"><li class="nav-item">
+          <a class="nav-link" href="/series/">
+            <i class="fas fa-fw fa-columns"></i>专栏
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/archives/">
+            <i class="fas fa-fw fa-file-archive"></i>归档
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/categories/">
+            <i class="fas fa-fw fa-folder"></i>分类
+          </a>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/tags/">
+            <i class="fas fa-fw fa-tags"></i>标签
+          </a>
+        </li><li class="nav-item dropdown">
+          <a class="nav-link" id="navbarDropdownFriends" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-fw fa-chevron-circle-down"></i>友情链接
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownFriends"><li>
+              <a class="dropdown-item"
+                href="https://xieash.work/" target="_blank" rel="noopener noreferrer">
+                xieash
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://sunnysab.cn/" target="_blank" rel="noopener noreferrer">
+                sunnysab
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://wanfengcxz.cn/" target="_blank" rel="noopener noreferrer">
+                wanfengcxz
+              </a>
+            </li><li>
+              <a class="dropdown-item"
+                href="https://zhangzqs.cn/" target="_blank" rel="noopener noreferrer">
+                zhangzqs
+              </a>
+            </li></ul>
+        </li><li class="nav-item">
+          <a class="nav-link" href="/data">
+            资料
+          </a>
+        </li></ul>
+    </div>
+  </div>
+</nav>
+</header>
+<main class="container">
+      <div class="row content">
+<div class="col-lg-8">
+  <div class="container"><nav class="row card component" aria-label="breadcrumb">
+  <div class="card-body">
+    <ol class="breadcrumb "><li class="breadcrumb-item"><a href="/">主页</a></li><li class="breadcrumb-item"><a href="/posts/">Posts</a></li><li class="breadcrumb-item active">GRPC-四种模式实践</li></ol>
+  </div>
+</nav><div class="post-panel-wrapper position-sticky">
+  <div class="d-flex flex-column component rounded post-panel position-absolute">
+    
+    <a class="action action-panel-toggler" role="button" title="Panel toggler">
+      <i class="fas fa-fw fa-chevron-circle-down"></i>
+    </a>
+    <a id="sidebarToggler" class="action d-none d-lg-block" role="button" title="Sidebar toggler">
+  <i class="fas fa-fw fa-expand-alt" data-fa-transform="rotate-45"></i>
+</a>
+
+    
+
+    
+    <a class="action" href="#post-copyright" role="button" aria-label="Copyright" title="Copyright">
+  <i class="fas fa-fw fa-copyright"></i>
+</a>
+    
+    <a class="action" href="#postTOC" aria-controls="Table of contents" role="button" title="Table of contents">
+  <i class="fas fa-fw fa-list-alt"></i>
+</a>
+    
+  </div>
+</div>
+<article class="row card component mb-4 post">
+  <div class="card-header ">
+    <h1 class="card-title post-title">GRPC-四种模式实践
+</h1>
+  </div>
+  <div class="card-body"><div class="post-meta">
+  <span class="post-date" title="创建于 2022-03-09 17:41:28 &#43;0800 CST。">
+    2022-03-09
+  </span><span class="post-reading-time">
+    6 分钟阅读
+  </span><span class="post-taxonomies"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge post-taxonomy">教程</a><a href="/tags/grpc/" class="badge post-taxonomy">gRPC</a></span>
+</div>
+<div class="post-content mb-3"><p>本文介绍如何使用gRPC的四种模式</p>
+<p>gRPC共有四种模式：简单模式、服务端流模式、客户端流模式、双向流模式。</p>
+<p>在开始之前，我们首先新建<code>proto/hello.proto</code>文件</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-protobuf" data-lang="protobuf"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="c1">// 表示当前使用的语法版本
+</span></span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="c1"></span><span class="n">syntax</span> <span class="o">=</span> <span class="s">&#34;proto3&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="err"></span><span class="c1">//.代表当前文件夹，分号后面是生成go文件引入的包名，abc具体的值根据项目需求而定。
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1">// 生成.go 文件的package
+</span></span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1"></span><span class="k">option</span> <span class="n">go_package</span> <span class="o">=</span> <span class="s">&#34;.;abc&#34;</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="err"></span><span class="c1">// 定义一个Request
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1">// 类型 变量名 标志（标志在相同目录中必须唯一）
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span><span class="kd">message</span> <span class="nc">LoginRequest</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="err"></span>  <span class="kt">string</span> <span class="n">username</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="err"></span>  <span class="kt">string</span> <span class="n">password</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="err"></span><span class="kd">message</span> <span class="nc">LoginResponse</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="err"></span>  <span class="kt">int32</span> <span class="n">code</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="err"></span>  <span class="kt">string</span> <span class="n">meg</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span><span class="err">
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="err">
+</span></span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="err"></span><span class="c1">// 定义一个服务
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span><span class="kd">service</span> <span class="n">HelloService</span><span class="p">{</span><span class="err">
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="err"></span>  <span class="c1">// 一元到一元 的服务
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">HelloUnaryToUnary</span><span class="p">(</span><span class="n">LoginRequest</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">LoginResponse</span><span class="p">){};</span><span class="err">
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="err"></span>  <span class="c1">// 一元到流的服务 服务端流
+</span></span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">HelloUnary2Stream</span><span class="p">(</span><span class="n">LoginRequest</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">stream</span> <span class="n">LoginResponse</span><span class="p">){};</span><span class="err">
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="err"></span>  <span class="c1">// 流到一元的服务 客户端流
+</span></span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">HelloStream2Unary</span><span class="p">(</span><span class="n">stream</span> <span class="n">LoginRequest</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">LoginResponse</span><span class="p">){};</span><span class="err">
+</span></span></span><span class="line"><span class="ln">29</span><span class="cl"><span class="err"></span>  <span class="c1">// 双向流的服务
+</span></span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="c1"></span>  <span class="k">rpc</span> <span class="n">HelloStream2Stream</span><span class="p">(</span><span class="n">stream</span> <span class="n">LoginRequest</span><span class="p">)</span> <span class="k">returns</span><span class="p">(</span><span class="n">stream</span> <span class="n">LoginResponse</span><span class="p">){};</span><span class="err">
+</span></span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="err"></span><span class="p">}</span><span class="err">
+</span></span></span></code></pre></div><p>在此之前我们还要下载go的依赖</p>
+<p>在项目中</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">go</span> <span class="n">mod</span> <span class="n">init</span> <span class="n">test</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">go</span> <span class="n">get</span> <span class="n">-u</span> <span class="n">google</span><span class="p">.</span><span class="n">golang</span><span class="p">.</span><span class="n">org</span><span class="p">/</span><span class="n">grpc</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="n">go</span> <span class="n">get</span> <span class="n">-u</span> <span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">golang</span><span class="p">/</span><span class="n">protobuf</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="n">go</span> <span class="n">get</span> <span class="n">-u</span> <span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">golang</span><span class="p">/</span><span class="n">protobuf</span><span class="p">/</span><span class="nb">protoc-gen</span><span class="n">-go</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="n">go</span> <span class="n">get</span> <span class="n">github</span><span class="p">.</span><span class="n">com</span><span class="p">/</span><span class="n">google</span><span class="p">/</span><span class="n">uuid</span>
+</span></span></code></pre></div><p>此外还要安装<code>protoc</code>安装完成之后，在项目根目录执行</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">protoc</span> <span class="p">-</span><span class="n">-proto_path</span><span class="p">=</span><span class="n">proto</span> <span class="n">proto</span><span class="p">/*.</span><span class="n">proto</span> <span class="p">-</span><span class="n">-go_out</span><span class="p">=</span><span class="n">plugins</span><span class="p">=</span><span class="n">grpc</span><span class="err">:</span><span class="p">./</span><span class="n">proto</span>
+</span></span></code></pre></div><p>在proto文件下就会有<code>hello.pb.go</code>生成。</p>
+<h3 id="简单模式">简单模式<a class="anchor ms-1" href="#简单模式"><i class="fas fa-link"></i></a></h3>
+<p>类似于普通的http请求，客户端请求request服务端进行响应response。</p>
+<p>我说一句话你说一句话。</p>
+<p>我们首先实现客户端。<code>client/main.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;context&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;fmt&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;github.com/google/uuid&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="s">&#34;io&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="nx">abc</span> <span class="s">&#34;test/proto&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">    <span class="c1">// 1. 创建一个连接 
+</span></span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1"></span>	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">Dial</span><span class="p">(</span><span class="s">&#34;127.0.0.1:8888&#34;</span><span class="p">,</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">WithInsecure</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;cannot dial server :&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">    <span class="c1">// 记着close
+</span></span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1"></span>	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl">    <span class="c1">// 2. 创建一个client proto生成的go文件中有一个创建 client的方法
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span>	<span class="nx">client</span> <span class="o">:=</span> <span class="nx">abc</span><span class="p">.</span><span class="nf">NewHelloServiceClient</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	
+</span></span><span class="line"><span class="ln">25</span><span class="cl">    <span class="c1">// 客户端
+</span></span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="c1"></span>	<span class="p">{</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">        
+</span></span><span class="line"><span class="ln">28</span><span class="cl">        <span class="nx">req</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span> <span class="s">&#34;admin&#34;</span><span class="p">,</span> <span class="nx">Password</span><span class="p">:</span> <span class="s">&#34;123456&#34;</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">        <span class="c1">// 3. 调用服务，传一个request
+</span></span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="c1"></span>		<span class="nx">response</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">HelloUnaryToUnary</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;cannot receive response :%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">		
+</span></span><span class="line"><span class="ln">35</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;response :%v\n&#34;</span><span class="p">,</span> <span class="nx">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p>实现服务端<code>server/server/hello_service.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">server</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;github.com/google/uuid&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;golang.org/x/net/context&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc/codes&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc/status&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="s">&#34;io&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="nx">abc</span> <span class="s">&#34;test/proto&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1">// 定义server的结构体
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">HelloServer</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="kd">func</span> <span class="nf">NewHelloServer</span><span class="p">()</span> <span class="o">*</span><span class="nx">HelloServer</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">return</span> <span class="o">&amp;</span><span class="nx">HelloServer</span><span class="p">{}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1">// 实现一元-一元服务
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloUnaryToUnary</span><span class="p">(</span><span class="nx">ctx</span> <span class="nx">context</span><span class="p">.</span><span class="nx">Context</span><span class="p">,</span> <span class="nx">req</span> <span class="o">*</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">    <span class="c1">// 这是一个简单是示例，所以就直接写死了
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"></span>    <span class="c1">// 拿到 request ，如果符合要求就响应 成功，不符合要求就响应 没有该用户。
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span>	<span class="k">if</span> <span class="nx">req</span><span class="p">.</span><span class="nf">GetUsername</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#34;admin&#34;</span> <span class="o">&amp;&amp;</span> <span class="nx">req</span><span class="p">.</span><span class="nf">GetPassword</span><span class="p">()</span> <span class="o">==</span> <span class="s">&#34;123456&#34;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;request :%v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">		<span class="nx">resp</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">			<span class="nx">Code</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">			<span class="nx">Meg</span><span class="p">:</span>  <span class="s">&#34;成功&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">		<span class="k">return</span> <span class="nx">resp</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">	<span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">		<span class="nx">resp</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">			<span class="nx">Code</span><span class="p">:</span> <span class="mi">404</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">			<span class="nx">Meg</span><span class="p">:</span>  <span class="s">&#34;没有该用户&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="k">return</span> <span class="nx">resp</span><span class="p">,</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">
+</span></span><span class="line"><span class="ln">41</span><span class="cl"><span class="c1">// 空实现
+</span></span></span><span class="line"><span class="ln">42</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloUnary2Stream</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">,</span> <span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloUnary2StreamServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl"><span class="c1">// 空实现
+</span></span></span><span class="line"><span class="ln">46</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloStream2Unary</span><span class="p">(</span><span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloStream2UnaryServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">48</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl"><span class="c1">// 空实现
+</span></span></span><span class="line"><span class="ln">50</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloStream2Stream</span><span class="p">(</span><span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloStream2StreamServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">51</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">52</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>实现服务端<code>server/main.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;google.golang.org/grpc&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="s">&#34;log&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;net&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="nx">abc</span> <span class="s">&#34;test/proto&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">	<span class="s">&#34;test/server/server&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">    <span class="c1">// 1. 拿出服务
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span>	<span class="nx">grpcSever</span> <span class="o">:=</span> <span class="nx">grpc</span><span class="p">.</span><span class="nf">NewServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="c1">// 2. 挂载方法 就是上面实现的方法
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>	<span class="nx">helloService</span> <span class="o">:=</span> <span class="nx">server</span><span class="p">.</span><span class="nf">NewHelloServer</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">    
+</span></span><span class="line"><span class="ln">18</span><span class="cl">    <span class="c1">// 3. 注册服务
+</span></span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="c1"></span>	<span class="nx">abc</span><span class="p">.</span><span class="nf">RegisterHelloServiceServer</span><span class="p">(</span><span class="nx">grpcSever</span><span class="p">,</span> <span class="nx">helloService</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;gRPC is running ......&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl">    <span class="c1">// 4. 创建监听
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span>	<span class="nx">listen</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">net</span><span class="p">.</span><span class="nf">Listen</span><span class="p">(</span><span class="s">&#34;tcp&#34;</span><span class="p">,</span> <span class="s">&#34;:8888&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;cannot listen port 8888 :%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">	<span class="nx">err</span> <span class="p">=</span> <span class="nx">grpcSever</span><span class="p">.</span><span class="nf">Serve</span><span class="p">(</span><span class="nx">listen</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;gRPC server err: %s\n&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>我们分别启动服务端和客户端。</p>
+<p>在<code>server/</code>目录</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">go</span> <span class="n">run</span> <span class="p">.\</span><span class="n">main</span><span class="p">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">15</span><span class="err">:</span><span class="n">08</span> <span class="n">gRPC</span> <span class="n">is</span> <span class="n">running</span> <span class="p">......</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">15</span><span class="err">:</span><span class="n">22</span> <span class="n">request</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;admin&#34;</span>  <span class="n">password</span><span class="err">:</span><span class="s2">&#34;123456&#34;</span>
+</span></span></code></pre></div><p>在<code>client/</code>目录</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln">1</span><span class="cl"><span class="n">go</span> <span class="n">run</span> <span class="p">.\</span><span class="n">main</span><span class="p">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">15</span><span class="err">:</span><span class="n">22</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;成功&#34;</span>
+</span></span></code></pre></div><p>现在我们就实现了一个简单的一元服务。</p>
+<h3 id="服务端流模式">服务端流模式<a class="anchor ms-1" href="#服务端流模式"><i class="fas fa-link"></i></a></h3>
+<p>客户端发送一个request，服务端的是一个响应流。</p>
+<p>我说一句话，你说一大堆。</p>
+<p><code>client.go</code>中括号以外的内容都能复用。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    <span class="c1">// 客户端向服务端发一条消息，
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"></span>	<span class="nx">stream</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">HelloUnary2Stream</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">(),</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;cannot receiver stream :%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="c1">// 客户端不断收服务端的消息流
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">        <span class="c1">// 接受服务端的流
+</span></span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1"></span>		<span class="nx">resp</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">        <span class="c1">// 没有错误就是收到了
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;receiver :%v&#34;</span><span class="p">,</span> <span class="nx">resp</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">        <span class="c1">// 接受完了就要结束了
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>		<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;receiver end...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">			<span class="k">break</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;unknow error:%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">    <span class="c1">// 接受完了之后关闭通道
+</span></span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="c1"></span>    <span class="nx">err</span><span class="p">=</span>  <span class="nx">stream</span><span class="p">.</span><span class="nf">CloseSend</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span><span class="o">!=</span><span class="kc">nil</span><span class="p">{</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;cannot close stream&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">    
+</span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>实现<code>func (server *HelloServer) HelloUnary2Stream(req *abc.LoginRequest, stream abc.HelloService_HelloUnary2StreamServer) error</code>方法</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloUnary2Stream</span><span class="p">(</span><span class="nx">req</span> <span class="o">*</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">,</span> <span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloUnary2StreamServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="c1">// 服务端收到一条消息
+</span></span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1"></span>	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;request :%v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="c1">// 不断向客服端发消息
+</span></span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">		<span class="nx">username</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewRandom</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">		<span class="nx">response</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">{</span><span class="nx">Code</span><span class="p">:</span> <span class="nb">int32</span><span class="p">(</span><span class="nx">i</span><span class="p">),</span> <span class="nx">Meg</span><span class="p">:</span> <span class="nx">username</span><span class="p">.</span><span class="nf">String</span><span class="p">()}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">response</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;send %v %v&#34;</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Code</span><span class="p">,</span> <span class="nx">response</span><span class="p">.</span><span class="nx">Meg</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">			<span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>服务端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">PS</span> <span class="nx">D</span><span class="p">:</span><span class="err">\</span><span class="nx">code</span><span class="err">\</span><span class="k">go</span><span class="err">\</span><span class="nx">test</span><span class="err">\</span><span class="nx">server</span><span class="p">&gt;</span> <span class="k">go</span> <span class="nx">run</span> <span class="p">.</span><span class="err">\</span><span class="nx">main</span><span class="p">.</span><span class="k">go</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">28</span> <span class="nx">gRPC</span> <span class="nx">is</span> <span class="nx">running</span> <span class="o">......</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">request</span> <span class="p">:</span><span class="nx">username</span><span class="p">:</span><span class="s">&#34;admin&#34;</span>  <span class="nx">password</span><span class="p">:</span><span class="s">&#34;123456&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">0</span> <span class="mi">6497</span><span class="nx">cd6a</span><span class="o">-</span><span class="mi">11</span><span class="nx">ce</span><span class="o">-</span><span class="mi">4</span><span class="nx">d76</span><span class="o">-</span><span class="nx">b9a6</span><span class="o">-</span><span class="mf">7e2</span><span class="nx">da224199b</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">1</span> <span class="mi">1119826</span><span class="nx">f</span><span class="o">-</span><span class="nx">c7c1</span><span class="o">-</span><span class="mi">41</span><span class="nx">cb</span><span class="o">-</span><span class="mi">8</span><span class="nx">d17</span><span class="o">-</span><span class="mi">19</span><span class="nx">c827d53281</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">2</span> <span class="mi">7</span><span class="nx">c90922f</span><span class="o">-</span><span class="mi">212</span><span class="nx">d</span><span class="o">-</span><span class="mi">4524</span><span class="o">-</span><span class="nx">b225</span><span class="o">-</span><span class="nx">d6c2c2e0977a</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">3</span> <span class="mi">11</span><span class="nx">cafa80</span><span class="o">-</span><span class="nx">ce70</span><span class="o">-</span><span class="mf">4e22</span><span class="o">-</span><span class="mi">98</span><span class="nx">a4</span><span class="o">-</span><span class="mi">6</span><span class="nx">af1e6c2b545</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">4</span> <span class="nx">ed87b66c</span><span class="o">-</span><span class="mi">6</span><span class="nx">d18</span><span class="o">-</span><span class="mi">4</span><span class="nx">de8</span><span class="o">-</span><span class="mi">9285</span><span class="o">-</span><span class="nx">d8587a8f6a53</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">5</span> <span class="nx">a0db893c</span><span class="o">-</span><span class="mi">9</span><span class="nx">dfa</span><span class="o">-</span><span class="mi">4</span><span class="nx">dac</span><span class="o">-</span><span class="mi">9</span><span class="nx">b77</span><span class="o">-</span><span class="nx">a39e88763f0d</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">6</span> <span class="mf">9914e70</span><span class="nx">f</span><span class="o">-</span><span class="nx">a732</span><span class="o">-</span><span class="mi">4002</span><span class="o">-</span><span class="nx">b000</span><span class="o">-</span><span class="mi">7</span><span class="nx">ded2c66918e</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">7</span> <span class="nx">b0933c28</span><span class="o">-</span><span class="mo">07</span><span class="mi">8</span><span class="nx">c</span><span class="o">-</span><span class="mi">48</span><span class="nx">c6</span><span class="o">-</span><span class="mi">903</span><span class="nx">d</span><span class="o">-</span><span class="nx">b3b936fa325f</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">8</span> <span class="nx">e24a9de1</span><span class="o">-</span><span class="nx">f662</span><span class="o">-</span><span class="mi">47</span><span class="nx">c9</span><span class="o">-</span><span class="nx">b7ea</span><span class="o">-</span><span class="nx">bd9126687b97</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">send</span> <span class="mi">9</span> <span class="mf">18e6</span><span class="nx">e09a</span><span class="o">-</span><span class="mi">206</span><span class="nx">c</span><span class="o">-</span><span class="mi">4240</span><span class="o">-</span><span class="mi">9</span><span class="nx">a27</span><span class="o">-</span><span class="mi">2</span><span class="nx">f27cf5fa0e0</span>
+</span></span></code></pre></div><p>客户端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">meg</span><span class="p">:</span><span class="s">&#34;6497cd6a-11ce-4d76-b9a6-7e2da224199b&#34;</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">1</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;1119826f-c7c1-41cb-8d17-19c827d53281&#34;</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">2</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;7c90922f-212d-4524-b225-d6c2c2e0977a&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">3</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;11cafa80-ce70-4e22-98a4-6af1e6c2b545&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">4</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;ed87b66c-6d18-4de8-9285-d8587a8f6a53&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">5</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;a0db893c-9dfa-4dac-9b77-a39e88763f0d&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">6</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;9914e70f-a732-4002-b000-7ded2c66918e&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">7</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;b0933c28-078c-48c6-903d-b3b936fa325f&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">8</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;e24a9de1-f662-47c9-b7ea-bd9126687b97&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="p">:</span><span class="nx">code</span><span class="p">:</span><span class="mi">9</span>  <span class="nx">meg</span><span class="p">:</span><span class="s">&#34;18e6e09a-206c-4240-9a27-2f27cf5fa0e0&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="mi">2022</span><span class="o">/</span><span class="mo">03</span><span class="o">/</span><span class="mi">09</span> <span class="mi">10</span><span class="p">:</span><span class="mi">34</span><span class="p">:</span><span class="mi">35</span> <span class="nx">receiver</span> <span class="nx">end</span><span class="o">...</span>
+</span></span></code></pre></div><h3 id="客户端流模式">客户端流模式<a class="anchor ms-1" href="#客户端流模式"><i class="fas fa-link"></i></a></h3>
+<p>客户端发送流，服务端只是一个响应。</p>
+<p>我说了一大堆，你回了一句话。</p>
+<p><code>client.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">	<span class="nx">stream</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">HelloStream2Unary</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;cannot send &#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="c1">// 发送10条请求流
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">		<span class="nx">req</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewString</span><span class="p">(),</span> <span class="nx">Password</span><span class="p">:</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewString</span><span class="p">()}</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">		<span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;cannot send %v ,err:%v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;send end...&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="c1">// 关闭 发送通道
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span>	<span class="nx">err</span> <span class="p">=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">CloseSend</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;cannot close stream&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="c1">// 接受响应
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span>	<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">CloseAndRecv</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;cannot receive response&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;receive response %v&#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><code>server.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloStream2Unary</span><span class="p">(</span><span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloStream2UnaryServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">   <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">      <span class="nx">req</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">         <span class="nx">log</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="s">&#34;no more data&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">         <span class="k">break</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">         <span class="k">return</span> <span class="nf">logErr</span><span class="p">(</span><span class="nx">status</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">,</span> <span class="s">&#34;cannot receive request&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;receiver :%v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">   <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">SendAndClose</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">{</span><span class="nx">Code</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">Meg</span><span class="p">:</span> <span class="s">&#34;接受完毕&#34;</span><span class="p">})</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">      <span class="k">return</span> <span class="nf">logErr</span><span class="p">(</span><span class="nx">status</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">,</span> <span class="s">&#34;cannot send response&#34;</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">   <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>服务端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6a57a4d0-aaa3-41de-bd16-2da29d3a0ff5&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1aade1e4-135d-4734-a29c-6a3fd23a5597&#34;</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7e04862e-efae-439e-94e5-ee0e394002d6&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2837e260-c90a-433c-9822-a378ff99fbe9&#34;</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;4204b5b5-3df0-4a61-91f1-6940b14e809f&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;c139d1f7-89c0-4628-961b-db3c0b2fa23a&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;52c5153d-f35d-4bc6-ad8c-127df19250fe&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1985a5cc-b200-431c-959e-9220a1c8fa85&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6f0fc379-93c9-46f5-a374-9d9851a9f56a&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2166039e-1b97-4887-a0d1-d6a61bafef87&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;da7e2195-ec64-448c-b8e6-1e58580b1637&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;279d7b32-ffcd-4be2-8111-e0cb557e6bd0&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7dc698a9-e77a-491d-99f3-d36f17f8ffc0&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1b449f77-c6e1-413d-a88f-6b7a8f7b1bb7&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;186de3d9-de9c-4243-aef7-fc9800991349&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;731f6ef2-8241-400e-bc57-509cb8cc75e8&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;5fa98e03-4a95-4653-bc1a-4f0356bcca07&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;f3cc126c-b4c8-474a-b93e-6d4064545f84&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receiver</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;b2157cc2-8244-4e10-887f-b82e29617ce2&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;f0a5c65e-dcf9-454e-88dd-0b985c2a7cdf&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">no</span> <span class="n">more</span> <span class="n">data</span>
+</span></span></code></pre></div><p>客户端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">go</span> <span class="n">run</span> <span class="p">.\</span><span class="n">main</span><span class="p">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6a57a4d0-aaa3-41de-bd16-2da29d3a0ff5&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1aade1e4-135d-4734-a29c-6a3fd23a5597&#34;</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7e04862e-efae-439e-94e5-ee0e394002d6&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2837e260-c90a-433c-9822-a378ff99fbe9&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;4204b5b5-3df0-4a61-91f1-6940b14e809f&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;c139d1f7-89c0-4628-961b-db3c0b2fa23a&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;52c5153d-f35d-4bc6-ad8c-127df19250fe&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1985a5cc-b200-431c-959e-9220a1c8fa85&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6f0fc379-93c9-46f5-a374-9d9851a9f56a&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2166039e-1b97-4887-a0d1-d6a61bafef87&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;da7e2195-ec64-448c-b8e6-1e58580b1637&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;279d7b32-ffcd-4be2-8111-e0cb557e6bd0&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7dc698a9-e77a-491d-99f3-d36f17f8ffc0&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1b449f77-c6e1-413d-a88f-6b7a8f7b1bb7&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;186de3d9-de9c-4243-aef7-fc9800991349&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;731f6ef2-8241-400e-bc57-509cb8cc75e8&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;5fa98e03-4a95-4653-bc1a-4f0356bcca07&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;f3cc126c-b4c8-474a-b93e-6d4064545f84&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;b2157cc2-8244-4e10-887f-b82e29617ce2&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;f0a5c65e-dcf9-454e-88dd-0b985c2a7cdf&#34;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="k">end</span><span class="p">...</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">receive</span> <span class="n">response</span> <span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;接受完毕&#34;</span>
+</span></span></code></pre></div><h3 id="双向流模式">双向流模式。<a class="anchor ms-1" href="#双向流模式"><i class="fas fa-link"></i></a></h3>
+<p>两个都不断在向对方发送流。</p>
+<p>两个人都在不断说话。可能是你说一句我回0-N句，我说一句你回0-N。</p>
+<p><code>client.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">		<span class="nx">stream</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">client</span><span class="p">.</span><span class="nf">HelloStream2Stream</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nf">Background</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatalf</span><span class="p">(</span><span class="s">&#34;unknow error %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">		<span class="c1">// 由于双方都需要不断发收，所以不能阻塞在一处，通过 chan 进行error的通信
+</span></span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1"></span>		<span class="nx">waitResponse</span> <span class="o">:=</span> <span class="nb">make</span><span class="p">(</span><span class="kd">chan</span> <span class="kt">error</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">		<span class="c1">// 开启一个携程，专门收
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span>		<span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">			<span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">				<span class="nx">res</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">				<span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">					<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;no more response&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">					<span class="nx">waitResponse</span> <span class="o">&lt;-</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">				<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">					<span class="nx">waitResponse</span> <span class="o">&lt;-</span> <span class="nx">fmt</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="s">&#34;cannot receive stream response %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">					<span class="k">return</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">				<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl">				<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;received response :%v&#34;</span><span class="p">,</span> <span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">		<span class="p">}()</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl">		<span class="c1">// 继续发
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span>		<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">			<span class="nx">req</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginRequest</span><span class="p">{</span><span class="nx">Username</span><span class="p">:</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewString</span><span class="p">(),</span> <span class="nx">Password</span><span class="p">:</span> <span class="nx">uuid</span><span class="p">.</span><span class="nf">NewString</span><span class="p">()}</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">			<span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;send %v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">			<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">				<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="s">&#34;unknow&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">		<span class="c1">// 关闭发送
+</span></span></span><span class="line"><span class="ln">36</span><span class="cl"><span class="c1"></span>		<span class="nx">err</span> <span class="p">=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">CloseSend</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">			<span class="nx">log</span><span class="p">.</span><span class="nf">Fatal</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">		<span class="c1">// 如果没有遇到error 会一直阻塞到这，直到遇到error
+</span></span></span><span class="line"><span class="ln">41</span><span class="cl"><span class="c1"></span>		<span class="nx">err</span> <span class="p">=</span> <span class="o">&lt;-</span><span class="nx">waitResponse</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">		<span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;end  %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">43</span><span class="cl">
+</span></span><span class="line"><span class="ln">44</span><span class="cl">	<span class="p">}</span>
+</span></span></code></pre></div><p><code>server.go</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kd">func</span> <span class="p">(</span><span class="nx">server</span> <span class="o">*</span><span class="nx">HelloServer</span><span class="p">)</span> <span class="nf">HelloStream2Stream</span><span class="p">(</span><span class="nx">stream</span> <span class="nx">abc</span><span class="p">.</span><span class="nx">HelloService_HelloStream2StreamServer</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">   <span class="k">for</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">      <span class="c1">// 不断接受
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span>      <span class="nx">req</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Recv</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">==</span> <span class="nx">io</span><span class="p">.</span><span class="nx">EOF</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">         <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;no more data&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">         <span class="k">break</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">         <span class="k">return</span> <span class="nf">logErr</span><span class="p">(</span><span class="nx">status</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">,</span> <span class="s">&#34;cannot receive stream request :%v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Printf</span><span class="p">(</span><span class="s">&#34;receive data: %v  %v&#34;</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Username</span><span class="p">,</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Password</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl">      <span class="c1">// 将接受到的发送
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>      <span class="nx">res</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="nx">abc</span><span class="p">.</span><span class="nx">LoginResponse</span><span class="p">{</span><span class="nx">Code</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span> <span class="nx">Meg</span><span class="p">:</span> <span class="s">&#34;receive data username &#34;</span> <span class="o">+</span> <span class="nx">req</span><span class="p">.</span><span class="nx">Username</span><span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">      <span class="nx">err</span> <span class="p">=</span> <span class="nx">stream</span><span class="p">.</span><span class="nf">Send</span><span class="p">(</span><span class="nx">res</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">      <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">         <span class="k">return</span> <span class="nf">logErr</span><span class="p">(</span><span class="nx">status</span><span class="p">.</span><span class="nf">Errorf</span><span class="p">(</span><span class="nx">codes</span><span class="p">.</span><span class="nx">Unknown</span><span class="p">,</span> <span class="s">&#34;cannot send response %v&#34;</span><span class="p">,</span> <span class="nx">err</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">   <span class="k">return</span> <span class="kc">nil</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="c1">// 打印并返回
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span><span class="kd">func</span> <span class="nf">logErr</span><span class="p">(</span><span class="nx">err</span> <span class="kt">error</span><span class="p">)</span> <span class="kt">error</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">   <span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">      <span class="nx">log</span><span class="p">.</span><span class="nf">Print</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">   <span class="p">}</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">   <span class="k">return</span> <span class="nx">err</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>服务端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="ln"> 1</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;6a57a4d0-aaa3-41de-bd16-2da29d3a0ff5&#34; password:&#34;1aade1e4-135d-4734-a29c-6a3fd23a5597&#34;
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;7e04862e-efae-439e-94e5-ee0e394002d6&#34; password:&#34;2837e260-c90a-433c-9822-a378ff99fbe9&#34;
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;4204b5b5-3df0-4a61-91f1-6940b14e809f&#34; password:&#34;c139d1f7-89c0-4628-961b-db3c0b2fa23a&#34;
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;52c5153d-f35d-4bc6-ad8c-127df19250fe&#34; password:&#34;1985a5cc-b200-431c-959e-9220a1c8fa85&#34;
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;6f0fc379-93c9-46f5-a374-9d9851a9f56a&#34; password:&#34;2166039e-1b97-4887-a0d1-d6a61bafef87&#34;
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;da7e2195-ec64-448c-b8e6-1e58580b1637&#34; password:&#34;279d7b32-ffcd-4be2-8111-e0cb557e6bd0&#34;
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;7dc698a9-e77a-491d-99f3-d36f17f8ffc0&#34; password:&#34;1b449f77-c6e1-413d-a88f-6b7a8f7b1bb7&#34;
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;186de3d9-de9c-4243-aef7-fc9800991349&#34; password:&#34;731f6ef2-8241-400e-bc57-509cb8cc75e8&#34;
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;5fa98e03-4a95-4653-bc1a-4f0356bcca07&#34; password:&#34;f3cc126c-b4c8-474a-b93e-6d4064545f84&#34;
+</span></span><span class="line"><span class="ln">10</span><span class="cl">2022/03/09 10:53:26 receiver :username:&#34;b2157cc2-8244-4e10-887f-b82e29617ce2&#34; password:&#34;f0a5c65e-dcf9-454e-88dd-0b985c2a7cdf&#34;
+</span></span><span class="line"><span class="ln">11</span><span class="cl">2022/03/09 10:53:26 no more data
+</span></span></code></pre></div><p>客户端</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="n">go</span> <span class="n">run</span> <span class="p">.\</span><span class="n">main</span><span class="p">.</span><span class="n">go</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6a57a4d0-aaa3-41de-bd16-2da29d3a0ff5&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1aade1e4-135d-4734-a29c-6a3fd23a5597&#34;</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7e04862e-efae-439e-94e5-ee0e394002d6&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2837e260-c90a-433c-9822-a378ff99fbe9&#34;</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;4204b5b5-3df0-4a61-91f1-6940b14e809f&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;c139d1f7-89c0-4628-961b-db3c0b2fa23a&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;52c5153d-f35d-4bc6-ad8c-127df19250fe&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1985a5cc-b200-431c-959e-9220a1c8fa85&#34;</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;6f0fc379-93c9-46f5-a374-9d9851a9f56a&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;2166039e-1b97-4887-a0d1-d6a61bafef87&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;da7e2195-ec64-448c-b8e6-1e58580b1637&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;279d7b32-ffcd-4be2-8111-e0cb557e6bd0&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;7dc698a9-e77a-491d-99f3-d36f17f8ffc0&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;1b449f77-c6e1-413d-a88f-6b7a8f7b1bb7&#34;</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">53</span><span class="err">:</span><span class="n">26</span> <span class="n">send</span> <span class="n">req</span> <span class="err">:</span><span class="n">username</span><span class="err">:</span><span class="s2">&#34;186de3d9-de9c-4243-aef7-fc9800991349&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;731f6ef2-8241-400e-bc57-509cb8cc75e8&#34;</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username 4b6bcd51-652a-4a8c-af34-85a667ad4957&#34;</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">send</span> <span class="n">username</span><span class="err">:</span><span class="s2">&#34;d9a3e249-c85e-4a4f-84a5-e43a787dced0&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;e5e34dbb-585e-4b5e-83f4-e38f367f8bc0&#34;</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">send</span> <span class="n">username</span><span class="err">:</span><span class="s2">&#34;1905bdd1-0a77-4d34-ae38-102038d8a4a9&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;93bd9964-9c15-40a8-8005-f84d8aada832&#34;</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">send</span> <span class="n">username</span><span class="err">:</span><span class="s2">&#34;a1d2b612-03b5-4166-aa1a-ea29e27c8f9e&#34;</span> <span class="n">password</span><span class="err">:</span><span class="s2">&#34;5b7d1fec-fba3-4120-b24b-8ee6c8f34713&#34;</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username 12903ede-ead0-48d9-8240-6f51c9816ac1&#34;</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username 91e8bf53-38c7-493d-b9ab-b3ce273a4780&#34;</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username c47db986-b1a1-443b-8e39-e815ea4c65a8&#34;</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username f8fa740e-c286-4cc4-829b-d36e571084ab&#34;</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username de6112ca-8abf-4c08-9f52-f14f448f5772&#34;</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username d9a3e249-c85e-4a4f-84a5-e43a787dced0&#34;</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username 1905bdd1-0a77-4d34-ae38-102038d8a4a9&#34;</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">received</span> <span class="n">response</span> <span class="err">:</span><span class="n">code</span><span class="err">:</span><span class="n">200</span> <span class="n">meg</span><span class="err">:</span><span class="s2">&#34;receive data username a1d2b612-03b5-4166-aa1a-ea29e27c8f9e&#34;</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="n">no</span> <span class="n">more</span> <span class="n">response</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="n">2022</span><span class="p">/</span><span class="n">03</span><span class="p">/</span><span class="n">09</span> <span class="n">10</span><span class="err">:</span><span class="n">56</span><span class="err">:</span><span class="n">49</span> <span class="p">&lt;</span><span class="n">nil</span><span class="p">&gt;</span>
+</span></span></code></pre></div></div></div>
+  <div class="card-footer"><div class="post-navs d-flex justify-content-evenly"><div class="post-nav post-prev">
+    <i class="fas fa-fw fa-chevron-circle-down post-prev-icon" data-fa-transform="rotate-90"></i>
+    <a href="/posts/60b013aa/">为什么Request.Body需要被关闭
+</a>
+  </div><div class="post-nav post-next">
+    <a href="/posts/d5376d72/">为什么paseto比jwt好？
+</a>
+    <i class="fas fa-fw fa-chevron-circle-down post-next-icon" data-fa-transform="rotate-270"></i>
+  </div></div></div>
+</article><div class="post-copyright mb-3 row card component" id="post-copyright">
+    <div class="card-header">
+        <h2 class="card-title">版权</h2>
+    </div>
+    <div class="card-body"><a class="d-flex align-items-center flex-column" target="_blank" rel="license noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh">
+  <span><i class="fab fa-fw fa-2x fa-creative-commons"></i><i class="fab fa-fw fa-2x fa-creative-commons-by"></i><i class="fab fa-fw fa-2x fa-creative-commons-nc"></i><i class="fab fa-fw fa-2x fa-creative-commons-nd"></i></span>
+  CC BY-NC-ND 4.0 
+</a>
+
+
+    </div>
+</div><section class="related-posts row card component">
+    <div class="card-header">
+      <h2 class="card-title">相关文章</h2>
+    </div>
+    <div class="card-body">
+      <ul class="post-list"><li>
+          <a href="/posts/17eab2e7/">在同一机器上安装Go的不同版本
+</a>
+          <span class="float-end post-date">2022-02-17
+</span>
+        </li><li>
+          <a href="/posts/c4697fb2/">TCP/IP协议三次握手、四次挥手
+</a>
+          <span class="float-end post-date">2022-02-10
+</span>
+        </li><li>
+          <a href="/posts/387f5f40/">Kubernetes学习记录
+</a>
+          <span class="float-end post-date">2022-01-27
+</span>
+        </li><li>
+          <a href="/posts/b7d0417a/">Golang中的make和new
+</a>
+          <span class="float-end post-date">2022-01-18
+</span>
+        </li><li>
+          <a href="/posts/427ffcfc/">Golang逃逸现象
+</a>
+          <span class="float-end post-date">2022-01-18
+</span>
+        </li></ul>
+    </div>
+  </section></div>
+</div><aside class="col-lg-4 sidebar d-flex">
+  <div class="container d-flex flex-column">
+    
+    <div class="card row text-center profile component">
+  <div class="card-body">
+    <div class="col-12 d-flex align-items-center justify-content-center"><picture><img class="profile-avatar rounded-circle" alt="jimyag" src="/images/spider-man.jpg" loading="lazy" data-viewer-invisible
+     width="556" height="559"
+     />
+</picture>
+</div>
+    <div class="col-12 profile-meta"><div class="profile-name">jimyag</div><div class="profile-bio">Gopher</div><div class="profile-location"><i class="fas fa-fw fa-map-marker-alt"></i>Shanghai</div><div class="profile-about"><i class="fas fa-fw fa-user"></i><a href="/about/">About</a></div><nav class="social-links nav justify-content-center"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+</div>
+  </div>
+</div>
+<div class="post-toc row mb-4 card component" id="postTOC">
+  <div class="card-header">
+    <h2 class="card-title">目录</h2>
+  </div>
+  <div class="card-body">
+    <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#简单模式">简单模式</a></li>
+        <li><a href="#服务端流模式">服务端流模式</a></li>
+        <li><a href="#客户端流模式">客户端流模式</a></li>
+        <li><a href="#双向流模式">双向流模式。</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+  </div>
+</div><section class="recent-posts row card component">
+  <div class="card-header">
+    <h2 class="card-title">最近文章</h2>
+  </div>
+  <div class="card-body">
+    <ul class="post-list"><li>
+        <a href="/posts/6db6b747/">Google MapReduce翻译
+</a>
+      </li><li>
+        <a href="/posts/f6adfb46/">6.824 Spring 2020 Lab1 MapReduce文档翻译
+</a>
+      </li><li>
+        <a href="/posts/14976c16/">我的notion规划
+</a>
+      </li><li>
+        <a href="/posts/9c78a390/">Git开发分支落后远程主分支
+</a>
+      </li><li>
+        <a href="/posts/0f0b28a1/">Oh My Zsh进入git目录卡顿
+</a>
+      </li></ul>
+  </div>
+</section><section class="series-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/series">专栏</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/series/leetcode/" class="badge rounded post-taxonomy" title="leetcode">
+            leetcode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/series/%E4%BB%8E0%E5%88%B01%E5%AE%9E%E7%8E%B0%E5%AE%8C%E6%95%B4%E7%9A%84%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%A1%86%E6%9E%B6/" class="badge rounded post-taxonomy" title="从0到1实现完整的微服务框架">
+            从0到1实现完整的微服务框架<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/series/%E7%89%9B%E5%AE%A2top101/" class="badge rounded post-taxonomy" title="牛客TOP101">
+            牛客TOP101<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/series/mit6.824/" class="badge rounded post-taxonomy" title="MIT6.824">
+            MIT6.824<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/series/vim/" class="badge rounded post-taxonomy" title="vim">
+            vim<span class="badge badge-sm text-white bg-accent ms-1">1</span></a></div>
+      </div>
+    </section><section class="categories-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/categories">分类</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/categories/leetcode/" class="badge rounded post-taxonomy" title="LeetCode">
+            LeetCode<span class="badge badge-sm text-white bg-accent ms-1">32</span></a><a href="/categories/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/categories/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">4</span></a><a href="/categories/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" class="badge rounded post-taxonomy" title="编译原理">
+            编译原理<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/%E8%B8%A9%E5%9D%91/" class="badge rounded post-taxonomy" title="踩坑">
+            踩坑<span class="badge badge-sm text-white bg-accent ms-1">3</span></a><a href="/categories/hexo/" class="badge rounded post-taxonomy" title="Hexo">
+            Hexo<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/web/" class="badge rounded post-taxonomy" title="Web">
+            Web<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/yolov5/" class="badge rounded post-taxonomy" title="YOLOV5">
+            YOLOV5<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" class="badge rounded post-taxonomy" title="计算机网络">
+            计算机网络<span class="badge badge-sm text-white bg-accent ms-1">2</span></a><a href="/categories" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">22</span>
+        </a></div>
+      </div>
+    </section><section class="tags-taxonomies row card component">
+      <div class="card-header">
+        <h2 class="card-title">
+          <a href="/tags">标签</a>
+        </h2>
+      </div>
+      <div class="card-body">
+        <div class="py-2"><a href="/tags/%E6%95%99%E7%A8%8B/" class="badge rounded post-taxonomy" title="教程">
+            教程<span class="badge badge-sm text-white bg-accent ms-1">29</span></a><a href="/tags/%E4%B8%AD%E7%AD%89/" class="badge rounded post-taxonomy" title="中等">
+            中等<span class="badge badge-sm text-white bg-accent ms-1">14</span></a><a href="/tags/%E7%AE%80%E5%8D%95/" class="badge rounded post-taxonomy" title="简单">
+            简单<span class="badge badge-sm text-white bg-accent ms-1">13</span></a><a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" class="badge rounded post-taxonomy" title="微服务">
+            微服务<span class="badge badge-sm text-white bg-accent ms-1">12</span></a><a href="/tags/grpc/" class="badge rounded post-taxonomy" title="gRPC">
+            gRPC<span class="badge badge-sm text-white bg-accent ms-1">10</span></a><a href="/tags/go/" class="badge rounded post-taxonomy" title="Go">
+            Go<span class="badge badge-sm text-white bg-accent ms-1">9</span></a><a href="/tags/%E6%A8%A1%E6%8B%9F/" class="badge rounded post-taxonomy" title="模拟">
+            模拟<span class="badge badge-sm text-white bg-accent ms-1">7</span></a><a href="/tags/%E5%A4%8D%E4%B9%A0%E8%B5%84%E6%96%99/" class="badge rounded post-taxonomy" title="复习资料">
+            复习资料<span class="badge badge-sm text-white bg-accent ms-1">6</span></a><a href="/tags/%E5%9B%B0%E9%9A%BE/" class="badge rounded post-taxonomy" title="困难">
+            困难<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags/%E7%AE%97%E6%B3%95/" class="badge rounded post-taxonomy" title="算法">
+            算法<span class="badge badge-sm text-white bg-accent ms-1">5</span></a><a href="/tags" class="badge rounded post-taxonomy" title='全部'>
+          全部
+          <span class="badge badge-sm text-white bg-accent ms-1">81</span>
+        </a></div>
+      </div>
+    </section>
+    
+  </div>
+</aside>
+</div>
+    </main><footer class="footer mt-auto py-3 text-center container"><nav class="social-links nav justify-content-center mb-2"><a class="nav-link social-link" href="mailto:i@jimyag.cn" title="Email">
+      <i class="fas fa-fw fa-2x fa-envelope"></i>
+    </a><a class="nav-link social-link" target="_blank" href="https://github.com/jimyag" title="GitHub" rel="noopener noreferrer">
+        <i class="fa-fw fa-2x fab fa-github"></i>
+      </a><a class="nav-link social-link" target="_blank" href="/index.xml" title="RSS" rel="noopener noreferrer">
+    <i class="fas fa-fw fa-2x fa-rss"></i>
+  </a></nav>
+<div class="copyright mb-2">
+  Copyright © 2019-2022 jimyag. All Rights Reserved. 
+</div>
+<div class="powered-by mb-2">
+  <a href="https://beian.miit.gov.cn" target="_blank" rel="noopener noreferrer">陕ICP备2020018182号-1 </a>
+</div></footer>
+<script src="/assets/main/bundle.min.b5532796c3cf4f82f5b0254d4790694b9a7766fb69b6fc6bd76c68a1946df067.js" integrity="sha256-tVMnlsPPT4L1sCVNR5BpS5p3Zvtptvxr12xooZRt8Gc=" crossorigin="anonymous" defer></script><script src="/assets/icons/bundle.min.dfcbe757302616d36e2f117823c56facf382204bf3ab9ea29dffd5f2fc56bdef.js" integrity="sha256-38vnVzAmFtNuLxF4I8VvrPOCIEvzq56inf/V8vxWve8=" crossorigin="anonymous" defer></script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('\/service-worker.min.js').then(function(reg) {
+      console.log('Successfully registered service worker', reg);
+    }).catch(function(err) {
+      console.warn('Error whilst registering service worker', err);
+    });
+  });
+}
+</script><script src="/assets/viewer/bundle.min.0ec873e11f754ed0ad81a68dca8496e24286666354e9c7c11ff339c390f086f0.js" integrity="sha256-Dshz4R91TtCtgaaNyoSW4kKGZmNU6cfBH/M5w5DwhvA=" crossorigin="anonymous" defer></script>
+</body>
+</html>
