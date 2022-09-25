@@ -1,5 +1,5 @@
 baseURL = "https://jimyag.cn"
-title = "编程日记"
+title = "步履不停"
 theme = "hugo-theme-bootstrap" # install via git submodule
 # theme = "github.com/razonyang/hugo-theme-bootstrap" # install via hugo module
 copyright = "Copyright © 2019-{year} jimyag. All Rights Reserved. "

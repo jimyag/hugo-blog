@@ -11,7 +11,7 @@ keywords = "Gopher"
 
 logo = "images/spider-man.jpg" # Logo image. Default to "images/logo.webp".
 # logo = false # Disable Logo
-brand = "编程日记"
+brand = "步履不停"
 
 palette = "blue" # Default palette. Optional. You'll need to clear the browser cache after modifying this.
 # palettes = ["blue", "blue gray", "brown"] # Available palettes. Default to ALL.
@@ -37,7 +37,7 @@ toc = true # Disable TOC globally.
 # socialShare = false # disable social network sharing
 # searchBar = false # disable search-bar
 
-poweredBy = true # Whether to show powered by.
+poweredBy = false # Whether to show powered by.
 
 readingTime = true # Whether to display the reading time.
 postDate = true # Whether to display the post date in the post meta section.
